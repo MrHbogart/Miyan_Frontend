@@ -158,6 +158,8 @@ function getLocalizedPath(p) {
   return `/${currentLang}/${p}`
 }
 </script>
+
+
 <style scoped>
 @keyframes fadein-menu {
   from { opacity: 0; transform: translateY(12px) scale(.97); }
@@ -181,6 +183,13 @@ function getLocalizedPath(p) {
 .nav-placeholder section {
   width: 100%;
 }
+
+.logo-text {
+  font-size: 10rem;
+  color: white;
+
+}
+
 
 .navbar-sticky { position: sticky; top: var(--header-height); z-index: 30; }
 @media (min-width: 768px) { .navbar-sticky { top: var(--header-height); } }
