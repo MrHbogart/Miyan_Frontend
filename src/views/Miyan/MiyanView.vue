@@ -1,49 +1,72 @@
 <template>
-  <section class="w-full h-screen flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <video :src="siteMedia.heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
-      <div
-        class="absolute inset-0 transition-all"
-        :style="{ background: `rgba(0,0,0,${modalOverlayAlpha})`, transition: overlayTransition }"
-      ></div>
-    </div>
-
-    <div class="relative z-10 text-center px-6 max-w-xs mx-auto justify-center">
-      <template>
-        <img :src="siteMedia.miyanLogo" alt="Miyan Logo" class="mx-auto w-40 md:w-56 h-auto drop-shadow-lg brightness-0 invert" />
-      </template>
-    </div>
-  </section>
-
-  <!-- Toggle Buttons -->
-  <div class="nav-placeholder">
-    <div ref="navbarSentinel" :style="sentinelStyle"></div>
-    <section ref="navbarRef" class="bg-white py-2 shadow-sm transition-all duration-300" :style="navInlineStyle">
-      <div class="max-w-4xl mx-auto px-6">
-        <div class="flex justify-center gap-4">
-          <router-link
-            :to="{ path: getLocalizedPath('') }"
-            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg"
-            :class="[{ 'font-bold': $route.name === 'MiyanGallery' }, { 'font-cinzel font-light': lang === 'en' }]"
-          >
-            {{ lang === 'fa' ? 'گالری' : 'Gallery' }}
-          </router-link>
-          <router-link
-            :to="{ path: getLocalizedPath('projects') }"
-            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg"
-            :class="[{ 'font-bold': $route.name === 'MiyanProjects' }, { 'font-cinzel font-light': lang === 'en' }]"
-          >
-            {{ lang === 'fa' ? 'پروژه‌ها' : 'Projects' }}
-          </router-link>
-        </div>
+  <div>
+    <!-- Hero Section -->
+    <section class="w-full h-screen flex items-center justify-center overflow-hidden">
+      <div class="absolute inset-0 z-0">
+        <video 
+          :src="siteMedia.heroVideo" 
+          autoplay 
+          muted 
+          loop 
+          playsinline 
+          class="absolute inset-0 w-full h-full object-cover" 
+        />
+        <div
+          class="absolute inset-0 transition-all"
+          :style="{ 
+            background: `rgba(0,0,0,${modalOverlayAlpha})`, 
+            transition: overlayTransition 
+          }"
+        ></div>
+      </div>
+      <div class="relative z-10 text-center px-6 max-w-xs mx-auto">
+        <img 
+          :src="siteMedia.miyanLogo" 
+          alt="Miyan Logo" 
+          class="w-full h-auto drop-shadow-lg brightness-0 invert"
+        />
       </div>
     </section>
-  </div>
 
-  <!-- Child Router View -->
+    <!-- Navigation -->
+    <div class="nav-placeholder">
+      <div ref="navbarSentinel" :style="sentinelStyle"></div>
+      <section 
+        ref="navbarRef" 
+        class="bg-white py-2 shadow-sm transition-all duration-300" 
+        :style="navInlineStyle"
+      >
+        <div class="max-w-4xl mx-auto px-6">
+          <div class="flex justify-center gap-4">
+            <router-link
+              :to="{ path: getLocalizedPath('') }"
+              class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg"
+              :class="[{ 
+                'font-bold': $route.name === 'MiyanGallery' 
+              }, { 
+                'font-cinzel font-light': lang === 'en' 
+              }]"
+            >
+              {{ lang === 'fa' ? 'گالری' : 'Gallery' }}
+            </router-link>
+            <router-link
+              :to="{ path: getLocalizedPath('projects') }"
+              class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg"
+              :class="[{ 
+                'font-bold': $route.name === 'MiyanProjects' 
+              }, { 
+                'font-cinzel font-light': lang === 'en' 
+              }]"
+            >
+              {{ lang === 'fa' ? 'پروژه‌ها' : 'Projects' }}
+            </router-link>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
   <router-view />
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
