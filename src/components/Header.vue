@@ -15,7 +15,7 @@
         <div class="flex items-center justify-center header-logo">
           <router-link to="/" class="logo-link" :class="{ 'is-active': isActive('/') }">
             <template v-if="lang === 'fa'">
-              <img :src="siteMedia.miyantLogo" alt="Miyan" class="logo-img" />
+              <img :src="siteMedia.miyanLogo" alt="Miyan" class="logo-img" />
             </template>
             <template v-else>
               <span class="logo-text logo-text--center">Miyan</span>
