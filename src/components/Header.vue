@@ -5,7 +5,7 @@
         <div class="flex items-center justify-center header-logo">
           <router-link to="/beresht" class="logo-link" :class="{ 'is-active': isActive('/beresht') }">
             <template v-if="lang === 'fa'">
-              <img src=miyanbereshtImg alt="Miyan Beresht" class="logo-img" />
+              <img :src="siteMedia.bereshtLogo" alt="Miyan Beresht" class="logo-img" />
             </template>
             <template v-else>
               <span class="logo-text">Miyan Beresht</span>
@@ -15,7 +15,7 @@
         <div class="flex items-center justify-center header-logo">
           <router-link to="/" class="logo-link" :class="{ 'is-active': isActive('/') }">
             <template v-if="lang === 'fa'">
-              <img src={{miyanlogoImg}} alt="Miyan" class="logo-img" />
+              <img :src="siteMedia.miyantLogo" alt="Miyan" class="logo-img" />
             </template>
             <template v-else>
               <span class="logo-text logo-text--center">Miyan</span>
@@ -25,7 +25,7 @@
         <div class="flex items-center justify-center header-logo">
           <router-link to="/madi" class="logo-link" :class="{ 'is-active': isActive('/madi') }">
             <template v-if="lang === 'fa'">
-              <img src=miyanmadilogoImg alt="Miyan Madi" class="logo-img" />
+              <img :src="siteMedia.madiLogo" alt="Miyan Madi" class="logo-img" />
             </template>
             <template v-else>
               <span class="logo-text">Miyan Madi</span>
@@ -49,9 +49,7 @@ const headerStyle = computed(() => ({
 const route = useRoute()
 const isActive = (to) => route.path === to
 import { lang, setLang } from '../state/lang'
-import miyanbereshtImg from '@/assets/images/miyan_beresht.png';
-import miyanlogoImg from '@/assets/images/miyan_logo.png';
-import miyanmadilogoImg from '@/assets/images/miyan_madi_logo.png';
+import siteMedia from '@/data/siteMedia.js'
 
 // Reactive header bottom Y (document space). Provided so descendants (views) can read it.
 const headerBottomY = ref(0)
