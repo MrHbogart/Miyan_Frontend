@@ -1,7 +1,7 @@
 // Projects data holder (moved out of component so it can be fetched from backend later)
 export default [
   {
-    image: '/images/medium/menu-beresht-1.jpg',
+    image: '/images/medium/menu-beresht-7.jpg',
     title: { fa: 'مجتمع مسکونی', en: 'Residential Complex' },
     description: {
       fa: 'یک توسعه مسکونی مدرن با خطوط ساده و متریال پایدار.',
@@ -14,7 +14,7 @@ export default [
     ]
   },
   {
-    image: '/images/medium/menu-beresht-1.jpg',
+    image: '/images/medium/menu-beresht-10.jpg',
     title: { fa: 'فضای تجاری', en: 'Commercial Space' },
     description: {
       fa: 'طراحی اداری معاصر با تمرکز بر نور طبیعی و فضاهای باز.',
@@ -27,7 +27,7 @@ export default [
     ]
   },
   {
-    image: '/images/medium/menu-beresht-1.jpg',
+    image: '/images/medium/menu-beresht-13.jpg',
     title: { fa: 'مرکز فرهنگی', en: 'Cultural Center' },
     description: {
       fa: 'یک مرکز فرهنگی برای گردهمایی جامعه از طریق هنر و طراحی.',

@@ -111,7 +111,7 @@ function onScrollTrack() {
     rafId = null
   })
 }
-const headerHeightVh = 9
+
 const isNavFixed = computed(() => {
   const thresholdPx = Math.round(window.innerHeight * 0.9)
   return (scrollY.value || 0) >= thresholdPx
