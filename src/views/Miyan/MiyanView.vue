@@ -9,11 +9,8 @@
     </div>
 
     <div class="relative z-10 text-center px-6 max-w-xs mx-auto justify-center">
-      <template v-if="lang === 'fa'">
+      <template>
         <img :src="siteMedia.miyanLogo" alt="Miyan Logo" class="mx-auto w-40 md:w-56 h-auto drop-shadow-lg brightness-0 invert" />
-      </template>
-      <template v-else>
-        <span class="font-cinzel align-middle font-light text-7xl text-white">Miyan</span>
       </template>
     </div>
   </section>
