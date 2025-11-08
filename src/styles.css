@@ -1,0 +1,94 @@
+/* Global custom styles. Tailwind directives are in src/tailwind.css */
+
+html, body, #app {
+  height: 100%;
+}
+
+/* make overscroll background (the area revealed by bouncing) black while keeping app views white */
+html { background: #000 }
+/* keep body and #app surface white so views remain unchanged */
+body { background: var(--surface, #FFFFFF) }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Elegant variable font for a minimal feel */
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--surface, #FFFFFF);
+  color: var(--accent, #0b0b0b);
+  margin: 0;
+  padding: 0;
+}
+
+/* thin straight lines and tokens */
+:root {
+  --surface: #FFFFFF;
+  --accent: #0b0b0b;
+  --brand: #2b2b2b; /* dark slate */
+  --metal: #9aa0a6;
+  --concrete: #6b6b6b;
+  --thin-line: rgba(11,11,11,0.06);
+}
+
+/* hero kenburns animation */
+@keyframes kenburns {
+  0% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.08) translateY(-6px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+.hero-bg {
+  /* no auto animation for hero now; static background for a luxurious still image */
+  animation: none;
+  filter: saturate(0.95) contrast(1.02) blur(0px);
+  background-attachment: fixed;
+  height: 100vh; /* fullscreen hero */
+}
+
+/* image card hover */
+.img-card {
+  transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 260ms;
+  border-left: 1px solid var(--thin-line);
+  border-top: 1px solid var(--thin-line);
+  height: 320px; /* taller gallery tiles */
+}
+.img-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
+
+/* Fullscreen modal / overlay specifics */
+.fullscreen-modal { position: fixed; inset: 0; z-index: 60; display:flex; align-items:center; justify-content:center }
+.fullscreen-modal video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
+.fullscreen-modal .overlay { position:absolute; inset:0; background: rgba(6,6,6,0.45); transition: opacity 420ms ease }
+.fullscreen-modal .content { position:relative; z-index:10; color: white }
+
+/* header style rules */
+header { will-change: transform, background-color }
+.header-hidden { transform: translateY(-100%) }
+
+/* subtle glow for modal text */
+.glow { text-shadow: 0 12px 40px rgba(0,0,0,0.6) }
+
+/* rigid background helper */
+.bg-rigid { background-attachment: fixed; background-position: center; background-size: cover }
+
+/* hard edges */
+.hard-edge { border-radius: 0 !important }
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5,6,8,0.98);
+  z-index: 10000;
+  transition: opacity 420ms ease;
+}
+.loading-overlay.hidden { opacity: 0; pointer-events: none }
+.loading-image { width: 160px; height: 160px; object-fit: cover; border-radius: 8px }
+@keyframes spin-quick { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+.loading-rotate { animation: spin-quick 1s linear; }
+
+/* rtl helpers */
+[dir="rtl"] .ml-4 { margin-left: 0 !important }
+[dir="rtl"] .mr-4 { margin-right: 0 !important }
