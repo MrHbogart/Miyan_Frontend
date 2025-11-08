@@ -13,7 +13,7 @@
         <img :src="siteMedia.miyanLogo" alt="Miyan Logo" class="mx-auto w-40 md:w-56 h-auto drop-shadow-lg brightness-0 invert" />
       </template>
       <template v-else>
-        <span class="logo-text">Miyan</span>
+        <span class="font-cinzel font-light tracking-wide text-base color-white">Miyan</span>
       </template>
     </div>
   </section>
@@ -182,12 +182,6 @@ function getLocalizedPath(p) {
 
 .nav-placeholder section {
   width: 100%;
-}
-
-.logo-text {
-  font-size: 10rem;
-  color: white;
-
 }
 
 
