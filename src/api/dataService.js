@@ -206,14 +206,14 @@ export function getCacheInfo(key) {
   }
 }
 
-// API Endpoints with specific configurations
+// API Endpoints with specific configurations - UPDATED TO MATCH YOUR ACTUAL ENDPOINTS
 export const api = {
   // Long-term cache (1 day) for relatively static data
-  getMiyanGallery: () => fetchWithCache(CACHE_KEYS.MIYAN_GALLERY, '/miyanGallery', {
+  getMiyanGallery: () => fetchWithCache(CACHE_KEYS.MIYAN_GALLERY, '/group/miyan_gallery/', {
     maxAge: 24 * 3600000, // 24 hours
   }),
   
-  getMiyanProjects: () => fetchWithCache(CACHE_KEYS.MIYAN_PROJECTS, '/miyanProjects', {
+  getMiyanProjects: () => fetchWithCache(CACHE_KEYS.MIYAN_PROJECTS, '/group/miyan_gallery/', {
     maxAge: 24 * 3600000, // 24 hours
   }),
   
@@ -221,17 +221,20 @@ export const api = {
     maxAge: 24 * 3600000, // 24 hours
   }),
   
-  // Shorter cache for menu data (1 hour)
-  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/miyan_beresht_menu'),
+  // Updated menu endpoints to match your actual API URLs
+  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/miyan_beresht_menu/', {
+    maxAge: 3600000, // 1 hour
+  }),
   
-  // Very short cache for today's menu (5 minutes)
-  getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/bereshtTodayMenu', {
+  getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/miyan_beresht_menu_today/', {
     maxAge: 300000, // 5 minutes
   }),
   
-  getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madiMenu'),
+  getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/miyan_madi_menu/', {
+    maxAge: 3600000, // 1 hour
+  }),
   
-  getMadiTodayMenu: () => fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madiTodayMenu', {
+  getMadiTodayMenu: () => fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/miyan_madi_menu_today/', {
     maxAge: 300000, // 5 minutes
   }),
 };
