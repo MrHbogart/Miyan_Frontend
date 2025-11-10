@@ -222,7 +222,7 @@ export const api = {
   }),
   
   // Shorter cache for menu data (1 hour)
-  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/bereshtMenu'),
+  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/miyan_beresht_menu'),
   
   // Very short cache for today's menu (5 minutes)
   getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/bereshtTodayMenu', {
