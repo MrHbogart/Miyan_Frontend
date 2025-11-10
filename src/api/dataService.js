@@ -221,15 +221,24 @@ export const api = {
     maxAge: 24 * 3600000, // 24 hours
   }),
   
-  // Updated menu endpoints to match your actual API URLs
-  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/miyan_beresht_menu/', {
+  // Updated Beresht endpoints
+  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/api/beresht_menu/main/', {
     maxAge: 3600000, // 1 hour
   }),
   
-  getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/miyan_beresht_menu_today/', {
+  getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/api/beresht_menu/today/', {
     maxAge: 300000, // 5 minutes
   }),
   
+  // Updated Madi endpoints
+  getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/api/madi_menu/main/', {
+    maxAge: 3600000, // 1 hour
+  }),
+  
+  getMadiTodayMenu: () => fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/api/madi_menu/today/', {
+    maxAge: 300000, // 5 minutes
+  }),
+
   getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/miyan_madi_menu/', {
     maxAge: 3600000, // 1 hour
   }),
