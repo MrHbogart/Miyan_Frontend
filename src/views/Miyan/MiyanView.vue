@@ -152,21 +152,49 @@ const isNavFixed = computed(() => {
 })
 const HEADER_BG_DURATION = 500
 const NAV_TOP_DURATION = 240
+const NAV_DETACH_DURATION = 350
+
+// Track detachment state for smooth animation
+const isDetaching = ref(false)
 
 const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
 watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
+// Watch for detachment (transition from fixed to non-fixed)
+watch(isNavFixed, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    // Starting detachment - will animate downward
+    isDetaching.value = true
+    setTimeout(() => {
+      isDetaching.value = false
+    }, NAV_DETACH_DURATION)
+  }
+})
+
 const navInlineStyle = computed(() => {
-  if (!isNavFixed.value) return { backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`, transition: `background ${HEADER_BG_DURATION}ms ease` }
+  const baseStyle = {
+    backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`,
+    transition: `background ${HEADER_BG_DURATION}ms ease`
+  }
+  
+  if (!isNavFixed.value && !isDetaching.value) {
+    // Normal non-fixed state
+    return baseStyle
+  }
+  
+  // Fixed or detaching state
   return {
+    ...baseStyle,
     position: 'fixed',
-    top: 'var(--header-height)',
     left: '0',
     width: '100vw',
     zIndex: '30',
-    backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`,
-    transition: `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
+    top: isDetaching.value ? 'var(--header-height)' : 'var(--header-height)',
+    transform: isDetaching.value ? 'translateY(0)' : 'translateY(0)',
+    transition: isDetaching.value 
+      ? `transform ${NAV_DETACH_DURATION}ms cubic-bezier(.34,.5,.8,1), top ${NAV_DETACH_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+      : `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
   }
 })
 
