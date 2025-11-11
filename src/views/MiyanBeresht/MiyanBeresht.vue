@@ -23,14 +23,14 @@
         <div class="flex justify-center gap-4">
           <router-link
             :to="{ path: getLocalizedPath('beresht') }"
-            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg"
+            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-lg md:text-xl font-semibold"
             :class="[{ 'font-bold': $route.name === 'MiyanBereshtBaseMenu' }, { 'font-cinzel font-light': lang === 'en' }]"
           >
             {{ lang === 'fa' ? 'منوی اصلی' : 'Menu' }}
           </router-link>
           <router-link
             :to="{ path: getLocalizedPath('beresht/daily-menu') }"
-            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg"
+            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-lg md:text-xl font-semibold"
             :class="[{ 'font-bold': $route.name === 'MiyanBereshtDailyMenu' }, { 'font-cinzel font-light': lang === 'en' }]"
           >
             {{ lang === 'fa' ? 'پخت روز' : "Today's Special" }}
@@ -53,16 +53,8 @@ import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
 import { headerHeight, headerInitialHeight, navAttached } from '@/state/headerState'
 
-const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
-const siteMedia = computed(() => {
-  const apiVal = siteMediaData.value || {}
-  return {
-    heroVideo: apiVal.heroVideo || siteMediaDefaults.heroVideo,
-    miyanLogo: apiVal.miyanLogo || siteMediaDefaults.miyanLogo,
-    bereshtLogo: apiVal.bereshtLogo || siteMediaDefaults.bereshtLogo,
-    madiLogo: apiVal.madiLogo || siteMediaDefaults.madiLogo,
-  }
-})
+// Use local defaults only (backend doesn't provide siteMedia)
+const siteMedia = siteMediaDefaults
 
 function getLocalizedPath(p) {
   const seg = route.path.split('/').filter(Boolean)[0]

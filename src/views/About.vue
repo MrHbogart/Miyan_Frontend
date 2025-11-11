@@ -22,24 +22,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useDataFetcher } from '@/composables/useDataFetcher'
-import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
 
-const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, {
-  autoLoad: true,
-  initialValue: {}
-})
-
-const siteMedia = computed(() => {
-  const apiVal = siteMediaData.value || {}
-  return {
-    heroVideo: apiVal.heroVideo || siteMediaDefaults.heroVideo,
-    miyanLogo: apiVal.miyanLogo || siteMediaDefaults.miyanLogo,
-    bereshtLogo: apiVal.bereshtLogo || siteMediaDefaults.bereshtLogo,
-    madiLogo: apiVal.madiLogo || siteMediaDefaults.madiLogo,
-  }
-})
+// Use local defaults only (backend doesn't provide siteMedia)
+const siteMedia = siteMediaDefaults
 </script>
 
 <style scoped>

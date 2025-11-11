@@ -43,27 +43,20 @@ import { useRoute } from 'vue-router'
 
 const { scrolled } = defineProps({ scrolled: { type: Boolean, default: false } })
 const headerStyle = computed(() => ({
-  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none'
+  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
+  // respect the device safe area (notch / status bar)
+  paddingTop: 'env(safe-area-inset-top)',
+  WebkitPaddingTop: 'env(safe-area-inset-top)'
 }))
 
 const route = useRoute()
 const isActive = (to) => route.path === to
-import { lang, setLang } from '../state/lang'
-import { useDataFetcher } from '@/composables/useDataFetcher'
-import { api } from '@/api/dataService'
+import { lang, setLang } from '@/state/lang'
 
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
 import { headerHeight, headerInitialHeight, navAttached } from '@/state/headerState'
-const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
-const siteMedia = computed(() => {
-  const apiVal = siteMediaData.value || {}
-  return {
-    heroVideo: apiVal.heroVideo || siteMediaDefaults.heroVideo,
-    miyanLogo: apiVal.miyanLogo || siteMediaDefaults.miyanLogo,
-    bereshtLogo: apiVal.bereshtLogo || siteMediaDefaults.bereshtLogo,
-    madiLogo: apiVal.madiLogo || siteMediaDefaults.madiLogo,
-  }
-})
+// Use local defaults only (backend doesn't provide siteMedia)
+const siteMedia = siteMediaDefaults
 
 // Reactive header bottom Y (document space). Provided so descendants (views) can read it.
 const headerBottomY = ref(0)
@@ -105,6 +98,24 @@ const headerTargetOpacity = computed(() => {
 const headerBgOpacity = ref(headerTargetOpacity.value)
 watch(headerTargetOpacity, (v) => {
   headerBgOpacity.value = v
+}, { immediate: true })
+
+// Keep the browser UI/status bar coherent with header color where supported
+function ensureThemeMeta() {
+  let m = document.querySelector('meta[name="theme-color"]')
+  if (!m) {
+    m = document.createElement('meta')
+    m.setAttribute('name', 'theme-color')
+    document.head.appendChild(m)
+  }
+  return m
+}
+const themeMeta = (typeof window !== 'undefined') ? ensureThemeMeta() : null
+watch(headerBgOpacity, (v) => {
+  if (!themeMeta) return
+  // Use an rgba string so the UI color follows header opacity (browsers may ignore alpha)
+  const color = `rgba(255,255,255, ${Math.max(0, Math.min(1, Number(v) || 0))})`
+  try { themeMeta.setAttribute('content', color) } catch (e) { /* no-op */ }
 }, { immediate: true })
 
 let resizeObs = null
