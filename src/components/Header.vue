@@ -100,7 +100,7 @@ const HEADER_BG_DURATION = 500
 // header/background opacity coordination
 const headerTargetOpacity = computed(() => {
   if (navAttached.value) return 1
-  return scrolled ? 0.7 : 0
+  return scrolled ? 0.85 : 0
 })
 const headerBgOpacity = ref(headerTargetOpacity.value)
 watch(headerTargetOpacity, (v) => {

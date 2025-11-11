@@ -131,7 +131,7 @@ const isNavFixed = computed(() => {
 const HEADER_BG_DURATION = 500
 const NAV_TOP_DURATION = 240
 
-const navTargetOpacity = computed(() => (isNavFixed.value ? 0.7 : 1))
+const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
 watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
