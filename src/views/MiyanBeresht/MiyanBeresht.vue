@@ -130,10 +130,10 @@ const isNavFixed = computed(() => {
 
 const HEADER_BG_DURATION = 500
 const NAV_TOP_DURATION = 240
-const NAV_DETACH_DURATION = 350
+const NAV_RETURN_DURATION = 300
 
-// Track detachment state for smooth animation
-const isDetaching = ref(false)
+// Track when navbar is returning to flow (animates smoothly back to position)
+const isReturningToFlow = ref(false)
 
 const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
@@ -142,11 +142,11 @@ watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 // Watch for detachment (transition from fixed to non-fixed)
 watch(isNavFixed, (newVal, oldVal) => {
   if (oldVal === true && newVal === false) {
-    // Starting detachment - will animate downward
-    isDetaching.value = true
+    // Starting detachment - navbar will animate back to flow
+    isReturningToFlow.value = true
     setTimeout(() => {
-      isDetaching.value = false
-    }, NAV_DETACH_DURATION)
+      isReturningToFlow.value = false
+    }, NAV_RETURN_DURATION)
   }
 })
 
@@ -156,23 +156,25 @@ const navInlineStyle = computed(() => {
     transition: `background ${HEADER_BG_DURATION}ms ease`
   }
   
-  if (!isNavFixed.value && !isDetaching.value) {
-    // Normal non-fixed state
-    return baseStyle
+  if (!isNavFixed.value) {
+    // Not fixed - either returning to flow or already there
+    return {
+      ...baseStyle,
+      transition: isReturningToFlow.value 
+        ? `all ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+        : `background ${HEADER_BG_DURATION}ms ease`
+    }
   }
   
-  // Fixed or detaching state
+  // Fixed state (attached to header)
   return {
     ...baseStyle,
     position: 'fixed',
+    top: 'var(--header-height)',
     left: '0',
     width: '100vw',
     zIndex: '30',
-    top: isDetaching.value ? 'var(--header-height)' : 'var(--header-height)',
-    transform: isDetaching.value ? 'translateY(0)' : 'translateY(0)',
-    transition: isDetaching.value 
-      ? `transform ${NAV_DETACH_DURATION}ms cubic-bezier(.34,.5,.8,1), top ${NAV_DETACH_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-      : `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
+    transition: `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
   }
 })
 
