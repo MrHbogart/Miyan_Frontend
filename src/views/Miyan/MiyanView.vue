@@ -33,7 +33,7 @@
       <div ref="navbarSentinel" :style="sentinelStyle"></div>
       <section 
         ref="navbarRef" 
-        :class="[navClass, 'py-2', 'shadow-sm', 'transition-all', 'duration-300']" 
+        class="py-2 shadow-sm transition-all duration-300" 
         :style="navInlineStyle"
       >
         <div class="max-w-4xl mx-auto px-6">
@@ -150,19 +150,25 @@ const isNavFixed = computed(() => {
   const thresholdPx = Math.round(window.innerHeight * 0.9)
   return (scrollY.value || 0) >= thresholdPx
 })
+const HEADER_BG_DURATION = 500
+const NAV_TOP_DURATION = 240
+
+const navTargetOpacity = computed(() => (isNavFixed.value ? 0.7 : 1))
+const navBgOpacity = ref(navTargetOpacity.value)
+watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
+
 const navInlineStyle = computed(() => {
-  if (!isNavFixed.value) return {}
+  if (!isNavFixed.value) return { backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`, transition: `background ${HEADER_BG_DURATION}ms ease` }
   return {
     position: 'fixed',
     top: 'var(--header-height)',
     left: '0',
     width: '100vw',
     zIndex: '30',
-    transition: 'top 200ms ease, background 240ms ease'
+    backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`,
+    transition: `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
   }
 })
-
-const navClass = computed(() => isNavFixed.value ? 'backdrop-blur-sm bg-white/70 border-b border-white/6 shadow-sm' : 'bg-white')
 
 const sentinelStyle = computed(() => {
   if (!isNavFixed.value) return {}

@@ -1,5 +1,5 @@
 <template>
-  <header :class="['fixed w-full top-0 left-0 z-40 transition-all duration-500', headerDynamicClass, isCompact ? 'header-compact' : '']" :style="headerStyle">
+  <header :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '']" :style="[headerStyle, { backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` }]">
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, provide } from 'vue'
+import { computed, ref, onMounted, onUnmounted, provide, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const { scrolled } = defineProps({ scrolled: { type: Boolean, default: false } })
@@ -94,14 +94,18 @@ function updateHeaderBottom() {
   }
 }
 
-// compute header dynamic class based on scroll and navbar attachment
-const headerDynamicClass = computed(() => {
-  if (navAttached.value) {
-    // when navbar is attached, header should be opaque (no transparency)
-    return 'bg-white border-b border-white/6 shadow-sm'
-  }
-  return scrolled ? 'backdrop-blur-sm bg-white/70 border-b border-white/6 shadow-sm' : 'bg-transparent'
+// animation durations (ms)
+const HEADER_BG_DURATION = 500
+
+// header/background opacity coordination
+const headerTargetOpacity = computed(() => {
+  if (navAttached.value) return 1
+  return scrolled ? 0.7 : 0
 })
+const headerBgOpacity = ref(headerTargetOpacity.value)
+watch(headerTargetOpacity, (v) => {
+  headerBgOpacity.value = v
+}, { immediate: true })
 
 let resizeObs = null
 onMounted(() => {
