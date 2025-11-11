@@ -55,9 +55,18 @@ body {
 .img-card:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
 
 /* Fullscreen modal / overlay specifics */
-.fullscreen-modal { position: fixed; inset: 0; z-index: 60; display:flex; align-items:center; justify-content:center }
-.fullscreen-modal video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
-.fullscreen-modal .overlay { position:absolute; inset:0; background: rgba(6,6,6,0.45); transition: opacity 420ms ease }
+.fullscreen-modal {
+  position: fixed;
+  /* anchor below header and above device safe-area bottom so fullscreen covers only the usable area */
+  top: var(--header-height, 0px);
+  left: 0;
+  right: 0;
+  bottom: env(safe-area-inset-bottom);
+  z-index: 60;
+  display:flex; align-items:center; justify-content:center;
+}
+.fullscreen-modal video { position:absolute; top:0; left:0; right:0; bottom:0; width:100%; height:100%; object-fit:cover }
+.fullscreen-modal .overlay { position:absolute; top:0; left:0; right:0; bottom:0; background: rgba(6,6,6,0.45); transition: opacity 420ms ease }
 .fullscreen-modal .content { position:relative; z-index:10; color: white }
 
 /* header style rules */

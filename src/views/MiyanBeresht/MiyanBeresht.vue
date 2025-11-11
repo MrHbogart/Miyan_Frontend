@@ -171,10 +171,12 @@ const navInlineStyle = computed(() => {
 })
 
 const sentinelStyle = computed(() => {
-  if (!isNavFixed.value) return {}
   const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
-  return { height: `${h}px`, transition: 'height 240ms cubic-bezier(.2,.9,.2,1)' }
+  if (isNavFixed.value || isReturningToFlow.value) {
+    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms' }
+  }
+  return { height: '0px', transition: `height 0ms` }
 })
 
 watch(isNavFixed, (v) => { navAttached.value = !!v }, { immediate: true })

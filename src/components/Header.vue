@@ -118,6 +118,21 @@ watch(headerBgOpacity, (v) => {
   try { themeMeta.setAttribute('content', color) } catch (e) { /* no-op */ }
 }, { immediate: true })
 
+// Also add apple-mobile-web-app-status-bar-style meta to allow overlaying the status bar
+function ensureAppleMeta() {
+  let m = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+  if (!m) {
+    m = document.createElement('meta')
+    m.setAttribute('name', 'apple-mobile-web-app-status-bar-style')
+    document.head.appendChild(m)
+  }
+  return m
+}
+const appleMeta = (typeof window !== 'undefined') ? ensureAppleMeta() : null
+if (appleMeta) {
+  try { appleMeta.setAttribute('content', 'black-translucent') } catch (e) { /* no-op */ }
+}
+
 let resizeObs = null
 onMounted(() => {
   updateHeaderBottom()
