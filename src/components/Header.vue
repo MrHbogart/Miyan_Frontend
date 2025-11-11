@@ -1,5 +1,5 @@
 <template>
-  <header :class="['fixed w-full top-0 left-0 z-40 transition-all duration-500', scrolled ? 'backdrop-blur-sm bg-white/70 border-b border-white/6 shadow-sm' : 'bg-transparent', isCompact ? 'header-compact' : '']" :style="headerStyle">
+  <header :class="['fixed w-full top-0 left-0 z-40 transition-all duration-500', headerDynamicClass, isCompact ? 'header-compact' : '']" :style="headerStyle">
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
@@ -53,6 +53,7 @@ import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
+import { headerHeight, headerInitialHeight, navAttached } from '@/state/headerState'
 const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
 const siteMedia = computed(() => {
   const apiVal = siteMediaData.value || {}
@@ -68,6 +69,11 @@ const siteMedia = computed(() => {
 const headerBottomY = ref(0)
 provide('headerBottomY', headerBottomY)
 
+// expose headerHeight values to shared state so views can react to header shrink
+// headerHeight and headerInitialHeight are refs imported from shared state
+// (they'll be updated in `updateHeaderBottom` below)
+
+
 function updateHeaderBottom() {
   const el = document.querySelector('header')
   if (!el) {
@@ -80,10 +86,22 @@ function updateHeaderBottom() {
   try {
     const h = Math.ceil(rect.height)
     document.documentElement.style.setProperty('--header-height', `${h-2}px`)
+    // update shared header heights
+    headerHeight.value = h
+    if (!headerInitialHeight.value) headerInitialHeight.value = h
   } catch (e) {
     // no-op
   }
 }
+
+// compute header dynamic class based on scroll and navbar attachment
+const headerDynamicClass = computed(() => {
+  if (navAttached.value) {
+    // when navbar is attached, header should be opaque (no transparency)
+    return 'bg-white border-b border-white/6 shadow-sm'
+  }
+  return scrolled ? 'backdrop-blur-sm bg-white/70 border-b border-white/6 shadow-sm' : 'bg-transparent'
+})
 
 let resizeObs = null
 onMounted(() => {

@@ -33,7 +33,7 @@
       <div ref="navbarSentinel" :style="sentinelStyle"></div>
       <section 
         ref="navbarRef" 
-        class="bg-white py-2 shadow-sm transition-all duration-300" 
+        :class="[navClass, 'py-2', 'shadow-sm', 'transition-all', 'duration-300']" 
         :style="navInlineStyle"
       >
         <div class="max-w-4xl mx-auto px-6">
@@ -69,13 +69,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute } from 'vue-router'
 const route = useRoute()
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
+import { headerHeight, headerInitialHeight, navAttached } from '@/state/headerState'
 
 const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
 const siteMedia = computed(() => {
@@ -157,15 +158,20 @@ const navInlineStyle = computed(() => {
     left: '0',
     width: '100vw',
     zIndex: '30',
-    transition: 'top 200ms ease'
+    transition: 'top 200ms ease, background 240ms ease'
   }
 })
+
+const navClass = computed(() => isNavFixed.value ? 'backdrop-blur-sm bg-white/70 border-b border-white/6 shadow-sm' : 'bg-white')
+
 const sentinelStyle = computed(() => {
   if (!isNavFixed.value) return {}
-  const delta = Math.max(0, Math.round(window.innerHeight * 0.01))
+  const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
-  return { height: `${h}px`, transition: 'height 200ms ease' }
+  return { height: `${h}px`, transition: 'height 240ms cubic-bezier(.2,.9,.2,1)' }
 })
+
+watch(isNavFixed, (v) => { navAttached.value = !!v }, { immediate: true })
 
 onMounted(() => {
   animationComplete = false
