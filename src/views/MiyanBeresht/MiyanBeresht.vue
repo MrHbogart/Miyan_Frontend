@@ -50,9 +50,18 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
+import siteMediaDefaults from '@/utils/siteMediaDefaults'
 
 const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
-const siteMedia = computed(() => siteMediaData.value || {})
+const siteMedia = computed(() => {
+  const apiVal = siteMediaData.value || {}
+  return {
+    heroVideo: apiVal.heroVideo || siteMediaDefaults.heroVideo,
+    miyanLogo: apiVal.miyanLogo || siteMediaDefaults.miyanLogo,
+    bereshtLogo: apiVal.bereshtLogo || siteMediaDefaults.bereshtLogo,
+    madiLogo: apiVal.madiLogo || siteMediaDefaults.madiLogo,
+  }
+})
 
 function getLocalizedPath(p) {
   const seg = route.path.split('/').filter(Boolean)[0]

@@ -50,10 +50,19 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
+import siteMediaDefaults from '@/utils/siteMediaDefaults'
 
 // fetch site media from backend
 const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
-const siteMedia = computed(() => siteMediaData.value || {})
+const siteMedia = computed(() => {
+  const apiVal = siteMediaData.value || {}
+  return {
+    heroVideo: apiVal.heroVideo || siteMediaDefaults.heroVideo,
+    miyanLogo: apiVal.miyanLogo || siteMediaDefaults.miyanLogo,
+    bereshtLogo: apiVal.bereshtLogo || siteMediaDefaults.bereshtLogo,
+    madiLogo: apiVal.madiLogo || siteMediaDefaults.madiLogo,
+  }
+})
 
 // fetch madi menu from backend to build an overview
 const { data: madiMenuData } = useDataFetcher(api.getMadiMenu, { autoLoad: true, initialValue: null })
