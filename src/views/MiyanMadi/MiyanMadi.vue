@@ -135,6 +135,9 @@ const NAV_RETURN_DURATION = 300
 
 // Track when navbar is returning to flow (animates smoothly back to position)
 const isReturningToFlow = ref(false)
+// short-lived flags to coordinate attach/detach animations and placeholder hold
+const isAttaching = ref(false)
+const isDetaching = ref(false)
 
 const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
@@ -142,12 +145,26 @@ watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
 // Watch for detachment (transition from fixed to non-fixed)
 watch(isNavFixed, (newVal, oldVal) => {
+  // Attachment (becoming fixed)
+  if (oldVal === false && newVal === true) {
+    // animate attaching: start slightly offset and slide into place
+    isAttaching.value = true
+    // keep placeholder during attach animation
+    setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
+  }
+
+  // Detachment (leaving fixed state)
   if (oldVal === true && newVal === false) {
-    // Starting detachment - navbar will animate back to flow
+    // make detachment instant (no transform animation) but hold placeholder briefly
+    isDetaching.value = true
+    // keep the returning flag to drive the final layout-friendly animations
     isReturningToFlow.value = true
+    // short window to avoid visual jump when scrolling fast
     setTimeout(() => {
-      isReturningToFlow.value = false
-    }, NAV_RETURN_DURATION)
+      isDetaching.value = false
+    }, 80)
+    // allow the return animation window to finish (this keeps placeholder stable)
+    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
 })
 
@@ -158,8 +175,22 @@ const navInlineStyle = computed(() => {
   }
   
   if (!isNavFixed.value) {
-    // Not fixed - either returning to flow or already there
-    if (isReturningToFlow.value) {
+    // Not fixed - either returning to flow, detaching, attaching, or already there
+    if (isDetaching.value) {
+      // Detach instantly at its detached position (no transform animation)
+      return {
+        ...baseStyle,
+        position: 'fixed',
+        top: 'var(--header-height)',
+        left: '0',
+        width: '100vw',
+        zIndex: '60',
+        transform: 'translateY(0)',
+        transition: `background ${HEADER_BG_DURATION}ms ease`
+      }
+    }
+
+    if (isReturningToFlow.value || isAttaching.value) {
       // keep it fixed and overlay the content while animating down into place
       return {
         ...baseStyle,
@@ -168,10 +199,12 @@ const navInlineStyle = computed(() => {
         left: '0',
         width: '100vw',
         zIndex: '60',
-        transform: 'translateY(-8px)',
+        transform: isAttaching.value ? 'translateY(-8px)' : 'translateY(-8px)',
         transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
       }
     }
+
+    // fully in-flow (no special animation), render as non-fixed
     return {
       ...baseStyle,
       transform: 'translateY(0)',
@@ -196,9 +229,10 @@ const sentinelStyle = computed(() => {
   // header reduction delta: initial - current
   const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
-  // Keep the placeholder height while the navbar is fixed or while it is returning to flow
-  if (isNavFixed.value || isReturningToFlow.value) {
-    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
+  // Keep the placeholder height while the navbar is fixed or while it is returning/attaching/detaching
+  if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
+    const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
+    return { height: `${h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
   }
   // when not fixed and not returning, collapse the placeholder
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }

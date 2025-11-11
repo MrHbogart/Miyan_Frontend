@@ -126,19 +126,25 @@ const NAV_RETURN_DURATION = 300
 
 // Track when navbar is returning to flow (animates smoothly back to position)
 const isReturningToFlow = ref(false)
+// short-lived flags to coordinate attach/detach animations and placeholder hold
+const isAttaching = ref(false)
+const isDetaching = ref(false)
 
 const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
 watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
-// Watch for detachment (transition from fixed to non-fixed)
+// Watch for attach/detach and coordinate short animations
 watch(isNavFixed, (newVal, oldVal) => {
+  if (oldVal === false && newVal === true) {
+    isAttaching.value = true
+    setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
+  }
   if (oldVal === true && newVal === false) {
-    // Starting detachment - navbar will animate back to flow
+    isDetaching.value = true
     isReturningToFlow.value = true
-    setTimeout(() => {
-      isReturningToFlow.value = false
-    }, NAV_RETURN_DURATION)
+    setTimeout(() => { isDetaching.value = false }, 80)
+    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
 })
 
@@ -149,8 +155,20 @@ const navInlineStyle = computed(() => {
   }
   
   if (!isNavFixed.value) {
-    // Not fixed - either returning to flow or already there
-    if (isReturningToFlow.value) {
+    // Not fixed - either returning to flow, detaching, attaching, or already there
+    if (isDetaching.value) {
+      return {
+        ...baseStyle,
+        position: 'fixed',
+        top: 'var(--header-height)',
+        left: '0',
+        width: '100vw',
+        zIndex: '60',
+        transform: 'translateY(0)',
+        transition: `background ${HEADER_BG_DURATION}ms ease`
+      }
+    }
+    if (isReturningToFlow.value || isAttaching.value) {
       return {
         ...baseStyle,
         position: 'fixed',
@@ -184,8 +202,9 @@ const navInlineStyle = computed(() => {
 const sentinelStyle = computed(() => {
   const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
-  if (isNavFixed.value || isReturningToFlow.value) {
-    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
+  if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
+    const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
+    return { height: `${h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
   }
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
 })
