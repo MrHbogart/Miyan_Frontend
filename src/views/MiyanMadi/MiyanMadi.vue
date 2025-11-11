@@ -186,10 +186,10 @@ const sentinelStyle = computed(() => {
   const h = Math.max(0, (navHeight.value || 0) - delta)
   // Keep the placeholder height while the navbar is fixed or while it is returning to flow
   if (isNavFixed.value || isReturningToFlow.value) {
-    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms' }
+    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
   }
   // when not fixed and not returning, collapse the placeholder immediately to avoid layout jumps
-  return { height: '0px', transition: `height 0ms` }
+  return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
 })
 
 // sync shared navAttached state so Header can change transparency when navbar attaches

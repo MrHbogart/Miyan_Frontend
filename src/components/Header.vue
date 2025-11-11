@@ -1,5 +1,7 @@
 <template>
   <header :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '']" :style="[headerStyle, { backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` }]">
+    <!-- status-safe-area overlay for notch / status bar coloring -->
+    <div class="status-safe-area" :style="{ backgroundColor: 'var(--top-bg-color)', backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none' }" />
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
@@ -111,11 +113,22 @@ function ensureThemeMeta() {
   return m
 }
 const themeMeta = (typeof window !== 'undefined') ? ensureThemeMeta() : null
+// initialize top area to black
+document.documentElement.style.setProperty('--top-bg-color', '#000000')
+if (themeMeta) try { themeMeta.setAttribute('content', '#000000') } catch (e) {}
+
 watch(headerBgOpacity, (v) => {
   if (!themeMeta) return
-  // Use an rgba string so the UI color follows header opacity (browsers may ignore alpha)
-  const color = `rgba(255,255,255, ${Math.max(0, Math.min(1, Number(v) || 0))})`
-  try { themeMeta.setAttribute('content', color) } catch (e) { /* no-op */ }
+  const opacity = Math.max(0, Math.min(1, Number(v) || 0))
+  // when header is visible, set top area to white with same opacity so it shows scrolled content behind
+  if (opacity > 0.02) {
+    const rgba = `rgba(255,255,255,${opacity})`
+    document.documentElement.style.setProperty('--top-bg-color', rgba)
+    try { themeMeta.setAttribute('content', '#ffffff') } catch (e) { /* no-op */ }
+  } else {
+    document.documentElement.style.setProperty('--top-bg-color', '#000000')
+    try { themeMeta.setAttribute('content', '#000000') } catch (e) { /* no-op */ }
+  }
 }, { immediate: true })
 
 // Also add apple-mobile-web-app-status-bar-style meta to allow overlaying the status bar
@@ -195,7 +208,8 @@ header { height: 10vh; transition: height 500ms ease; }
 .header-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; column-gap: 12px; }
 .header-logo {
   height: 40px;
-  @apply mx-2;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 @media (min-width: 768px) {
   .header-logo { height: 56px; }
@@ -224,6 +238,18 @@ header { height: 10vh; transition: height 500ms ease; }
   filter: brightness(1.05);
   transform: scale(1.03) translateY(-1px);
   font-weight: 600;
+}
+
+/* status-safe-area overlay styles */
+.status-safe-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top);
+  z-index: 45;
+  transition: background-color 260ms ease, backdrop-filter 260ms ease;
+  pointer-events: none;
 }
 
 /* English logo text styling */
