@@ -159,10 +159,22 @@ const navInlineStyle = computed(() => {
   
   if (!isNavFixed.value) {
     // Not fixed - either returning to flow or already there
+    if (isReturningToFlow.value) {
+      // keep it fixed and overlay the content while animating down into place
+      return {
+        ...baseStyle,
+        position: 'fixed',
+        top: 'var(--header-height)',
+        left: '0',
+        width: '100vw',
+        zIndex: '60',
+        transform: 'translateY(-8px)',
+        transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+      }
+    }
     return {
       ...baseStyle,
-      // animate the navbar coming into place by translating from slightly above
-      transform: isReturningToFlow.value ? 'translateY(-8px)' : 'translateY(0)',
+      transform: 'translateY(0)',
       transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
     }
   }
@@ -185,10 +197,14 @@ const sentinelStyle = computed(() => {
   const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
   // Keep the placeholder height while the navbar is fixed or while it is returning to flow
-  if (isNavFixed.value || isReturningToFlow.value) {
-    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
+  if (isReturningToFlow.value) {
+    // collapse the placeholder immediately while navbar overlays the area
+    return { height: '0px', transition: `height 0ms`, backgroundColor: 'transparent' }
   }
-  // when not fixed and not returning, collapse the placeholder immediately to avoid layout jumps
+  if (isNavFixed.value) {
+    return { height: `${h}px`, transition: 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
+  }
+  // when not fixed and not returning, collapse the placeholder
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
 })
 

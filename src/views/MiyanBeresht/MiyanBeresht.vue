@@ -150,11 +150,22 @@ const navInlineStyle = computed(() => {
   
   if (!isNavFixed.value) {
     // Not fixed - either returning to flow or already there
+    if (isReturningToFlow.value) {
+      return {
+        ...baseStyle,
+        position: 'fixed',
+        top: 'var(--header-height)',
+        left: '0',
+        width: '100vw',
+        zIndex: '60',
+        transform: 'translateY(-8px)',
+        transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+      }
+    }
     return {
       ...baseStyle,
-      transition: isReturningToFlow.value 
-        ? `all ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-        : `background ${HEADER_BG_DURATION}ms ease`
+      transform: 'translateY(0)',
+      transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
     }
   }
   
@@ -173,8 +184,11 @@ const navInlineStyle = computed(() => {
 const sentinelStyle = computed(() => {
   const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
-  if (isNavFixed.value || isReturningToFlow.value) {
-    return { height: `${h}px`, transition: isReturningToFlow.value ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
+  if (isReturningToFlow.value) {
+    return { height: '0px', transition: `height 0ms`, backgroundColor: 'transparent' }
+  }
+  if (isNavFixed.value) {
+    return { height: `${h}px`, transition: 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
   }
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
 })

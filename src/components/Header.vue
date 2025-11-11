@@ -1,7 +1,7 @@
 <template>
   <header :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '']" :style="[headerStyle, { backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` }]">
-    <!-- status-safe-area overlay for notch / status bar coloring -->
-    <div class="status-safe-area" :style="{ backgroundColor: 'var(--top-bg-color)', backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none' }" />
+  <!-- status-safe-area overlay for notch / status bar coloring -->
+  <div class="status-safe-area" :style="statusStyle" />
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
@@ -117,18 +117,22 @@ const themeMeta = (typeof window !== 'undefined') ? ensureThemeMeta() : null
 document.documentElement.style.setProperty('--top-bg-color', '#000000')
 if (themeMeta) try { themeMeta.setAttribute('content', '#000000') } catch (e) {}
 
+// compute top-safe-area style directly from header opacity so CSS transitions can animate it
+const topBgColor = computed(() => {
+  const opacity = Math.max(0, Math.min(1, Number(headerBgOpacity.value) || 0))
+  return opacity > 0.02 ? `rgba(255,255,255,${opacity})` : '#000000'
+})
+const statusStyle = computed(() => ({
+  backgroundColor: topBgColor.value,
+  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
+  transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease`
+}))
+
+// Keep theme meta in sync (solid colors only)
 watch(headerBgOpacity, (v) => {
   if (!themeMeta) return
   const opacity = Math.max(0, Math.min(1, Number(v) || 0))
-  // when header is visible, set top area to white with same opacity so it shows scrolled content behind
-  if (opacity > 0.02) {
-    const rgba = `rgba(255,255,255,${opacity})`
-    document.documentElement.style.setProperty('--top-bg-color', rgba)
-    try { themeMeta.setAttribute('content', '#ffffff') } catch (e) { /* no-op */ }
-  } else {
-    document.documentElement.style.setProperty('--top-bg-color', '#000000')
-    try { themeMeta.setAttribute('content', '#000000') } catch (e) { /* no-op */ }
-  }
+  try { themeMeta.setAttribute('content', opacity > 0.02 ? '#ffffff' : '#000000') } catch (e) { /* no-op */ }
 }, { immediate: true })
 
 // Also add apple-mobile-web-app-status-bar-style meta to allow overlaying the status bar
