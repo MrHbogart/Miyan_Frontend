@@ -73,7 +73,11 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute } from 'vue-router'
 const route = useRoute()
-import siteMedia from '@/data/siteMedia.js'
+import { useDataFetcher } from '@/composables/useDataFetcher'
+import { api } from '@/api/dataService'
+
+const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
+const siteMedia = computed(() => siteMediaData.value || {})
 
 // overlay animation parameters (match other Miyan variants)
 const overlayStart = 1

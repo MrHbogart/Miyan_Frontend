@@ -21,8 +21,16 @@
 </template>
 
 <script setup>
-import siteMedia from '@/data/siteMedia.js'
-// About logic
+import { computed } from 'vue'
+import { useDataFetcher } from '@/composables/useDataFetcher'
+import { api } from '@/api/dataService'
+
+const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, {
+  autoLoad: true,
+  initialValue: {}
+})
+
+const siteMedia = computed(() => siteMediaData.value || {})
 </script>
 
 <style scoped>

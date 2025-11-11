@@ -62,8 +62,10 @@ export async function fetchWithCache(key, endpoint, options = {}) {
   // Fetch fresh data with retry mechanism
   try {
     const data = await fetchWithRetry(endpoint, retryAttempts);
-    setCachedData(storageKey, data);
-    return data;
+    // If backend returned a paginated response with `results`, prefer caching/returning the results array
+    const dataToCache = (data && Object.prototype.hasOwnProperty.call(data, 'results')) ? data.results : data;
+    setCachedData(storageKey, dataToCache);
+    return dataToCache;
   } catch (error) {
     // If fetch fails, return stale cache as fallback
     if (cachedData.data) {
@@ -158,7 +160,8 @@ async function fetchWithRetry(endpoint, retryAttempts) {
 async function refreshInBackground(key, endpoint, storageKey, retryAttempts) {
   try {
     const data = await fetchWithRetry(endpoint, retryAttempts);
-    setCachedData(storageKey, data);
+    const dataToCache = (data && Object.prototype.hasOwnProperty.call(data, 'results')) ? data.results : data;
+    setCachedData(storageKey, dataToCache);
     console.log(`Background refresh completed for ${key}`);
   } catch (error) {
     console.warn(`Background refresh failed for ${key}:`, error.message);
@@ -222,28 +225,23 @@ export const api = {
   }),
   
   // Updated Beresht endpoints
-  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/api/beresht_menu/main/', {
+  getBereshtMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/beresht_menu', {
     maxAge: 3600000, // 1 hour
   }),
   
-  getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/api/beresht_menu/today/', {
+  getBereshtTodayMenu: () => fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/beresht_menu', {
     maxAge: 300000, // 5 minutes
   }),
   
   // Updated Madi endpoints
-  getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/api/madi_menu/main/', {
+  // The backend returns a paginated object at `/madi/madi_menu`.
+  // We request the same endpoint for both base and today menus; the frontend will pick the correct result
+  // from the returned array (fetchWithCache now unwraps `results`).
+  getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/madi_menu', {
     maxAge: 3600000, // 1 hour
-  }),
-  
-  getMadiTodayMenu: () => fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/api/madi_menu/today/', {
-    maxAge: 300000, // 5 minutes
   }),
 
-  getMadiMenu: () => fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/miyan_madi_menu/', {
-    maxAge: 3600000, // 1 hour
-  }),
-  
-  getMadiTodayMenu: () => fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/miyan_madi_menu_today/', {
+  getMadiTodayMenu: () => fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/madi_menu', {
     maxAge: 300000, // 5 minutes
   }),
 };

@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import StructuredMenu from '@/components/StructuredMenu.vue'
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
@@ -17,91 +17,37 @@ const { data: apiData, loading, error } = useDataFetcher(api.getBereshtMenu, {
   enableRefresh: true,
 })
 
-// Transform API data to match the exact structure of your .js file
+// menu to pass to StructuredMenu
 const menu = ref(null)
 
-// Watch for API data changes and transform it
-const transformApiData = (apiData) => {
-  if (!apiData) return null
-  
-  // If your API returns data in the exact same format as your .js file, return as-is
-  if (apiData.title && apiData.sections) {
-    return apiData
+const pickMainMenuFromResults = (results) => {
+  if (!results) return null
+  if (!Array.isArray(results)) {
+    // already a single menu object
+    return results
   }
-  
-  // If your API returns a different structure, transform it here
-  // This example assumes your API returns an array of menu items
-  // Adjust this based on your actual API response
-  if (Array.isArray(apiData)) {
-    return {
-      title: { fa: 'منوی برشت', en: 'Beresht Menu' },
-      subtitle: null,
-      sections: [
-        {
-          title: { fa: 'منوی اصلی', en: 'Main Menu' },
-          items: apiData.map(item => ({
-            name: { 
-              fa: item.name_fa || item.name, 
-              en: item.name_en || item.name 
-            },
-            description: { 
-              fa: item.description_fa || item.description || '', 
-              en: item.description_en || item.description || '' 
-            },
-            price: { 
-              fa: item.price_fa || item.price.toString(), 
-              en: item.price_en || item.price.toString() 
-            },
-            image: item.image || '/images/medium/default-menu.jpg'
-          }))
-        }
-      ],
-      todays: {
-        title: { fa: 'آیتم‌های تازه امروز', en: "Today's Fresh" },
-        sections: [
-          {
-            title: { fa: 'پیشنهاد امروز', en: "Today's Special" },
-            items: apiData
-              .filter(item => item.is_todays_special)
-              .map(item => ({
-                name: { 
-                  fa: item.name_fa || item.name, 
-                  en: item.name_en || item.name 
-                },
-                description: { 
-                  fa: item.description_fa || item.description || '', 
-                  en: item.description_en || item.description || '' 
-                },
-                price: { 
-                  fa: item.price_fa || item.price.toString(), 
-                  en: item.price_en || item.price.toString() 
-                },
-                image: item.image || '/images/medium/default-menu.jpg'
-              }))
-          }
-        ]
-      }
-    }
-  }
-  
-  // Fallback structure if API returns unexpected format
-  return {
-    title: { fa: 'منوی برشت', en: 'Beresht Menu' },
-    subtitle: null,
-    sections: [],
-    todays: {
-      title: { fa: 'آیتم‌های تازه امروز', en: "Today's Fresh" },
-      sections: []
-    }
-  }
+
+  // Try to find an entry which clearly names the main menu
+  let main = results.find(r => r && r.title && (
+    (r.title.en && /main/i.test(r.title.en)) ||
+    (r.title.fa && /منوی اصلی/.test(r.title.fa))
+  ))
+
+  // Fallbacks: find first item with sections, or fallback to second or first
+  if (!main) main = results.find(r => r && r.sections) || results[1] || results[0]
+  return main
 }
 
-// Update menu when API data changes
-onMounted(() => {
-  if (apiData.value) {
-    menu.value = transformApiData(apiData.value)
-  }
-})
+const transformApiData = (apiDataVal) => {
+  if (!apiDataVal) return null
+  const main = pickMainMenuFromResults(apiDataVal)
+  return main || null
+}
+
+// Update menu whenever apiData changes
+watch(apiData, (v) => {
+  menu.value = transformApiData(v)
+}, { immediate: true })
 </script>
 
 <style scoped>

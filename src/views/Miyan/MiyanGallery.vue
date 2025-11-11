@@ -7,11 +7,18 @@
 
 <script setup>
 import GalleryGrid from '@/components/GalleryGrid.vue'
-import galleryItems from '@/data/miyanGallery.js'
 import { lang } from '@/state/lang'
+import { computed } from 'vue'
+import { useDataFetcher } from '@/composables/useDataFetcher'
+import { api } from '@/api/dataService'
+
+const { data: galleryData } = useDataFetcher(api.getMiyanGallery, { autoLoad: true, initialValue: [] })
+const galleryItems = computed(() => galleryData.value || [])
 
 function t(obj) {
-  return typeof obj === 'string' ? obj : (obj && (obj[window.__VUE_DEVTOOLS_GLOBAL_HOOK__?.app? 'en' : 'en']))
+  if (typeof obj === 'string') return obj
+  if (!obj) return ''
+  return obj.en || obj.fa || ''
 }
 
 // pass items directly; GalleryGrid uses the 'lang' store to localize titles

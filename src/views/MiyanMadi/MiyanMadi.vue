@@ -48,11 +48,25 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute } from 'vue-router'
 const route = useRoute()
-import menuData from '@/data/menus/madiMenu.js'
-import siteMedia from '@/data/siteMedia.js'
+import { useDataFetcher } from '@/composables/useDataFetcher'
+import { api } from '@/api/dataService'
 
-// derive a small overview list from menu data (so there's no hardcoded values here)
-const overview = menuData.sections.flatMap(s => s.items).slice(0, 3).map(i => ({ img: i.image, title: i.name }))
+// fetch site media from backend
+const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
+const siteMedia = computed(() => siteMediaData.value || {})
+
+// fetch madi menu from backend to build an overview
+const { data: madiMenuData } = useDataFetcher(api.getMadiMenu, { autoLoad: true, initialValue: null })
+const allMenuItems = computed(() => {
+  const d = madiMenuData.value
+  if (!d) return []
+  const menu = Array.isArray(d) ? (d[0] || {}) : d
+  const sections = menu.sections || []
+  return sections.flatMap(s => s.items || [])
+})
+const overview = computed(() => allMenuItems.value.slice(0, 3).map(i => ({ img: i.image, title: i.name })))
+
+// overview is computed from backend-fetched menu items
 const overlayStart = 1
 const overlayBase = 0.4
 const overlayMin = 0

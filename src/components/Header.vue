@@ -49,7 +49,11 @@ const headerStyle = computed(() => ({
 const route = useRoute()
 const isActive = (to) => route.path === to
 import { lang, setLang } from '../state/lang'
-import siteMedia from '@/data/siteMedia.js'
+import { useDataFetcher } from '@/composables/useDataFetcher'
+import { api } from '@/api/dataService'
+
+const { data: siteMediaData } = useDataFetcher(api.getSiteMedia, { autoLoad: true, initialValue: {} })
+const siteMedia = computed(() => siteMediaData.value || {})
 
 // Reactive header bottom Y (document space). Provided so descendants (views) can read it.
 const headerBottomY = ref(0)
