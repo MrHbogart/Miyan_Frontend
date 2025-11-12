@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 
 const props = defineProps({
   show: {
@@ -54,18 +54,6 @@ function emitClose() {
 function onKey(e) {
   if (e.key === 'Escape') emit('close')
 }
-
-// Scale English title to feel balanced in modal (roughly akin to image)
-const englishTitleStyle = computed(() => ({
-  fontWeight: 500,
-  letterSpacing: '0.02em',
-  // responsive size: around 5-7vh depending on viewport
-  fontSize: 'clamp(28px, 6.2vh, 64px)',
-  lineHeight: 1.1,
-  textShadow: '0 2px 18px rgba(0,0,0,.35)'
-}))
-
-import { watch } from 'vue'
 
 watch(() => props.show, (isOpen) => {
   if (isOpen) {
