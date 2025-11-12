@@ -40,6 +40,14 @@
     </section>
   </div>
 
+  <!-- transform-only overlay used during attach/detach to avoid layout reflow -->
+  <section
+    ref="overlayRef"
+    v-show="overlayVisible"
+    class="fixed left-0 right-0 z-60 pointer-events-none"
+    :style="{ top: '0px', willChange: 'transform', transform: 'translateY(0)' }"
+  ></section>
+
   <!-- Child Router View -->
   <div ref="childSwipe" class="child-swipe-wrapper">
     <router-view />
@@ -96,6 +104,8 @@ const heroVideo = ref(null)
 const attached = ref(false)
 const navHeight = ref(0)
 const detachTop = ref(null)
+const overlayRef = ref(null)
+const overlayVisible = ref(false)
 const scrollY = ref(window.scrollY || 0)
 const navbarTopY = ref(-1)
 let rafId = null
@@ -153,21 +163,43 @@ watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
 // Watch for attach/detach and coordinate short animations
 watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
+// overlay-based transform animation to avoid layout reflow on detach/attach
+async function runAttachSequenceBeresht() {
+  if (!navbarRef.value || !overlayRef.value) return
+  overlayRef.value.innerHTML = navbarRef.value.innerHTML
+  overlayRef.value.style.top = `${headerHeight.value || 0}px`
+  overlayRef.value.style.transition = 'none'
+  overlayRef.value.style.transform = 'translateY(0)'
+  overlayVisible.value = true
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+  overlayRef.value.style.transform = 'translateY(-1vh)'
+  isReturningToFlow.value = true
+  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
+  if (navbarRef.value) navbarRef.value.style.visibility = 'hidden'
+  navAttached.value = true
+  isReturningToFlow.value = false
+}
+async function runDetachSequenceBeresht() {
+  if (!navbarRef.value || !overlayRef.value) return
+  const r = navbarRef.value.getBoundingClientRect()
+  overlayRef.value.innerHTML = navbarRef.value.innerHTML
+  overlayRef.value.style.top = `${Math.round(r.top)}px`
+  overlayRef.value.style.transition = 'none'
+  overlayRef.value.style.transform = 'translateY(-1vh)'
+  overlayVisible.value = true
+  navAttached.value = false
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+  overlayRef.value.style.transform = 'translateY(0)'
+  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
+  if (navbarRef.value) navbarRef.value.style.visibility = ''
+  overlayVisible.value = false
+  detachTop.value = null
+}
 watch(attached, (newVal, oldVal) => {
-  if (oldVal === false && newVal === true) {
-    // attach: start at 0 then animate up to -1vh
-    isAttaching.value = true
-    requestAnimationFrame(() => { requestAnimationFrame(() => { isAttaching.value = false }) })
-    isReturningToFlow.value = true
-    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
-  }
-  if (oldVal === true && newVal === false) {
-    updateDetachTop()
-    isDetaching.value = true
-    requestAnimationFrame(() => { requestAnimationFrame(() => { isDetaching.value = false }) })
-    isReturningToFlow.value = true
-    setTimeout(() => { isReturningToFlow.value = false; detachTop.value = null }, NAV_RETURN_DURATION)
-  }
+  if (oldVal === false && newVal === true) runAttachSequenceBeresht()
+  if (oldVal === true && newVal === false) runDetachSequenceBeresht()
 }, { immediate: true })
 
 const navInlineStyle = computed(() => {

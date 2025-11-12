@@ -38,6 +38,9 @@
         </div>
       </div>
     </section>
+    <!-- overlay clone used for transform-only attach/detach animations -->
+    <section ref="overlayRef" v-show="overlayVisible" class="py-2 shadow-sm fixed left-0 w-full z-60 pointer-events-none" style="transform:translateY(0);">
+    </section>
   </div>
 
   <!-- Child Router View -->
@@ -105,6 +108,8 @@ const heroVideo = ref(null)
 // simpler attachment state: when navbar hits header it becomes attached
 const attached = ref(false)
 const navHeight = ref(0)
+const overlayRef = ref(null)
+const overlayVisible = ref(false)
 const detachTop = ref(null)
 const scrollY = ref(window.scrollY || 0)
 const navbarTopY = ref(-1)
@@ -162,29 +167,59 @@ watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
 
 // coordinate short attach/detach windows for smooth animations
+// transform-only overlay sequences: clone DOM into overlay and animate transforms to avoid layout jumps
+async function runAttachSequence() {
+  if (!navbarRef.value || !overlayRef.value) return
+  const headerH = headerHeight.value || 0
+  // clone innerHTML
+  overlayRef.value.innerHTML = navbarRef.value.innerHTML
+  // position overlay at header
+  overlayRef.value.style.top = `${headerH}px`
+  overlayRef.value.style.transition = 'none'
+  overlayRef.value.style.transform = 'translateY(0)'
+  overlayVisible.value = true
+  // force reflow then animate up by 1vh
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+  overlayRef.value.style.transform = 'translateY(-1vh)'
+  // hold placeholder during animation
+  isReturningToFlow.value = true
+  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
+  // finalize: hide in-flow nav and mark attached so header updates
+  if (navbarRef.value) navbarRef.value.style.visibility = 'hidden'
+  navAttached.value = true
+  isReturningToFlow.value = false
+}
+
+async function runDetachSequence() {
+  if (!navbarRef.value || !overlayRef.value) return
+  // capture current visual top
+  const r = navbarRef.value.getBoundingClientRect()
+  overlayRef.value.innerHTML = navbarRef.value.innerHTML
+  overlayRef.value.style.top = `${Math.round(r.top)}px`
+  // start 1vh higher instantly
+  overlayRef.value.style.transition = 'none'
+  overlayRef.value.style.transform = 'translateY(-1vh)'
+  overlayVisible.value = true
+  // ensure header switches out of attached state immediately
+  navAttached.value = false
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+  // animate overlay down by 1vh
+  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+  overlayRef.value.style.transform = 'translateY(0)'
+  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
+  // cleanup: show in-flow nav and hide overlay
+  if (navbarRef.value) navbarRef.value.style.visibility = ''
+  overlayVisible.value = false
+  detachTop.value = null
+}
+
 watch(attached, (newVal, oldVal) => {
   if (oldVal === false && newVal === true) {
-    // Start attach: placeholder stays full, navbar starts at 0 and animates up to -1vh
-    isAttaching.value = true
-    // trigger the upward animation on next frame
-    requestAnimationFrame(() => { requestAnimationFrame(() => { isAttaching.value = false }) })
-    // ensure returning flag holds placeholder during the animation window
-    isReturningToFlow.value = true
-    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
+    runAttachSequence()
   }
   if (oldVal === true && newVal === false) {
-    // capture current visual top so detachment doesn't 'drop' from a different position
-    if (navbarRef.value) {
-      const r = navbarRef.value.getBoundingClientRect()
-      detachTop.value = Math.round(r.top)
-    }
-    // Detach: render navbar 1vh higher immediately, then animate it down 1vh
-    isDetaching.value = true
-    // trigger the downward animation on next frame
-    requestAnimationFrame(() => { requestAnimationFrame(() => { isDetaching.value = false }) })
-    // keep returning state so placeholder animates back to full height
-    isReturningToFlow.value = true
-    setTimeout(() => { isReturningToFlow.value = false; detachTop.value = null }, NAV_RETURN_DURATION)
+    runDetachSequence()
   }
 }, { immediate: true })
 
