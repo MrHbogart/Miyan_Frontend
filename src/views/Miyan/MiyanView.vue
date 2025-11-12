@@ -129,6 +129,14 @@ function updateNavTop() {
     navbarTopY.value = -1
   }
 }
+function checkAttachment() {
+  const sent = navbarSentinel.value
+  if (!sent) return
+  const rect = sent.getBoundingClientRect()
+  const headerH = headerHeight.value || 0
+  const shouldAttach = rect.top <= headerH + 1
+  if (shouldAttach !== attached.value) attached.value = shouldAttach
+}
 function updateNavHeight() {
   if (navbarRef.value) navHeight.value = navbarRef.value.offsetHeight || 0
 }
