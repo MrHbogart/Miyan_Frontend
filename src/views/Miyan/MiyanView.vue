@@ -29,20 +29,20 @@
     </section>
 
     <!-- Navigation -->
-    <div class="nav-placeholder">
+    <div class="nav-placeholder overflow-visible">
       <div ref="navbarSentinel" :style="sentinelStyle"></div>
       <section 
         ref="navbarRef" 
-        class="py-2 shadow-sm transition-all duration-300" 
+        class="navbar-section" 
         :style="navInlineStyle"
       >
         <div class="max-w-4xl mx-auto px-6">
-          <div class="flex justify-center gap-4">
+          <div class="flex justify-center gap-4 md:gap-6">
             <router-link
               :to="{ path: getLocalizedPath('') }"
-              class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-lg md:text-xl font-semibold"
+              class="navbar-link"
               :class="[{ 
-                'font-bold': $route.name === 'MiyanGallery' 
+                'navbar-link--active': $route.name === 'MiyanGallery' 
               }, { 
                 'font-cinzel font-light': lang === 'en' 
               }]"
@@ -51,9 +51,9 @@
             </router-link>
             <router-link
               :to="{ path: getLocalizedPath('projects') }"
-              class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-lg md:text-xl font-semibold"
+              class="navbar-link"
               :class="[{ 
-                'font-bold': $route.name === 'MiyanProjects' 
+                'navbar-link--active': $route.name === 'MiyanProjects' 
               }, { 
                 'font-cinzel font-light': lang === 'en' 
               }]"
@@ -65,20 +65,20 @@
       </section>
     </div>
     <!-- transform-only overlay used during attach/detach to avoid layout reflow -->
-      <section
-        ref="overlayRef"
-        v-show="overlayVisible"
-        class="fixed left-0 right-0 z-60 pointer-events-none"
-        :style="{ top: '0px', willChange: 'transform', transform: 'translateY(0)' }"
-      ></section>
+    <section
+      ref="overlayRef"
+      v-show="overlayVisible"
+      class="navbar-overlay fixed left-0 right-0 z-60 pointer-events-none overflow-visible"
+      :style="{ top: '0px', willChange: 'transform', transform: 'translateY(0)' }"
+    ></section>
   </div>
-  <div ref="childSwipe" class="child-swipe-wrapper">
+  <div ref="childSwipe" class="child-swipe-wrapper overflow-visible">
     <router-view />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
@@ -86,19 +86,38 @@ const router = useRouter()
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
-import { headerHeight, headerInitialHeight, navAttached } from '@/state/headerState'
+import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
 
 // Use local defaults only (backend doesn't provide siteMedia)
 const siteMedia = siteMediaDefaults
 
-// overlay animation parameters (match other Miyan variants)
+// Navbar attachment logic using composable
+const navbarRef = ref(null)
+const navbarSentinel = ref(null)
+const overlayRef = ref(null)
+
+const routes = [
+  { path: '', name: 'MiyanGallery' },
+  { path: 'projects', name: 'MiyanProjects' }
+]
+
+const {
+  navInlineStyle,
+  sentinelStyle,
+  overlayVisible
+} = useNavbarAttachment(navbarRef, navbarSentinel, overlayRef, routes)
+
+// Enhanced overlay animation parameters with luxury transitions
 const overlayStart = 1
 const overlayBase = 0.4
 const overlayMin = 0
 const maxScroll = 380
-const fadeMs = 1500
+const fadeMs = 1800
+const EASING_LUXURY = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+const EASING_SMOOTH = 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+
 const modalOverlayAlpha = ref(overlayStart)
-const overlayTransition = ref(`background ${fadeMs}ms cubic-bezier(.55,.06,.21,.95)`)
+const overlayTransition = ref(`background ${fadeMs}ms ${EASING_LUXURY}`)
 let animationComplete = false
 
 function setAlphaFromScroll() {
@@ -109,194 +128,24 @@ function setAlphaFromScroll() {
 }
 function startIntroTransition() {
   modalOverlayAlpha.value = overlayStart
-  overlayTransition.value = `background ${fadeMs}ms cubic-bezier(.55,.06,.21,.95)`
+  overlayTransition.value = `background ${fadeMs}ms ${EASING_LUXURY}`
   setTimeout(() => {
     modalOverlayAlpha.value = overlayBase
     setTimeout(() => {
       animationComplete = true
-      overlayTransition.value = 'background 340ms cubic-bezier(.46,1.2,.34,1.01)'
+      overlayTransition.value = `background 400ms ${EASING_SMOOTH}`
     }, fadeMs)
   }, 20)
 }
 
-// dynamic sticky below 10vh header
-const navbarRef = ref(null)
-const navbarSentinel = ref(null)
-const navHeight = ref(0)
-const detachTop = ref(null)
-const overlayRef = ref(null)
-const overlayVisible = ref(false)
-const scrollY = ref(window.scrollY || 0)
-const navbarTopY = ref(-1)
-let rafId = null
-
-function updateNavTop() {
-  const el = navbarSentinel.value || navbarRef.value
-  if (el) {
-    const r = el.getBoundingClientRect()
-    navbarTopY.value = Math.ceil(r.top + window.scrollY)
-  } else {
-    navbarTopY.value = -1
-  }
-}
-function checkAttachment() {
-  const sent = navbarSentinel.value
-  if (!sent) return
-  const rect = sent.getBoundingClientRect()
-  const headerH = headerHeight.value || 0
-  const shouldAttach = rect.top <= headerH + 1
-  if (shouldAttach !== attached.value) attached.value = shouldAttach
-}
-function updateDetachTop() {
-  if (navbarRef.value) {
-    const r = navbarRef.value.getBoundingClientRect()
-    detachTop.value = Math.round(r.top)
-  }
-}
-function updateNavHeight() {
-  if (navbarRef.value) navHeight.value = navbarRef.value.offsetHeight || 0
-}
-function onScrollTrack() {
-  if (rafId) return
-  rafId = requestAnimationFrame(() => {
-    scrollY.value = window.scrollY || window.pageYOffset
-    updateNavTop()
-    rafId = null
-  })
-}
-
-// simpler attachment state driven by sentinel position
+// Hero video reference
 const heroVideo = ref(null)
-const attached = ref(false)
-const isNavFixed = computed(() => attached.value)
-const HEADER_BG_DURATION = 500
-const NAV_TOP_DURATION = 240
-const NAV_RETURN_DURATION = 300
-
-// Track when navbar is returning to flow (animates smoothly back to position)
-const isReturningToFlow = ref(false)
-// short-lived flags to coordinate attach/detach animations and placeholder hold
-const isAttaching = ref(false)
-const isDetaching = ref(false)
-
-const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
-const navBgOpacity = ref(navTargetOpacity.value)
-watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
-
-watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
-// use transform-only overlay to animate attach/detach without changing layout
-async function runAttachSequenceView() {
-  if (!navbarRef.value || !overlayRef.value) return
-  overlayRef.value.innerHTML = navbarRef.value.innerHTML
-  overlayRef.value.style.top = `${headerHeight.value || 0}px`
-  overlayRef.value.style.transition = 'none'
-  overlayRef.value.style.transform = 'translateY(0)'
-  overlayVisible.value = true
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
-  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-  overlayRef.value.style.transform = 'translateY(-1vh)'
-  isReturningToFlow.value = true
-  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
-  if (navbarRef.value) navbarRef.value.style.visibility = 'hidden'
-  navAttached.value = true
-  isReturningToFlow.value = false
-}
-async function runDetachSequenceView() {
-  if (!navbarRef.value || !overlayRef.value) return
-  const r = navbarRef.value.getBoundingClientRect()
-  overlayRef.value.innerHTML = navbarRef.value.innerHTML
-  overlayRef.value.style.top = `${Math.round(r.top)}px`
-  overlayRef.value.style.transition = 'none'
-  overlayRef.value.style.transform = 'translateY(-1vh)'
-  overlayVisible.value = true
-  navAttached.value = false
-  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
-  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-  overlayRef.value.style.transform = 'translateY(0)'
-  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
-  if (navbarRef.value) navbarRef.value.style.visibility = ''
-  overlayVisible.value = false
-  detachTop.value = null
-}
-watch(attached, (newVal, oldVal) => {
-  if (oldVal === false && newVal === true) runAttachSequenceView()
-  if (oldVal === true && newVal === false) runDetachSequenceView()
-}, { immediate: true })
-
-const navInlineStyle = computed(() => {
-  const baseStyle = {
-    backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`,
-    transition: `background ${HEADER_BG_DURATION}ms ease`
-  }
-  
-  if (!isNavFixed.value) {
-    // Not fixed - either returning to flow, detaching, attaching, or already there
-    if (isDetaching.value) {
-      const topPx = (detachTop.value != null) ? `${detachTop.value}px` : 'var(--header-height)'
-      return {
-        ...baseStyle,
-        position: 'fixed',
-        top: topPx,
-        left: '0',
-        width: '100vw',
-        zIndex: '60',
-        transform: 'translateY(0)',
-        transition: `background ${HEADER_BG_DURATION}ms ease`
-      }
-    }
-
-    if (isReturningToFlow.value || isAttaching.value) {
-      // keep it fixed and overlay the content while animating down into place
-      return {
-        ...baseStyle,
-        position: 'fixed',
-        top: 'var(--header-height)',
-        left: '0',
-        width: '100vw',
-        zIndex: '60',
-        transform: 'translateY(-8px)',
-        transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-      }
-    }
-
-    // fully in-flow (no special animation)
-    return {
-      ...baseStyle,
-      transform: 'translateY(0)',
-      transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-    }
-  }
-
-  // Fixed state (attached to header)
-  return {
-    ...baseStyle,
-    position: 'fixed',
-    top: 'var(--header-height)',
-    left: '0',
-    width: '100vw',
-    zIndex: '30',
-    transform: 'translateY(0)',
-    transition: `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
-  }
-})
-
-const sentinelStyle = computed(() => {
-  const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
-  const h = Math.max(0, (navHeight.value || 0) - delta)
-  if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
-    const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
-    return { height: `${navHeight.value || h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
-  }
-  return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
-})
-
-watch(isNavFixed, (v) => { navAttached.value = !!v }, { immediate: true })
 
 onMounted(() => {
   animationComplete = false
   startIntroTransition()
   window.addEventListener('scroll', setAlphaFromScroll, { passive: true })
-  // init sticky measurements
+  
   // reset scroll on reload
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
   window.scrollTo({ top: 0 })
@@ -311,12 +160,6 @@ onMounted(() => {
   } else {
     startIntroTransition()
   }
-
-  updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment()
-  window.addEventListener('scroll', onScrollTrack, { passive: true })
-  window.addEventListener('scroll', () => { checkAttachment() }, { passive: true })
-  window.addEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment() })
-  window.addEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment() })
 
   // swipe handlers for child views
   const swipeEl = document.querySelector('.child-swipe-wrapper')
@@ -367,12 +210,8 @@ onMounted(() => {
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', setAlphaFromScroll)
-  window.removeEventListener('scroll', onScrollTrack)
-  window.removeEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
-  window.removeEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
   const swipeEl = document.querySelector('.child-swipe-wrapper')
   if (swipeEl && swipeEl.__swipeCleanup) swipeEl.__swipeCleanup()
-  if (rafId) cancelAnimationFrame(rafId)
 })
 
 function getLocalizedPath(p) {
@@ -384,30 +223,100 @@ function getLocalizedPath(p) {
 
 
 <style scoped>
-@keyframes fadein-menu {
-  from { opacity: 0; transform: translateY(12px) scale(.97); }
-  to { opacity: 1; transform: none; }
-}
-.animate-fadein-menu {
-  opacity: 0;
-  animation: fadein-menu 1.5s cubic-bezier(.47,.19,.17,1.03) both;
-}
-.group-hover\:scale-102:hover { transform: scale(1.02); }
-.group-hover\:brightness-104:hover { filter: brightness(1.04); }
-.group-active\:scale-97:active { transform: scale(0.97); }
-.rtl { direction: rtl; unicode-bidi: plaintext; }
-.font-vazir { font-family: 'Vazirmatn', Tahoma, serif; }
-.font-cinzel { font-family: 'Cinzel', serif; }
-
+/* Luxury navbar styles */
 .nav-placeholder {
   position: relative;
+  overflow: visible;
 }
 
 .nav-placeholder section {
   width: 100%;
 }
 
+.navbar-section {
+  padding: 1rem 0;
+  overflow: visible;
+}
 
-.navbar-sticky { position: sticky; top: var(--header-height); z-index: 30; }
-@media (min-width: 768px) { .navbar-sticky { top: var(--header-height); } }
+.navbar-link {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: all 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 1rem;
+  font-weight: 600;
+  position: relative;
+  overflow: visible;
+  color: #1a1a1a;
+}
+
+@media (min-width: 768px) {
+  .navbar-link {
+    font-size: 1.125rem;
+    padding: 0.875rem 2rem;
+  }
+}
+
+.navbar-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.4), transparent);
+  border-radius: 2px;
+  transition: transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.navbar-link:hover {
+  transform: translateY(-2px);
+  color: #0a0a0a;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-link--active {
+  font-weight: 700;
+  color: #0a0a0a;
+}
+
+.navbar-link--active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.navbar-link:active {
+  transform: translateY(0);
+  transition: transform 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.navbar-overlay {
+  overflow: visible;
+}
+
+.navbar-sticky { 
+  position: sticky; 
+  top: var(--header-height); 
+  z-index: 30; 
+}
+
+@media (min-width: 768px) { 
+  .navbar-sticky { 
+    top: var(--header-height); 
+  } 
+}
+
+.rtl { 
+  direction: rtl; 
+  unicode-bidi: plaintext; 
+}
+
+.font-vazir { 
+  font-family: 'Vazirmatn', Tahoma, serif; 
+}
+
+.font-cinzel { 
+  font-family: 'Cinzel', serif; 
+}
 </style>
