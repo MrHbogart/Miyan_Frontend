@@ -64,13 +64,17 @@
         </div>
       </section>
     </div>
-    <!-- transform-only overlay used during attach/detach to avoid layout reflow -->
+    <!-- Smooth overlay used during attach/detach animations -->
       <section
         ref="overlayRef"
         v-show="overlayVisible"
         class="fixed left-0 right-0 z-60 pointer-events-none"
-        :style="{ top: '0px', willChange: 'transform', transform: 'translateY(0)' }"
-      ></section>
+        style="will-change: top, background, backdrop-filter;"
+      >
+        <div class="max-w-4xl mx-auto px-6">
+          <div class="flex justify-center gap-4"></div>
+        </div>
+      </section>
   </div>
   <div ref="childSwipe" class="child-swipe-wrapper">
     <router-view />
@@ -170,124 +174,161 @@ const heroVideo = ref(null)
 const attached = ref(false)
 const isNavFixed = computed(() => attached.value)
 const HEADER_BG_DURATION = 500
-const NAV_TOP_DURATION = 240
-const NAV_RETURN_DURATION = 300
-
-// Track when navbar is returning to flow (animates smoothly back to position)
-const isReturningToFlow = ref(false)
-// short-lived flags to coordinate attach/detach animations and placeholder hold
-const isAttaching = ref(false)
-const isDetaching = ref(false)
+const NAV_TOP_DURATION = 350
+const NAV_RETURN_DURATION = 400
 
 const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
 watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
 watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
-// use transform-only overlay to animate attach/detach without changing layout
+
+// Smooth attach/detach animation using overlay technique
 async function runAttachSequenceView() {
   if (!navbarRef.value || !overlayRef.value) return
+  
+  const navbarRect = navbarRef.value.getBoundingClientRect()
+  const headerH = headerHeight.value || 0
+  const startTop = navbarRect.top + window.scrollY
+  
+  // Clone navbar content to overlay at current position
   overlayRef.value.innerHTML = navbarRef.value.innerHTML
-  overlayRef.value.style.top = `${headerHeight.value || 0}px`
+  overlayRef.value.style.top = `${startTop}px`
+  overlayRef.value.style.left = '0'
+  overlayRef.value.style.width = '100vw'
+  overlayRef.value.style.padding = '0.5rem 0'
+  overlayRef.value.style.backgroundColor = `rgba(255,255,255, 1)`
+  overlayRef.value.style.backdropFilter = 'none'
+  overlayRef.value.style.boxShadow = 'none'
   overlayRef.value.style.transition = 'none'
   overlayRef.value.style.transform = 'translateY(0)'
+  overlayRef.value.style.opacity = '1'
   overlayVisible.value = true
+  
+  // Force reflow to ensure overlay is rendered
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
-  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-  overlayRef.value.style.transform = 'translateY(-1vh)'
-  isReturningToFlow.value = true
-  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
+  
+  // Smoothly animate to header position with backdrop filter
+  overlayRef.value.style.transition = `top ${NAV_RETURN_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, box-shadow ${HEADER_BG_DURATION}ms ease`
+  overlayRef.value.style.top = `${headerH}px`
+  overlayRef.value.style.backgroundColor = `rgba(255,255,255, 0.85)`
+  overlayRef.value.style.backdropFilter = 'saturate(120%) blur(6px)'
+  overlayRef.value.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'
+  
+  // Wait for animation to complete
+  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION + 30))
+  
+  // Hide original navbar and show attached state
   if (navbarRef.value) navbarRef.value.style.visibility = 'hidden'
   navAttached.value = true
-  isReturningToFlow.value = false
+  overlayVisible.value = false
 }
+
 async function runDetachSequenceView() {
   if (!navbarRef.value || !overlayRef.value) return
-  const r = navbarRef.value.getBoundingClientRect()
-  overlayRef.value.innerHTML = navbarRef.value.innerHTML
-  overlayRef.value.style.top = `${Math.round(r.top)}px`
-  overlayRef.value.style.transition = 'none'
-  overlayRef.value.style.transform = 'translateY(-1vh)'
-  overlayVisible.value = true
+  
+  const headerH = headerHeight.value || 0
+  
+  // Show original navbar first (but keep it invisible during animation)
   navAttached.value = false
+  
+  // Force layout recalculation to get natural position
+  if (navbarRef.value) {
+    navbarRef.value.style.visibility = 'hidden'
+  }
+  
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
-  overlayRef.value.style.transition = `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+  
+  // Calculate where navbar should be in natural flow
+  const sentinelRect = navbarSentinel.value?.getBoundingClientRect()
+  const targetTop = sentinelRect ? sentinelRect.top + window.scrollY : headerH + 100
+  
+  // Clone to overlay at header position with attached styling
+  overlayRef.value.innerHTML = navbarRef.value.innerHTML
+  overlayRef.value.style.top = `${headerH}px`
+  overlayRef.value.style.left = '0'
+  overlayRef.value.style.width = '100vw'
+  overlayRef.value.style.padding = '0.5rem 0'
+  overlayRef.value.style.backgroundColor = `rgba(255,255,255, 0.85)`
+  overlayRef.value.style.backdropFilter = 'saturate(120%) blur(6px)'
+  overlayRef.value.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)'
+  overlayRef.value.style.transition = 'none'
   overlayRef.value.style.transform = 'translateY(0)'
-  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION))
+  overlayRef.value.style.opacity = '1'
+  overlayVisible.value = true
+  
+  // Force reflow
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)))
+  
+  // Smoothly animate to natural position, removing backdrop filter
+  overlayRef.value.style.transition = `top ${NAV_RETURN_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, box-shadow ${HEADER_BG_DURATION}ms ease`
+  overlayRef.value.style.top = `${targetTop}px`
+  overlayRef.value.style.backgroundColor = `rgba(255,255,255, 1)`
+  overlayRef.value.style.backdropFilter = 'none'
+  overlayRef.value.style.boxShadow = 'none'
+  
+  // Wait for animation to complete
+  await new Promise(r => setTimeout(r, NAV_RETURN_DURATION + 30))
+  
+  // Show original navbar again
   if (navbarRef.value) navbarRef.value.style.visibility = ''
   overlayVisible.value = false
   detachTop.value = null
 }
+
 watch(attached, (newVal, oldVal) => {
-  if (oldVal === false && newVal === true) runAttachSequenceView()
-  if (oldVal === true && newVal === false) runDetachSequenceView()
-}, { immediate: true })
+  if (oldVal === false && newVal === true) {
+    runAttachSequenceView()
+  } else if (oldVal === true && newVal === false) {
+    runDetachSequenceView()
+  }
+})
 
 const navInlineStyle = computed(() => {
   const baseStyle = {
     backgroundColor: `rgba(255,255,255, ${navBgOpacity.value})`,
-    transition: `background ${HEADER_BG_DURATION}ms ease`
+    backdropFilter: isNavFixed.value ? 'saturate(120%) blur(6px)' : 'none',
+    transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease`
   }
   
-  if (!isNavFixed.value) {
-    // Not fixed - either returning to flow, detaching, attaching, or already there
-    if (isDetaching.value) {
-      const topPx = (detachTop.value != null) ? `${detachTop.value}px` : 'var(--header-height)'
-      return {
-        ...baseStyle,
-        position: 'fixed',
-        top: topPx,
-        left: '0',
-        width: '100vw',
-        zIndex: '60',
-        transform: 'translateY(0)',
-        transition: `background ${HEADER_BG_DURATION}ms ease`
-      }
-    }
-
-    if (isReturningToFlow.value || isAttaching.value) {
-      // keep it fixed and overlay the content while animating down into place
-      return {
-        ...baseStyle,
-        position: 'fixed',
-        top: 'var(--header-height)',
-        left: '0',
-        width: '100vw',
-        zIndex: '60',
-        transform: 'translateY(-8px)',
-        transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-      }
-    }
-
-    // fully in-flow (no special animation)
+  if (isNavFixed.value) {
+    // Fixed state (attached to header) - smooth transition
     return {
       ...baseStyle,
+      position: 'fixed',
+      top: 'var(--header-height)',
+      left: '0',
+      width: '100vw',
+      zIndex: '30',
       transform: 'translateY(0)',
-      transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+      transition: `top ${NAV_TOP_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94), background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease`
     }
   }
 
-  // Fixed state (attached to header)
+  // Normal flow state - no special positioning needed
   return {
     ...baseStyle,
-    position: 'fixed',
-    top: 'var(--header-height)',
-    left: '0',
-    width: '100vw',
-    zIndex: '30',
+    position: 'relative',
     transform: 'translateY(0)',
-    transition: `top ${NAV_TOP_DURATION}ms cubic-bezier(.2,.9,.2,1), background ${HEADER_BG_DURATION}ms ease`
+    transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease`
   }
 })
 
 const sentinelStyle = computed(() => {
   const delta = (headerInitialHeight.value && headerHeight.value) ? Math.max(0, headerInitialHeight.value - headerHeight.value) : 0
   const h = Math.max(0, (navHeight.value || 0) - delta)
-  if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
-    const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
-    return { height: `${navHeight.value || h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
+  if (isNavFixed.value || overlayVisible.value) {
+    return { 
+      height: `${navHeight.value || h}px`, 
+      transition: `height ${NAV_RETURN_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`, 
+      backgroundColor: 'var(--surface, #fff)' 
+    }
   }
-  return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
+  return { 
+    height: '0px', 
+    transition: `height ${NAV_RETURN_DURATION}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`, 
+    backgroundColor: 'var(--surface, #fff)' 
+  }
 })
 
 watch(isNavFixed, (v) => { navAttached.value = !!v }, { immediate: true })
