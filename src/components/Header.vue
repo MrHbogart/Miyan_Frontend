@@ -1,16 +1,15 @@
 <template>
   <header 
-    :class="['fixed w-full top-0 left-0 z-40 overflow-visible', isCompact ? 'header-compact' : '', navAttached ? 'header-attached' : '']" 
+    :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '', navAttached ? 'header-attached' : '']" 
     :style="[headerStyle, { 
-      backgroundColor: `rgba(255, 255, 255, ${headerBgOpacity})`, 
-      borderBottom: headerBgOpacity > 0.1 ? `1px solid rgba(0, 0, 0, ${0.05 * headerBgOpacity})` : 'none', 
-      transition: `background ${HEADER_BG_DURATION}ms ${EASING_SMOOTH}, backdrop-filter ${HEADER_BG_DURATION}ms ${EASING_SMOOTH}, height 600ms ${EASING_LUXURY}, box-shadow ${HEADER_BG_DURATION}ms ${EASING_SMOOTH}`,
-      boxShadow: headerBgOpacity > 0.1 ? `0 2px 24px rgba(0, 0, 0, ${0.06 * headerBgOpacity}), 0 1px 4px rgba(0, 0, 0, ${0.08 * headerBgOpacity})` : 'none'
+      backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, 
+      borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', 
+      transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` 
     }]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
     <div class="status-safe-area" :style="statusStyle" />
-    <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4 overflow-visible">
+    <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
           <router-link to="/beresht" class="logo-link" :class="{ 'is-active': isActive('/beresht') }">
@@ -53,17 +52,14 @@ import { useRoute } from 'vue-router'
 
 const { scrolled } = defineProps({ scrolled: { type: Boolean, default: false } })
 
-// Luxury animation constants
-const HEADER_BG_DURATION = 600
-const EASING_SMOOTH = 'cubic-bezier(0.4, 0.0, 0.2, 1)'
-const EASING_LUXURY = 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+// animation durations (ms)
+const HEADER_BG_DURATION = 500
 
 const headerStyle = computed(() => ({
-  backdropFilter: scrolled ? 'saturate(180%) blur(16px)' : 'none',
-  // respect the device safe area (notch / status bar) with smooth transitions
-  paddingTop: 'max(env(safe-area-inset-top), 0px)',
-  WebkitPaddingTop: 'max(env(safe-area-inset-top), 0px)',
-  transition: `backdrop-filter ${HEADER_BG_DURATION}ms ${EASING_SMOOTH}`
+  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
+  // respect the device safe area (notch / status bar)
+  paddingTop: 'env(safe-area-inset-top)',
+  WebkitPaddingTop: 'env(safe-area-inset-top)'
 }))
 
 const route = useRoute()
@@ -104,10 +100,10 @@ function updateHeaderBottom() {
   }
 }
 
-// header/background opacity coordination with smooth transitions
+// header/background opacity coordination
 const headerTargetOpacity = computed(() => {
-  if (navAttached.value) return 0.98
-  return scrolled ? 0.92 : 0
+  if (navAttached.value) return 1
+  return scrolled ? 0.85 : 0
 })
 const headerBgOpacity = ref(headerTargetOpacity.value)
 watch(headerTargetOpacity, (v) => {
@@ -129,18 +125,15 @@ const themeMeta = (typeof window !== 'undefined') ? ensureThemeMeta() : null
 document.documentElement.style.setProperty('--top-bg-color', '#000000')
 if (themeMeta) try { themeMeta.setAttribute('content', '#000000') } catch (e) {}
 
-// compute top-safe-area style directly from header opacity with luxury transitions
+// compute top-safe-area style directly from header opacity so CSS transitions can animate it
 const topBgColor = computed(() => {
   const opacity = Math.max(0, Math.min(1, Number(headerBgOpacity.value) || 0))
-  return opacity > 0.02 ? `rgba(255, 255, 255, ${opacity})` : '#000000'
+  return opacity > 0.02 ? `rgba(255,255,255,${opacity})` : '#000000'
 })
 const statusStyle = computed(() => ({
   backgroundColor: topBgColor.value,
-  backdropFilter: scrolled ? 'saturate(180%) blur(16px)' : 'none',
-  transition: `background ${HEADER_BG_DURATION}ms ${EASING_SMOOTH}, backdrop-filter ${HEADER_BG_DURATION}ms ${EASING_SMOOTH}`,
-  boxShadow: headerBgOpacity.value > 0.1 
-    ? `0 1px 8px rgba(0, 0, 0, ${0.04 * headerBgOpacity.value})` 
-    : 'none'
+  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
+  transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease`
 }))
 
 // Keep theme meta in sync (solid colors only)
@@ -218,48 +211,22 @@ onUnmounted(() => {
 .logo { color: var(--brand, #2b2b2b); font-family: Inter, ui-sans-serif; }
 header { 
   height: 10vh; 
-  transition: height 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: transform, background-color, backdrop-filter;
+  transition: height 500ms ease, background-color 500ms ease, backdrop-filter 500ms ease;
 }
 .header-compact { height: 9vh; }
 .header-attached { height: calc(10vh - 1vh); }
 
-/* Elegant child visibility transitions with luxury easing */
-.header-hidden { 
-  opacity: 0; 
-  transform: translateY(-8px) scale(0.98); 
-  transition: opacity 500ms cubic-bezier(0.4, 0.0, 0.2, 1), 
-              transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.header-visible { 
-  opacity: 1; 
-  transform: translateY(0) scale(1); 
-  transition: opacity 600ms cubic-bezier(0.4, 0.0, 0.2, 1), 
-              transform 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.header-visible .logo, .header-visible nav, .header-visible button { 
-  opacity: 1; 
-  transform: none;
-  transition: opacity 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-.header-hidden .logo, .header-hidden nav, .header-hidden button { 
-  opacity: 0;
-  transition: opacity 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
-}
+/* child visibility transitions */
+.header-hidden { opacity: 0; transform: translateY(-6px); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1) }
+.header-visible { opacity: 1; transform: translateY(0); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1) }
+.header-visible .logo, .header-visible nav, .header-visible button { opacity: 1; transform: none }
+.header-hidden .logo, .header-hidden nav, .header-hidden button { opacity: 0 }
 
-.header-grid { 
-  display: grid; 
-  grid-template-columns: repeat(3, 1fr); 
-  align-items: center; 
-  column-gap: 12px;
-  overflow: visible;
-}
-
+.header-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; column-gap: 12px; }
 .header-logo {
   height: 40px;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-  overflow: visible;
 }
 @media (min-width: 768px) {
   .header-logo { height: 56px; }
@@ -270,56 +237,28 @@ header {
   align-items: center;
   height: 100%;
   cursor: pointer;
-  border-radius: 10px;
-  padding: 4px 8px;
-  transition: transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-              filter 400ms cubic-bezier(0.4, 0.0, 0.2, 1),
-              box-shadow 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
-  position: relative;
-  overflow: visible;
+  border-radius: 8px;
+  transition: transform 430ms cubic-bezier(.19,.9,.33,1.19), filter 430ms cubic-bezier(.19,.9,.33,1.19);
 }
-
-.logo-link.is-active {
-  filter: brightness(1);
-}
-
-.logo-link.is-active::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.3), transparent);
-  border-radius: 2px;
-  transition: width 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
 .logo-img {
   height: 100%;
   width: auto;
   max-width: 82px;
   aspect-ratio: 4/1;
   object-fit: contain;
-  filter: brightness(0.98) grayscale(0);
-  transition: filter 400ms cubic-bezier(0.4, 0.0, 0.2, 1), 
-              transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: brightness(0.96) grayscale(0);
+  transition: filter 430ms cubic-bezier(.19,.9,.33,1.19), transform 430ms cubic-bezier(.19,.9,.33,1.19);
 }
-
-/* Elegant hover animations for non-active logos */
+/* Only non-active gets hover animation */
 .logo-link:not(.is-active):hover .logo-img,
-.logo-link:not(.is-active):focus .logo-img {
-  filter: brightness(1.08) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
-  transform: scale(1.04) translateY(-2px);
-}
-
+.logo-link:not(.is-active):focus .logo-img,
 .logo-link:not(.is-active):active .logo-img {
-  transform: scale(1.02) translateY(-1px);
-  transition: transform 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  filter: brightness(1.05);
+  transform: scale(1.03) translateY(-1px);
+  font-weight: 600;
 }
 
-/* Enhanced status-safe-area overlay with luxury transitions */
+/* status-safe-area overlay styles */
 .status-safe-area {
   position: fixed;
   top: 0;
@@ -327,14 +266,11 @@ header {
   right: 0;
   height: env(safe-area-inset-top);
   z-index: 45;
-  transition: background-color 600ms cubic-bezier(0.4, 0.0, 0.2, 1), 
-              backdrop-filter 600ms cubic-bezier(0.4, 0.0, 0.2, 1),
-              box-shadow 600ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: background-color 260ms ease, backdrop-filter 260ms ease;
   pointer-events: none;
-  overflow: visible;
 }
 
-/* Enhanced English logo text styling with luxury animations */
+/* English logo text styling */
 .logo-text {
   display: inline-flex;
   align-items: center;
@@ -342,31 +278,24 @@ header {
   height: 100%;
   font-family: 'Cinzel', serif;
   font-weight: 400;
-  letter-spacing: 0.03em;
-  color: #1a1a1a;
+  letter-spacing: 0.02em;
+  color: #1f2937; /* gray-800 */
   line-height: 1;
   padding: 0 6px;
+  /* size tuned to match image height container (40px mobile, 56px md) */
   font-size: 20px;
-  transition: color 400ms cubic-bezier(0.4, 0.0, 0.2, 1),
-              transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              text-shadow 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 @media (min-width: 768px) {
   .logo-text { font-size: 26px; }
 }
 .logo-text--center { font-weight: 450; font-size: 24px; }
-@media (min-width: 768px) { .logo-text--center { font-size: 28px; } }
-
+@media (min-width: 768px) { .logo-text--center { font-size: 26px; } }
 .logo-link:not(.is-active):hover .logo-text,
-.logo-link:not(.is-active):focus .logo-text {
-  color: #0a0a0a;
-  transform: scale(1.05) translateY(-2px);
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
-  font-weight: 500;
-}
-
+.logo-link:not(.is-active):focus .logo-text,
 .logo-link:not(.is-active):active .logo-text {
-  transform: scale(1.02) translateY(-1px);
-  transition: transform 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  filter: brightness(1.05);
+  transform: scale(1.03) translateY(-1px);
+  transition: transform 300ms cubic-bezier(.19,.9,.33,1.19);
+  font-weight: 600;
 }
 </style>

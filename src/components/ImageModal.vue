@@ -5,7 +5,6 @@
         v-if="show" 
         class="image-modal-overlay" 
         @click="emitClose"
-        @touchmove.prevent
       >
         <div class="image-modal-container" @click.stop>
           <img 
@@ -29,8 +28,9 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-defineProps({
+import { computed, onMounted, onUnmounted, watch } from 'vue'
+
+const props = defineProps({
   show: {
     type: Boolean,
     required: true
@@ -47,13 +47,7 @@ defineProps({
 
 const emit = defineEmits(['close'])
 
-import { onMounted, onUnmounted } from 'vue'
-
 function emitClose() {
-  emit('close')
-}
-
-function onScrollClose() {
   emit('close')
 }
 
@@ -71,99 +65,100 @@ const englishTitleStyle = computed(() => ({
   textShadow: '0 2px 18px rgba(0,0,0,.35)'
 }))
 
+import { watch } from 'vue'
+
+watch(() => props.show, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+  } else {
+    document.body.style.overflow = ''
+    window.removeEventListener('keydown', onKey)
+  }
+}, { immediate: true })
+
 onMounted(() => {
-  window.addEventListener('scroll', onScrollClose, { passive: true })
-  window.addEventListener('touchmove', onScrollClose, { passive: true })
-  window.addEventListener('keydown', onKey)
+  if (props.show) {
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+  }
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', onScrollClose)
-  window.removeEventListener('touchmove', onScrollClose)
+  document.body.style.overflow = ''
   window.removeEventListener('keydown', onKey)
 })
 </script>
 
 <style scoped>
-/* Luxury modal transitions */
-.modal-enter-active {
-  transition: opacity 500ms cubic-bezier(0.4, 0.0, 0.2, 1),
-              backdrop-filter 500ms cubic-bezier(0.4, 0.0, 0.2, 1);
-}
+/* Modal transitions */
+.modal-enter-active,
 .modal-leave-active {
-  transition: opacity 400ms cubic-bezier(0.4, 0.0, 0.2, 1),
-              backdrop-filter 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: opacity 0.3s ease;
 }
+
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
-  backdrop-filter: blur(0px);
 }
 
 .image-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 50;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  overflow: visible;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .image-modal-container {
   position: relative;
   max-width: 95vw;
-  max-height: 95vh;
+  max-height: none;
   padding: 2rem;
-  overflow: visible;
+  margin: auto;
 }
 
 .image-modal-img {
   max-width: 100%;
   max-height: 90vh;
   object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
-  transition: transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              box-shadow 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
-  will-change: transform;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 300ms ease;
 }
 
 .image-modal-img:hover {
-  transform: scale(1.02);
-  box-shadow: 0 12px 64px rgba(0, 0, 0, 0.5), 0 6px 24px rgba(0, 0, 0, 0.4);
+  transform: scale(1.01);
 }
 
 .image-modal-close {
-  position: absolute;
+  position: fixed;
   top: 1rem;
   right: 1rem;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
-  z-index: 10;
-  overflow: visible;
+  transition: all 300ms ease;
+  z-index: 51;
 }
 
 .image-modal-close:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.1) rotate(90deg);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .image-modal-close:active {
-  transform: scale(1.05) rotate(90deg);
+  transform: scale(1.05);
 }
 </style>
