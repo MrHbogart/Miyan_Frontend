@@ -116,6 +116,7 @@ function startIntroTransition() {
 const navbarRef = ref(null)
 const navbarSentinel = ref(null)
 const navHeight = ref(0)
+const detachTop = ref(null)
 const scrollY = ref(window.scrollY || 0)
 const navbarTopY = ref(-1)
 let rafId = null
@@ -136,6 +137,12 @@ function checkAttachment() {
   const headerH = headerHeight.value || 0
   const shouldAttach = rect.top <= headerH + 1
   if (shouldAttach !== attached.value) attached.value = shouldAttach
+}
+function updateDetachTop() {
+  if (navbarRef.value) {
+    const r = navbarRef.value.getBoundingClientRect()
+    detachTop.value = Math.round(r.top)
+  }
 }
 function updateNavHeight() {
   if (navbarRef.value) navHeight.value = navbarRef.value.offsetHeight || 0
@@ -174,6 +181,8 @@ watch(attached, (newVal, oldVal) => {
     setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
   }
   if (oldVal === true && newVal === false) {
+    // set detach top right away so navbar doesn't fall from a different place
+    updateDetachTop()
     isDetaching.value = true
     isReturningToFlow.value = true
     setTimeout(() => { isDetaching.value = false }, 80)
@@ -190,11 +199,11 @@ const navInlineStyle = computed(() => {
   if (!isNavFixed.value) {
     // Not fixed - either returning to flow, detaching, attaching, or already there
     if (isDetaching.value) {
-      // Detach instantly (no transform animation)
+      const topPx = (detachTop.value != null) ? `${detachTop.value}px` : 'var(--header-height)'
       return {
         ...baseStyle,
         position: 'fixed',
-        top: 'var(--header-height)',
+        top: topPx,
         left: '0',
         width: '100vw',
         zIndex: '60',
@@ -243,7 +252,7 @@ const sentinelStyle = computed(() => {
   const h = Math.max(0, (navHeight.value || 0) - delta)
   if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
     const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
-    return { height: `${h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
+    return { height: `${navHeight.value || h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
   }
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
 })

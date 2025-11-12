@@ -105,6 +105,7 @@ const heroVideo = ref(null)
 // simpler attachment state: when navbar hits header it becomes attached
 const attached = ref(false)
 const navHeight = ref(0)
+const detachTop = ref(null)
 const scrollY = ref(window.scrollY || 0)
 const navbarTopY = ref(-1)
 let rafId = null
@@ -168,6 +169,11 @@ watch(attached, (newVal, oldVal) => {
     setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
   }
   if (oldVal === true && newVal === false) {
+    // capture current visual top so detachment doesn't 'drop' from a different position
+    if (navbarRef.value) {
+      const r = navbarRef.value.getBoundingClientRect()
+      detachTop.value = Math.round(r.top)
+    }
     isDetaching.value = true
     isReturningToFlow.value = true
     setTimeout(() => { isDetaching.value = false }, 80)
@@ -184,11 +190,12 @@ const navInlineStyle = computed(() => {
   if (!isNavFixed.value) {
     // Not fixed - either returning to flow, detaching, attaching, or already there
     if (isDetaching.value) {
-      // Detach instantly at its detached position (no transform animation)
+      // Detach instantly at its current visual position (no drop)
+      const topPx = (detachTop.value != null) ? `${detachTop.value}px` : 'var(--header-height)'
       return {
         ...baseStyle,
         position: 'fixed',
-        top: 'var(--header-height)',
+        top: topPx,
         left: '0',
         width: '100vw',
         zIndex: '60',
@@ -238,8 +245,9 @@ const sentinelStyle = computed(() => {
   const h = Math.max(0, (navHeight.value || 0) - delta)
   // Keep the placeholder height while the navbar is fixed or while it is returning/attaching/detaching
   if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
+    // keep the full navHeight while attached/transitioning to avoid content jumps
     const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
-    return { height: `${h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
+    return { height: `${navHeight.value || h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
   }
   // when not fixed and not returning, collapse the placeholder
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }
