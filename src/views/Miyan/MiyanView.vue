@@ -2,15 +2,15 @@
   <div>
     <!-- Hero Section -->
     <section class="w-full h-screen flex items-center justify-center overflow-hidden">
-      <div class="absolute inset-0 z-0">
-        <video 
-          :src="siteMedia.heroVideo" 
-          autoplay 
-          muted 
-          loop 
-          playsinline 
-          class="absolute inset-0 w-full h-full object-cover" 
-        />
+        <div class="absolute inset-0 z-0">
+          <video ref="heroVideo" 
+            :src="siteMedia.heroVideo" 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            class="absolute inset-0 w-full h-full object-cover" 
+          />
         <div
           class="absolute inset-0 transition-all"
           :style="{ 
@@ -65,14 +65,17 @@
       </section>
     </div>
   </div>
-  <router-view />
+  <div ref="childSwipe" class="child-swipe-wrapper">
+    <router-view />
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { lang } from '@/state/lang'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
+const router = useRouter()
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
@@ -138,10 +141,10 @@ function onScrollTrack() {
   })
 }
 
-const isNavFixed = computed(() => {
-  const thresholdPx = Math.round(window.innerHeight * 0.9)
-  return (scrollY.value || 0) >= thresholdPx
-})
+// simpler attachment state driven by sentinel position
+const heroVideo = ref(null)
+const attached = ref(false)
+const isNavFixed = computed(() => attached.value)
 const HEADER_BG_DURATION = 500
 const NAV_TOP_DURATION = 240
 const NAV_RETURN_DURATION = 300
@@ -156,23 +159,19 @@ const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
 const navBgOpacity = ref(navTargetOpacity.value)
 watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
-// Watch for attach/detach and coordinate short animations
-watch(isNavFixed, (newVal, oldVal) => {
-  // Attachment (becoming fixed)
+watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
+watch(attached, (newVal, oldVal) => {
   if (oldVal === false && newVal === true) {
     isAttaching.value = true
     setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
   }
-
-  // Detachment (leaving fixed state)
   if (oldVal === true && newVal === false) {
     isDetaching.value = true
     isReturningToFlow.value = true
-    // keep detaching window short but preserve placeholder while returning
     setTimeout(() => { isDetaching.value = false }, 80)
     setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
-})
+}, { immediate: true })
 
 const navInlineStyle = computed(() => {
   const baseStyle = {
@@ -248,16 +247,81 @@ onMounted(() => {
   startIntroTransition()
   window.addEventListener('scroll', setAlphaFromScroll, { passive: true })
   // init sticky measurements
-  updateNavTop(); updateNavHeight(); onScrollTrack()
+  // reset scroll on reload
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+  window.scrollTo({ top: 0 })
+
+  // video intro: wait for canplay then start
+  const v = heroVideo.value
+  if (v && v.readyState >= 3) {
+    startIntroTransition()
+  } else if (v) {
+    const onCan = () => { startIntroTransition(); v.removeEventListener('canplay', onCan) }
+    v.addEventListener('canplay', onCan)
+  } else {
+    startIntroTransition()
+  }
+
+  updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment()
   window.addEventListener('scroll', onScrollTrack, { passive: true })
-  window.addEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
-  window.addEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
+  window.addEventListener('scroll', () => { checkAttachment() }, { passive: true })
+  window.addEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment() })
+  window.addEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment() })
+
+  // swipe handlers for child views
+  const swipeEl = document.querySelector('.child-swipe-wrapper')
+  if (swipeEl) {
+    let startX = 0, startY = 0, dx = 0, dy = 0, moving = false
+    const threshold = 60
+    const onTouchStart = (e) => {
+      const t = e.touches && e.touches[0]
+      startX = t ? t.clientX : e.clientX
+      startY = t ? t.clientY : e.clientY
+      moving = true
+    }
+    const onTouchMove = (e) => {
+      if (!moving) return
+      const t = e.touches && e.touches[0]
+      dx = (t ? t.clientX : e.clientX) - startX
+      dy = (t ? t.clientY : e.clientY) - startY
+      if (Math.abs(dy) > Math.abs(dx)) return
+      e.preventDefault()
+    }
+    const onTouchEnd = () => {
+      moving = false
+      if (Math.abs(dx) > threshold && Math.abs(dx) > Math.abs(dy)) {
+        const path = route.path
+        const seg = path.split('/').filter(Boolean)
+        const langSeg = seg[0] === 'en' || seg[0] === 'fa' ? seg[0] : lang.value
+        const a = `/${langSeg}`
+        // implement a generic sibling switch: if path ends with 'projects' go to '', else go to 'projects'
+        const base = `/${langSeg}/` 
+        const projects = `/${langSeg}/projects`
+        if (dx < 0) {
+          if (path !== projects) router.push({ path: projects })
+        } else {
+          if (path !== base) router.push({ path: base })
+        }
+      }
+      dx = 0; dy = 0
+    }
+    swipeEl.addEventListener('touchstart', onTouchStart, { passive: true })
+    swipeEl.addEventListener('touchmove', onTouchMove, { passive: false })
+    swipeEl.addEventListener('touchend', onTouchEnd)
+    swipeEl.__swipeCleanup = () => {
+      swipeEl.removeEventListener('touchstart', onTouchStart)
+      swipeEl.removeEventListener('touchmove', onTouchMove)
+      swipeEl.removeEventListener('touchend', onTouchEnd)
+    }
+  }
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', setAlphaFromScroll)
   window.removeEventListener('scroll', onScrollTrack)
   window.removeEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
   window.removeEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
+  const swipeEl = document.querySelector('.child-swipe-wrapper')
+  if (swipeEl && swipeEl.__swipeCleanup) swipeEl.__swipeCleanup()
   if (rafId) cancelAnimationFrame(rafId)
 })
 

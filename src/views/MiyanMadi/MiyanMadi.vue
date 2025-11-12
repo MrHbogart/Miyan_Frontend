@@ -1,7 +1,7 @@
 <template>
   <section class="w-full h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
-  <video :src="siteMedia.heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
+  <video ref="heroVideo" :src="siteMedia.heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
       <div
         class="absolute inset-0 transition-all"
         :style="{
@@ -41,13 +41,16 @@
   </div>
 
   <!-- Child Router View -->
-  <router-view />
+  <div ref="childSwipe" class="child-swipe-wrapper">
+    <router-view />
+  </div>
 </template>
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { lang } from '@/state/lang'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
+const router = useRouter()
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
@@ -98,6 +101,9 @@ function startIntroTransition() {
 // dynamic sticky below 10vh header
 const navbarRef = ref(null)
 const navbarSentinel = ref(null)
+const heroVideo = ref(null)
+// simpler attachment state: when navbar hits header it becomes attached
+const attached = ref(false)
 const navHeight = ref(0)
 const scrollY = ref(window.scrollY || 0)
 const navbarTopY = ref(-1)
@@ -112,6 +118,15 @@ function updateNavTop() {
     navbarTopY.value = -1
   }
 }
+
+function checkAttachment() {
+  const sent = navbarSentinel.value
+  if (!sent) return
+  const rect = sent.getBoundingClientRect()
+  const headerH = headerHeight.value || 0
+  const shouldAttach = rect.top <= headerH + 1
+  if (shouldAttach !== attached.value) attached.value = shouldAttach
+}
 function updateNavHeight() {
   if (navbarRef.value) navHeight.value = navbarRef.value.offsetHeight || 0
 }
@@ -124,10 +139,8 @@ function onScrollTrack() {
   })
 }
 const headerHeightVh = 9
-const isNavFixed = computed(() => {
-  const thresholdPx = Math.round(window.innerHeight * 0.9)
-  return (scrollY.value || 0) >= thresholdPx
-})
+// keep legacy computed for backward compat but prefer `attached` for animations
+const isNavFixed = computed(() => attached.value)
 // navbar animation timings and opacity syncing
 const HEADER_BG_DURATION = 500
 const NAV_TOP_DURATION = 240
@@ -144,29 +157,23 @@ const navBgOpacity = ref(navTargetOpacity.value)
 watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 
 // Watch for detachment (transition from fixed to non-fixed)
-watch(isNavFixed, (newVal, oldVal) => {
-  // Attachment (becoming fixed)
+// sync shared navAttached state so Header can change transparency when navbar attaches
+watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
+
+// coordinate short attach/detach windows for smooth animations
+watch(attached, (newVal, oldVal) => {
   if (oldVal === false && newVal === true) {
-    // animate attaching: start slightly offset and slide into place
     isAttaching.value = true
-    // keep placeholder during attach animation
+    // keep placeholder while attaching
     setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
   }
-
-  // Detachment (leaving fixed state)
   if (oldVal === true && newVal === false) {
-    // make detachment instant (no transform animation) but hold placeholder briefly
     isDetaching.value = true
-    // keep the returning flag to drive the final layout-friendly animations
     isReturningToFlow.value = true
-    // short window to avoid visual jump when scrolling fast
-    setTimeout(() => {
-      isDetaching.value = false
-    }, 80)
-    // allow the return animation window to finish (this keeps placeholder stable)
+    setTimeout(() => { isDetaching.value = false }, 80)
     setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
-})
+}, { immediate: true })
 
 const navInlineStyle = computed(() => {
   const baseStyle = {
@@ -243,19 +250,90 @@ watch(isNavFixed, (v) => { navAttached.value = !!v }, { immediate: true })
 
 onMounted(() => {
   animationComplete = false
-  startIntroTransition()
+  // ensure reload starts from top
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+  window.scrollTo({ top: 0 })
+
+  // wait for video to be ready then start intro transition
+  const v = heroVideo.value
+  if (v && v.readyState >= 3) {
+    startIntroTransition()
+  } else if (v) {
+    const onCan = () => { startIntroTransition(); v.removeEventListener('canplay', onCan) }
+    v.addEventListener('canplay', onCan)
+  } else {
+    startIntroTransition()
+  }
+
   window.addEventListener('scroll', setAlphaFromScroll, { passive: true })
   // init sticky measurements
-  updateNavTop(); updateNavHeight(); onScrollTrack()
+  updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment()
   window.addEventListener('scroll', onScrollTrack, { passive: true })
-  window.addEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
-  window.addEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
+  window.addEventListener('scroll', () => { checkAttachment() }, { passive: true })
+  window.addEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment() })
+  window.addEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack(); checkAttachment() })
+
+  // Setup swipe handlers for child view switching
+  const swipeEl = document.querySelector('.child-swipe-wrapper')
+  if (swipeEl) {
+    let startX = 0, startY = 0, dx = 0, dy = 0, moving = false
+    const threshold = 60
+    const onTouchStart = (e) => {
+      const t = e.touches && e.touches[0]
+      startX = t ? t.clientX : e.clientX
+      startY = t ? t.clientY : e.clientY
+      moving = true
+    }
+    const onTouchMove = (e) => {
+      if (!moving) return
+      const t = e.touches && e.touches[0]
+      dx = (t ? t.clientX : e.clientX) - startX
+      dy = (t ? t.clientY : e.clientY) - startY
+      // if vertical scroll is dominant, ignore
+      if (Math.abs(dy) > Math.abs(dx)) return
+      e.preventDefault()
+    }
+    const onTouchEnd = () => {
+      moving = false
+      if (Math.abs(dx) > threshold && Math.abs(dx) > Math.abs(dy)) {
+        // navigate between the two child routes
+        const path = route.path
+        const seg = path.split('/').filter(Boolean)
+        const langSeg = seg[0] === 'en' || seg[0] === 'fa' ? seg[0] : lang.value
+        const base = `/${langSeg}/madi`
+        const daily = `/${langSeg}/madi/daily-menu`
+        if (dx < 0) {
+          // swipe left -> go to daily
+          if (path !== daily) {
+            router.push({ path: daily })
+          }
+        } else {
+          // swipe right -> go to base
+          if (path !== base) {
+            router.push({ path: base })
+          }
+        }
+      }
+      dx = 0; dy = 0
+    }
+    swipeEl.addEventListener('touchstart', onTouchStart, { passive: true })
+    swipeEl.addEventListener('touchmove', onTouchMove, { passive: false })
+    swipeEl.addEventListener('touchend', onTouchEnd)
+    // store removal functions on element for cleanup
+    swipeEl.__swipeCleanup = () => {
+      swipeEl.removeEventListener('touchstart', onTouchStart)
+      swipeEl.removeEventListener('touchmove', onTouchMove)
+      swipeEl.removeEventListener('touchend', onTouchEnd)
+    }
+  }
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', setAlphaFromScroll)
   window.removeEventListener('scroll', onScrollTrack)
   window.removeEventListener('resize', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
   window.removeEventListener('load', () => { updateNavTop(); updateNavHeight(); onScrollTrack() })
+  const swipeEl = document.querySelector('.child-swipe-wrapper')
+  if (swipeEl && swipeEl.__swipeCleanup) swipeEl.__swipeCleanup()
   if (rafId) cancelAnimationFrame(rafId)
 })
 
