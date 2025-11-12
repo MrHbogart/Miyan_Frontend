@@ -177,16 +177,19 @@ watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
 watch(attached, (newVal, oldVal) => {
   if (oldVal === false && newVal === true) {
+    // attach: start at 0 then animate up to -1vh
     isAttaching.value = true
-    setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
+    requestAnimationFrame(() => { requestAnimationFrame(() => { isAttaching.value = false }) })
+    isReturningToFlow.value = true
+    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
   if (oldVal === true && newVal === false) {
-    // set detach top right away so navbar doesn't fall from a different place
+    // detaching: capture top and animate down from -1vh
     updateDetachTop()
     isDetaching.value = true
+    requestAnimationFrame(() => { requestAnimationFrame(() => { isDetaching.value = false }) })
     isReturningToFlow.value = true
-    setTimeout(() => { isDetaching.value = false }, 80)
-    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
+    setTimeout(() => { isReturningToFlow.value = false; detachTop.value = null }, NAV_RETURN_DURATION)
   }
 }, { immediate: true })
 

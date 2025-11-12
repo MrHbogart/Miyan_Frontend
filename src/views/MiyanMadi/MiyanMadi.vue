@@ -164,9 +164,13 @@ watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true 
 // coordinate short attach/detach windows for smooth animations
 watch(attached, (newVal, oldVal) => {
   if (oldVal === false && newVal === true) {
+    // Start attach: placeholder stays full, navbar starts at 0 and animates up to -1vh
     isAttaching.value = true
-    // keep placeholder while attaching
-    setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
+    // trigger the upward animation on next frame
+    requestAnimationFrame(() => { requestAnimationFrame(() => { isAttaching.value = false }) })
+    // ensure returning flag holds placeholder during the animation window
+    isReturningToFlow.value = true
+    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
   if (oldVal === true && newVal === false) {
     // capture current visual top so detachment doesn't 'drop' from a different position
@@ -174,10 +178,13 @@ watch(attached, (newVal, oldVal) => {
       const r = navbarRef.value.getBoundingClientRect()
       detachTop.value = Math.round(r.top)
     }
+    // Detach: render navbar 1vh higher immediately, then animate it down 1vh
     isDetaching.value = true
+    // trigger the downward animation on next frame
+    requestAnimationFrame(() => { requestAnimationFrame(() => { isDetaching.value = false }) })
+    // keep returning state so placeholder animates back to full height
     isReturningToFlow.value = true
-    setTimeout(() => { isDetaching.value = false }, 80)
-    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
+    setTimeout(() => { isReturningToFlow.value = false; detachTop.value = null }, NAV_RETURN_DURATION)
   }
 }, { immediate: true })
 
@@ -189,9 +196,10 @@ const navInlineStyle = computed(() => {
   
   if (!isNavFixed.value) {
     // Not fixed - either returning to flow, detaching, attaching, or already there
-    if (isDetaching.value) {
-      // Detach instantly at its current visual position (no drop)
+    if (isDetaching.value || isReturningToFlow.value) {
+      // During detachment/return we render the navbar as an overlay at detachTop
       const topPx = (detachTop.value != null) ? `${detachTop.value}px` : 'var(--header-height)'
+      const tr = isDetaching.value ? 'translateY(-1vh)' : 'translateY(0)'
       return {
         ...baseStyle,
         position: 'fixed',
@@ -199,13 +207,13 @@ const navInlineStyle = computed(() => {
         left: '0',
         width: '100vw',
         zIndex: '60',
-        transform: 'translateY(0)',
-        transition: `background ${HEADER_BG_DURATION}ms ease`
+        transform: tr,
+        transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
       }
     }
 
-    if (isReturningToFlow.value || isAttaching.value) {
-      // keep it fixed and overlay the content while animating down into place
+    if (isAttaching.value) {
+      // initial attach state: start at translateY(0) then RAF will flip isAttaching and animate to -1vh
       return {
         ...baseStyle,
         position: 'fixed',
@@ -213,9 +221,16 @@ const navInlineStyle = computed(() => {
         left: '0',
         width: '100vw',
         zIndex: '60',
-        transform: isAttaching.value ? 'translateY(-8px)' : 'translateY(-8px)',
+        transform: 'translateY(0)',
         transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
       }
+    }
+
+    // fully in-flow (no special animation), render as non-fixed
+    return {
+      ...baseStyle,
+      transform: 'translateY(0)',
+      transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
     }
 
     // fully in-flow (no special animation), render as non-fixed
@@ -245,9 +260,14 @@ const sentinelStyle = computed(() => {
   const h = Math.max(0, (navHeight.value || 0) - delta)
   // Keep the placeholder height while the navbar is fixed or while it is returning/attaching/detaching
   if (isNavFixed.value || isReturningToFlow.value || isAttaching.value || isDetaching.value) {
-    // keep the full navHeight while attached/transitioning to avoid content jumps
-    const t = (isReturningToFlow.value || isAttaching.value) ? `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)` : 'height 0ms'
-    return { height: `${navHeight.value || h}px`, transition: t, backgroundColor: 'var(--surface, #fff)' }
+    const basePx = navHeight.value || h
+    // Attachment: during isAttaching we keep full height then animate to reduced (-1vh)
+    if (isAttaching.value) return { height: `${basePx}px`, transition: 'height 0ms', backgroundColor: 'var(--surface, #fff)' }
+    // Attached final or returning: compute target using calc to mix px and vh
+    if (isNavFixed.value && !isAttaching.value) return { height: `calc(${basePx}px - 1vh)`, transition: `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)`, backgroundColor: 'var(--surface, #fff)' }
+    // Detaching: start reduced and animate to full
+    if (isDetaching.value || isReturningToFlow.value) return { height: `${basePx}px`, transition: `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)`, backgroundColor: 'var(--surface, #fff)' }
+    return { height: `${basePx}px`, transition: `height ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1)`, backgroundColor: 'var(--surface, #fff)' }
   }
   // when not fixed and not returning, collapse the placeholder
   return { height: '0px', transition: `height 0ms`, backgroundColor: 'var(--surface, #fff)' }

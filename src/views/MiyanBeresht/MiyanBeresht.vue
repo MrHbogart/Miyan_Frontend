@@ -155,15 +155,18 @@ watch(navTargetOpacity, (v) => { navBgOpacity.value = v }, { immediate: true })
 watch(attached, (newVal) => { navAttached.value = !!newVal }, { immediate: true })
 watch(attached, (newVal, oldVal) => {
   if (oldVal === false && newVal === true) {
+    // attach: start at 0 then animate up to -1vh
     isAttaching.value = true
-    setTimeout(() => { isAttaching.value = false }, NAV_RETURN_DURATION)
+    requestAnimationFrame(() => { requestAnimationFrame(() => { isAttaching.value = false }) })
+    isReturningToFlow.value = true
+    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
   }
   if (oldVal === true && newVal === false) {
     updateDetachTop()
     isDetaching.value = true
+    requestAnimationFrame(() => { requestAnimationFrame(() => { isDetaching.value = false }) })
     isReturningToFlow.value = true
-    setTimeout(() => { isDetaching.value = false }, 80)
-    setTimeout(() => { isReturningToFlow.value = false }, NAV_RETURN_DURATION)
+    setTimeout(() => { isReturningToFlow.value = false; detachTop.value = null }, NAV_RETURN_DURATION)
   }
 }, { immediate: true })
 
@@ -175,8 +178,9 @@ const navInlineStyle = computed(() => {
   
   if (!isNavFixed.value) {
     // Not fixed - either returning to flow, detaching, attaching, or already there
-        if (isDetaching.value) {
+        if (isDetaching.value || isReturningToFlow.value) {
           const topPx = (detachTop.value != null) ? `${detachTop.value}px` : 'var(--header-height)'
+          const tr = isDetaching.value ? 'translateY(-1vh)' : 'translateY(0)'
           return {
             ...baseStyle,
             position: 'fixed',
@@ -184,22 +188,22 @@ const navInlineStyle = computed(() => {
             left: '0',
             width: '100vw',
             zIndex: '60',
-            transform: 'translateY(0)',
-            transition: `background ${HEADER_BG_DURATION}ms ease`
+            transform: tr,
+            transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
           }
-    }
-    if (isReturningToFlow.value || isAttaching.value) {
-      return {
-        ...baseStyle,
-        position: 'fixed',
-        top: 'var(--header-height)',
-        left: '0',
-        width: '100vw',
-        zIndex: '60',
-        transform: 'translateY(-8px)',
-        transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
-      }
-    }
+        }
+        if (isAttaching.value) {
+          return {
+            ...baseStyle,
+            position: 'fixed',
+            top: 'var(--header-height)',
+            left: '0',
+            width: '100vw',
+            zIndex: '60',
+            transform: 'translateY(0)',
+            transition: `transform ${NAV_RETURN_DURATION}ms cubic-bezier(.34,.5,.8,1), background ${HEADER_BG_DURATION}ms ease`
+          }
+        }
     return {
       ...baseStyle,
       transform: 'translateY(0)',

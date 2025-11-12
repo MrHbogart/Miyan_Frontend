@@ -1,5 +1,5 @@
 <template>
-  <header :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '']" :style="[headerStyle, { backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` }]">
+  <header :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '', navAttached ? 'header-attached' : '']" :style="[headerStyle, { backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` }]">
   <!-- status-safe-area overlay for notch / status bar coloring -->
   <div class="status-safe-area" :style="statusStyle" />
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
@@ -203,6 +203,7 @@ onUnmounted(() => {
 .logo { color: var(--brand, #2b2b2b); font-family: Inter, ui-sans-serif; }
 header { height: 10vh; transition: height 500ms ease; }
 .header-compact { height: 9vh; }
+.header-attached { height: calc(10vh - 1vh); }
 
 /* child visibility transitions */
 .header-hidden { opacity: 0; transform: translateY(-6px); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1) }
