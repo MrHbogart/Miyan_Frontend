@@ -1,31 +1,30 @@
 <template>
   <div class="w-full max-w-6xl mx-auto p-4">
-
-      <div class="space-y-6">
+      <div class="space-y-6" v-if="menu && menu.sections">
           <section v-for="(section, sIdx) in menu.sections" :key="sIdx" class="pb-8 last:pb-0">
             <h2 class="text-2xl mb-6 text-center">
-              <span v-if="lang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ t(section.title) }}</span>
+              <span v-if="currentLang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ t(section.title) }}</span>
               <span v-else class="block font-cinzel font-light tracking-wide">{{ t(section.title) }}</span>
             </h2>
         <div class="grid gap-6 md:gap-8">
           <article v-for="(item, idx) in section.items" :key="idx" class="group">
             <div class="grid md:grid-cols-2 gap-4 items-start">
-              <div :class="lang === 'fa' ? 'order-2 md:order-2' : 'order-2 md:order-1'">
+              <div :class="currentLang === 'fa' ? 'order-2 md:order-2' : 'order-2 md:order-1'">
                 <div class="mb-4">
-                  <div :class="['flex items-baseline justify-between', lang === 'fa' ? 'flex-row-reverse' : '']">
+                  <div :class="['flex items-baseline justify-between', currentLang === 'fa' ? 'flex-row-reverse' : '']">
                     <h3 class="mb-2">
-                      <span v-if="lang === 'fa'" class="block font-b-titr text-xl mb-1" dir="rtl">{{ t(item.name) }}</span>
+                      <span v-if="currentLang === 'fa'" class="block font-b-titr text-xl mb-1" dir="rtl">{{ t(item.name) }}</span>
                       <span v-else class="block font-cinzel text-lg font-medium">{{ t(item.name) }}</span>
                     </h3>
 
                     <div class="text-gray-600 ml-4">
-                      <span v-if="lang === 'fa'" class="block font-b-titr text-lg text-right" dir="rtl">{{ t(item.price) }}</span>
+                      <span v-if="currentLang === 'fa'" class="block font-b-titr text-lg text-right" dir="rtl">{{ t(item.price) }}</span>
                       <span v-else class="block font-cinzel font-light">{{ t(item.price) }}</span>
                     </div>
                   </div>
 
                   <p class="text-gray-500">
-                    <span v-if="lang === 'fa'" class="block font-b-titr text-sm mb-1" dir="rtl">{{ t(item.description) }}</span>
+                    <span v-if="currentLang === 'fa'" class="block font-b-titr text-sm mb-1" dir="rtl">{{ t(item.description) }}</span>
                     <span v-else class="block font-cinzel text-sm font-light">{{ t(item.description) }}</span>
                   </p>
                 </div>
@@ -33,12 +32,12 @@
 
               <div
                 v-if="item.image"
-                :class="lang === 'fa' ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
+                :class="currentLang === 'fa' ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
                 @click="openImage(item.image)"
               >
                 <img
                   :src="item.image"
-                  :alt="item.name.en"
+                  :alt="typeof item.name === 'object' ? item.name.en : item.name"
                   class="w-full h-40 md:h-56 object-cover transform transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
@@ -57,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ImageModal from './ImageModal.vue'
 import { lang } from '@/state/lang'
 
@@ -69,6 +68,7 @@ const props = defineProps({
 })
 
 const selectedImage = ref(null)
+const currentLang = computed(() => lang.value)
 
 function openImage(imageSrc) {
   selectedImage.value = imageSrc
@@ -78,7 +78,8 @@ function openImage(imageSrc) {
 function t(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
-  return obj[lang.value] ?? obj['fa'] ?? obj['en'] ?? ''
+  if (typeof obj !== 'object') return ''
+  return obj[currentLang.value] ?? obj['fa'] ?? obj['en'] ?? ''
 }
 </script>
 
