@@ -21,23 +21,27 @@ const menu = ref(null)
 const pickTodaysMenuFromResults = (results) => {
   if (!results) return null
   if (!Array.isArray(results)) {
-    // if single menu object, prefer its `todays` field if available
+    // Single menu object: prefer its `todays` field with full structure
     return results.todays || results
   }
 
-  // Try to find explicit "today"/"پخت روز" entry
-  let todayEntry = results.find(r => r && r.title && (
+  // results is an array: find the entry with "today" in title
+  const todayEntry = results.find(r => r && r.title && (
     (r.title.en && /today/i.test(r.title.en)) ||
     (r.title.fa && /پخت روز|تازه/i.test(r.title.fa))
   ))
 
   if (todayEntry) {
+    // Return todays if available, otherwise the entry itself (it has sections)
     return todayEntry.todays || todayEntry
   }
 
-  // If no explicit today entry, pick first entry's `todays` or fallback to first
+  // Fallback: use first entry's todays, or the first entry
   const first = results[0]
-  return (first && first.todays) ? first.todays : first
+  if (first) {
+    return first.todays || first
+  }
+  return null
 }
 
 watch(apiData, (v) => {

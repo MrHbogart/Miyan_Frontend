@@ -20,14 +20,23 @@ const menu = ref(null)
 
 const pickMainMenuFromResults = (results) => {
   if (!results) return null
-  if (!Array.isArray(results)) return results
+  if (!Array.isArray(results)) {
+    // Single menu object: pass as-is (it has sections)
+    return results
+  }
 
-  let main = results.find(r => r && r.title && (
+  // results is an array: find the entry with "main" or "اصلی" in title
+  const mainEntry = results.find(r => r && r.title && (
     (r.title.en && /main/i.test(r.title.en)) ||
     (r.title.fa && /منوی اصلی/.test(r.title.fa))
   ))
-  if (!main) main = results.find(r => r && r.sections) || results[1] || results[0]
-  return main
+
+  if (mainEntry) {
+    return mainEntry
+  }
+
+  // Fallback: use second entry (usually main) or first
+  return results[1] || results[0] || null
 }
 
 watch(apiData, (v) => {

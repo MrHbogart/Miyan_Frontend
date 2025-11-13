@@ -16,7 +16,9 @@ import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 const { data: projects, loading, error } = useDataFetcher(api.getMiyanGallery)
 
-// Map the projects data (a ref) to the menu shape expected by StructuredMenu
+// Map the gallery/projects data to the menu shape expected by StructuredMenu
+// API returns: { id, title_en, title_fa, image, ... }
+// Need to transform to: { name, description, image, price }
 const menu = computed(() => {
   const list = (projects && projects.value) ? projects.value : []
   return {
@@ -26,8 +28,8 @@ const menu = computed(() => {
       {
         title: { fa: 'پروژه‌ها', en: 'Projects' },
         items: (Array.isArray(list) ? list : []).map(p => ({
-          name: p.title,
-          description: p.description,
+          name: { fa: p.title_fa || '', en: p.title_en || '' },
+          description: null,
           image: p.image,
           price: null,
         })),

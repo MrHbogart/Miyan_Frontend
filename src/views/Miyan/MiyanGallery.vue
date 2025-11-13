@@ -13,14 +13,14 @@ import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 
 const { data: galleryData } = useDataFetcher(api.getMiyanGallery, { autoLoad: true, initialValue: [] })
-const galleryItems = computed(() => galleryData.value || [])
 
-function t(obj) {
-  if (typeof obj === 'string') return obj
-  if (!obj) return ''
-  return obj.en || obj.fa || ''
-}
-
-// pass items directly; GalleryGrid uses the 'lang' store to localize titles
+// Transform gallery API format (title_en, title_fa) to GalleryGrid format (title as object)
+const galleryItems = computed(() => {
+  const items = galleryData.value || []
+  return (Array.isArray(items) ? items : []).map(item => ({
+    ...item,
+    title: { fa: item.title_fa || '', en: item.title_en || '' }
+  }))
+})
 </script>
 
