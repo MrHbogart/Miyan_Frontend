@@ -7,8 +7,8 @@
               <span v-else class="block font-cinzel font-light tracking-wide">{{ t(section.title) }}</span>
             </h2>
         <div class="grid gap-6 md:gap-8">
-          <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group" v-if="item">
-            <div class="grid md:grid-cols-2 gap-4 items-start">
+          <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group">
+            <div v-if="item && item.name" class="grid md:grid-cols-2 gap-4 items-start">
               <div :class="currentLang === 'fa' ? 'order-2 md:order-2' : 'order-2 md:order-1'">
                 <div class="mb-4">
                   <div :class="['flex items-baseline justify-between', currentLang === 'fa' ? 'flex-row-reverse' : '']">
@@ -38,7 +38,7 @@
                 <img
                   :src="item.image"
                   :alt="(item.name && typeof item.name === 'object') ? (item.name.en || item.name.fa || '') : (item.name || '')"
-                  class="w-full h-40 md:h-56 object-cover transform transition-transform duration-300 group-hover:scale-105"
+                  class="w-full h-40 md:h-56 object-cover transform transition-transform duration-300 group-hover:scale-105 cursor-pointer"
                 />
               </div>
             </div>
@@ -70,25 +70,21 @@ const props = defineProps({
 const selectedImage = ref(null)
 const currentLang = computed(() => lang.value)
 
-// Get sections from menu: either menu.sections or wrap menu.items as a single section
+// Get sections directly from menu.sections
+// The API/mock data structure has sections at the top level
 const sections = computed(() => {
-  if (!props.menu) return []
-  // If menu has sections, use them directly
-  if (Array.isArray(props.menu.sections)) {
-    return props.menu.sections
+  if (!props.menu || !props.menu.sections) {
+    return []
   }
-  // If menu has items, wrap as single section
-  if (Array.isArray(props.menu.items)) {
-    return [{ title: props.menu.title || {}, items: props.menu.items }]
-  }
-  return []
+  console.log('[StructuredMenu] Sections count:', props.menu.sections.length, 'items:', props.menu.sections.map(s => s.items?.length || 0))
+  return props.menu.sections
 })
 
 function openImage(imageSrc) {
   selectedImage.value = imageSrc
 }
 
-// helper to read localized field (expects object with { fa, en })
+// Helper to read localized field (expects object with { fa, en })
 function t(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
