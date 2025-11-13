@@ -8,7 +8,6 @@ const scrolled = ref(false)
 const overlayAlpha = ref(0.45)
 const router = useRouter()
 
-// Luxury scroll handling with smooth transitions
 function handleScroll() {
 	const y = window.scrollY || window.pageYOffset
 	scrolled.value = y > 40

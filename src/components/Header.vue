@@ -1,16 +1,16 @@
 <template>
   <header 
-    :class="['fixed w-full top-0 left-0 z-40', isCompact ? 'header-compact' : '', navAttached ? 'header-attached' : '']" 
+    class="fixed w-full top-0 left-0 z-40" 
     :style="[headerStyle, { 
       backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, 
       borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', 
-      transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease, height 500ms ease` 
+      transition: `background 400ms ease, backdrop-filter 400ms ease` 
     }]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
     <div class="status-safe-area" :style="statusStyle" />
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
-      <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
+            <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
           <router-link to="/beresht" class="logo-link" :class="{ 'is-active': isActive('/beresht') }">
             <template v-if="lang === 'fa'">
@@ -49,37 +49,35 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted, provide, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { lang } from '@/state/lang'
+import siteMediaDefaults from '@/utils/siteMediaDefaults'
+import { headerHeight } from '@/state/headerState'
 
 const { scrolled } = defineProps({ scrolled: { type: Boolean, default: false } })
 
-// animation durations (ms)
-const HEADER_BG_DURATION = 500
+const route = useRoute()
+const isActive = (to) => route.path === to
+const siteMedia = siteMediaDefaults
 
+// Header state
+const headerBottomY = ref(0)
+provide('headerBottomY', headerBottomY)
+
+// Simple background opacity based on scroll state
+const headerTargetOpacity = computed(() => scrolled ? 0.85 : 0)
+const headerBgOpacity = ref(headerTargetOpacity.value)
+watch(headerTargetOpacity, (v) => {
+  headerBgOpacity.value = v
+}, { immediate: true })
+
+// Header style with backdrop filter
 const headerStyle = computed(() => ({
   backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
-  // respect the device safe area (notch / status bar)
   paddingTop: 'env(safe-area-inset-top)',
   WebkitPaddingTop: 'env(safe-area-inset-top)'
 }))
 
-const route = useRoute()
-const isActive = (to) => route.path === to
-import { lang, setLang } from '@/state/lang'
-
-import siteMediaDefaults from '@/utils/siteMediaDefaults'
-import { headerHeight, headerInitialHeight, navAttached } from '@/state/headerState'
-// Use local defaults only (backend doesn't provide siteMedia)
-const siteMedia = siteMediaDefaults
-
-// Reactive header bottom Y (document space). Provided so descendants (views) can read it.
-const headerBottomY = ref(0)
-provide('headerBottomY', headerBottomY)
-
-// expose headerHeight values to shared state so views can react to header shrink
-// headerHeight and headerInitialHeight are refs imported from shared state
-// (they'll be updated in `updateHeaderBottom` below)
-
-
+// Update header bottom Y position
 function updateHeaderBottom() {
   const el = document.querySelector('header')
   if (!el) {
@@ -88,29 +86,25 @@ function updateHeaderBottom() {
   }
   const rect = el.getBoundingClientRect()
   headerBottomY.value = Math.ceil(rect.bottom + window.scrollY)
-  // Expose header height via CSS variable for sticky navbars
+  
+  // Expose header height via CSS variable
   try {
     const h = Math.ceil(rect.height)
     document.documentElement.style.setProperty('--header-height', `${h-2}px`)
-    // update shared header heights
     headerHeight.value = h
-    if (!headerInitialHeight.value) headerInitialHeight.value = h
   } catch (e) {
     // no-op
   }
 }
 
-// header/background opacity coordination
-const headerTargetOpacity = computed(() => {
-  if (navAttached.value) return 1
-  return scrolled ? 0.85 : 0
-})
-const headerBgOpacity = ref(headerTargetOpacity.value)
-watch(headerTargetOpacity, (v) => {
-  headerBgOpacity.value = v
-}, { immediate: true })
+// Status bar styling
+const statusStyle = computed(() => ({
+  backgroundColor: scrolled ? 'rgba(255,255,255,0.85)' : '#000000',
+  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
+  transition: 'background 400ms ease, backdrop-filter 400ms ease'
+}))
 
-// Keep the browser UI/status bar coherent with header color where supported
+// Setup theme meta tags
 function ensureThemeMeta() {
   let m = document.querySelector('meta[name="theme-color"]')
   if (!m) {
@@ -120,30 +114,19 @@ function ensureThemeMeta() {
   }
   return m
 }
+
 const themeMeta = (typeof window !== 'undefined') ? ensureThemeMeta() : null
-// initialize top area to black
 document.documentElement.style.setProperty('--top-bg-color', '#000000')
 if (themeMeta) try { themeMeta.setAttribute('content', '#000000') } catch (e) {}
 
-// compute top-safe-area style directly from header opacity so CSS transitions can animate it
-const topBgColor = computed(() => {
-  const opacity = Math.max(0, Math.min(1, Number(headerBgOpacity.value) || 0))
-  return opacity > 0.02 ? `rgba(255,255,255,${opacity})` : '#000000'
-})
-const statusStyle = computed(() => ({
-  backgroundColor: topBgColor.value,
-  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
-  transition: `background ${HEADER_BG_DURATION}ms ease, backdrop-filter ${HEADER_BG_DURATION}ms ease`
-}))
-
-// Keep theme meta in sync (solid colors only)
+// Watch header opacity to update theme meta
 watch(headerBgOpacity, (v) => {
   if (!themeMeta) return
   const opacity = Math.max(0, Math.min(1, Number(v) || 0))
-  try { themeMeta.setAttribute('content', opacity > 0.02 ? '#ffffff' : '#000000') } catch (e) { /* no-op */ }
+  try { themeMeta.setAttribute('content', opacity > 0.02 ? '#ffffff' : '#000000') } catch (e) {}
 }, { immediate: true })
 
-// Also add apple-mobile-web-app-status-bar-style meta to allow overlaying the status bar
+// Setup apple meta tag for status bar
 function ensureAppleMeta() {
   let m = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
   if (!m) {
@@ -153,74 +136,42 @@ function ensureAppleMeta() {
   }
   return m
 }
+
 const appleMeta = (typeof window !== 'undefined') ? ensureAppleMeta() : null
 if (appleMeta) {
-  try { appleMeta.setAttribute('content', 'black-translucent') } catch (e) { /* no-op */ }
+  try { appleMeta.setAttribute('content', 'black-translucent') } catch (e) {}
 }
 
+// Observe header size changes
 let resizeObs = null
 onMounted(() => {
   updateHeaderBottom()
-  // watch for size changes
   try {
     resizeObs = new ResizeObserver(updateHeaderBottom)
     const el = document.querySelector('header')
     if (el) resizeObs.observe(el)
   } catch (e) {
-    // fallback: window resize
     window.addEventListener('resize', updateHeaderBottom)
   }
-  // also update on scroll because document scroll affects absolute Y
   window.addEventListener('scroll', updateHeaderBottom, { passive: true })
 })
+
 onUnmounted(() => {
   if (resizeObs) resizeObs.disconnect()
   window.removeEventListener('resize', updateHeaderBottom)
   window.removeEventListener('scroll', updateHeaderBottom)
 })
-
-const isActiveLocal = isActive
-function setLanguage(l) { setLang(l) }
-
-// Compact header when page is beyond 91vh
-const scrollY = ref(window.scrollY || 0)
-const viewportH = ref(window.innerHeight || 0)
-function onScrollHeader() {
-  scrollY.value = window.scrollY || window.pageYOffset
-}
-function onResizeHeader() {
-  viewportH.value = window.innerHeight || 0
-}
-const isCompact = computed(() => {
-  // Trigger at 90vh
-  const threshold = Math.round((viewportH.value || window.innerHeight) * 0.9)
-  return (scrollY.value || 0) >= threshold
-})
-onMounted(() => {
-  window.addEventListener('scroll', onScrollHeader, { passive: true })
-  window.addEventListener('resize', onResizeHeader)
-  onResizeHeader(); onScrollHeader()
-})
-onUnmounted(() => {
-  window.removeEventListener('scroll', onScrollHeader)
-  window.removeEventListener('resize', onResizeHeader)
-})
 </script>
 
 <style scoped>
-.logo { color: var(--brand, #2b2b2b); font-family: Inter, ui-sans-serif; }
 header { 
   height: 10vh; 
-  transition: height 500ms ease, background-color 500ms ease, backdrop-filter 500ms ease;
+  transition: background-color 400ms ease, backdrop-filter 400ms ease;
 }
-.header-compact { height: 9vh; }
-.header-attached { height: calc(10vh - 1vh); }
 
-/* child visibility transitions */
-.header-hidden { opacity: 0; transform: translateY(-6px); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1) }
-.header-visible { opacity: 1; transform: translateY(0); transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1) }
-.header-visible .logo, .header-visible nav, .header-visible button { opacity: 1; transform: none }
-.header-hidden .logo, .header-hidden nav, .header-hidden button { opacity: 0 }
+/* Child visibility transitions */
+.header-hidden { opacity: 0; transform: translateY(-6px); transition: opacity 320ms ease, transform 320ms cubic-bezier(.2,.9,.2,1) }
+.header-visible { opacity: 1; transform: translateY(0); transition: opacity 320ms ease, transform 320ms cubic-bezier(.2,.9,.2,1) }
 
 .header-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; column-gap: 12px; }
 .header-logo {
@@ -238,7 +189,7 @@ header {
   height: 100%;
   cursor: pointer;
   border-radius: 8px;
-  transition: transform 430ms cubic-bezier(.19,.9,.33,1.19), filter 430ms cubic-bezier(.19,.9,.33,1.19);
+  transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
 }
 .logo-img {
   height: 100%;
@@ -247,7 +198,7 @@ header {
   aspect-ratio: 4/1;
   object-fit: contain;
   filter: brightness(0.96) grayscale(0);
-  transition: filter 430ms cubic-bezier(.19,.9,.33,1.19), transform 430ms cubic-bezier(.19,.9,.33,1.19);
+  transition: filter 300ms cubic-bezier(.19,.9,.33,1.19), transform 300ms cubic-bezier(.19,.9,.33,1.19);
 }
 /* Only non-active gets hover animation */
 .logo-link:not(.is-active):hover .logo-img,
@@ -255,10 +206,9 @@ header {
 .logo-link:not(.is-active):active .logo-img {
   filter: brightness(1.05);
   transform: scale(1.03) translateY(-1px);
-  font-weight: 600;
 }
 
-/* status-safe-area overlay styles */
+/* Status-safe-area overlay styles */
 .status-safe-area {
   position: fixed;
   top: 0;
@@ -266,7 +216,7 @@ header {
   right: 0;
   height: env(safe-area-inset-top);
   z-index: 45;
-  transition: background-color 260ms ease, backdrop-filter 260ms ease;
+  transition: background-color 400ms ease, backdrop-filter 400ms ease;
   pointer-events: none;
 }
 
@@ -279,10 +229,9 @@ header {
   font-family: 'Cinzel', serif;
   font-weight: 400;
   letter-spacing: 0.02em;
-  color: #1f2937; /* gray-800 */
+  color: #1f2937;
   line-height: 1;
   padding: 0 6px;
-  /* size tuned to match image height container (40px mobile, 56px md) */
   font-size: 20px;
 }
 @media (min-width: 768px) {
@@ -296,6 +245,5 @@ header {
   filter: brightness(1.05);
   transform: scale(1.03) translateY(-1px);
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19);
-  font-weight: 600;
 }
 </style>

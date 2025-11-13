@@ -7,13 +7,13 @@
         <!-- language toggle: will update route to include lang prefix and update global state -->
         <button
           @click.prevent="changeLang('fa')"
-          :class="['px-1 py-1 rounded', lang === 'fa' ? 'text-white font-semibold' : 'text-white/70']"
+          :class="['px-1 py-1', lang === 'fa' ? 'text-white font-semibold' : 'text-white/70']"
         >
           FA
         </button>
         <button
           @click.prevent="changeLang('en')"
-          :class="['px-1 py-1 rounded', lang === 'en' ? 'text-white font-semibold' : 'text-white/70']"
+          :class="['px-1 py-1', lang === 'en' ? 'text-white font-semibold' : 'text-white/70']"
         >
           EN
         </button>
