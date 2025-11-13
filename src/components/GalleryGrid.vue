@@ -16,7 +16,7 @@
           <div @click="openImage(item.image)" class="gallery-item-wrapper">
             <img 
               :src="item.image" 
-              :alt="item.title.en" 
+              :alt="(item.title && typeof item.title === 'object') ? (item.title.en || item.title.fa || '') : (item.title || '')" 
               class="gallery-item-image" 
             />
             <div class="gallery-item-overlay">

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full max-w-6xl mx-auto p-4">
-      <div class="space-y-6" v-if="menu && menu.sections">
-          <section v-for="(section, sIdx) in menu.sections" :key="sIdx" class="pb-8 last:pb-0">
+      <div class="space-y-6" v-if="normalizedMenu && normalizedMenu.sections && normalizedMenu.sections.length">
+          <section v-for="(section, sIdx) in normalizedMenu.sections" :key="sIdx" class="pb-8 last:pb-0">
             <h2 class="text-2xl mb-6 text-center">
               <span v-if="currentLang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ t(section.title) }}</span>
               <span v-else class="block font-cinzel font-light tracking-wide">{{ t(section.title) }}</span>
@@ -37,7 +37,7 @@
               >
                 <img
                   :src="item.image"
-                  :alt="typeof item.name === 'object' ? item.name.en : item.name"
+                  :alt="(item.name && typeof item.name === 'object') ? (item.name.en || item.name.fa || '') : (item.name || '')"
                   class="w-full h-40 md:h-56 object-cover transform transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
@@ -61,14 +61,38 @@ import ImageModal from './ImageModal.vue'
 import { lang } from '@/state/lang'
 
 const props = defineProps({
+  // `menu` can be either:
+  // - an object with a `sections` array: { sections: [...] }
+  // - an array of sections directly: [ { title, items } ]
+  // - a single section-like object with `items`
   menu: {
-    type: Object,
+    type: [Object, Array],
     required: true,
   },
 })
 
 const selectedImage = ref(null)
 const currentLang = computed(() => lang.value)
+
+// Normalize incoming `menu` into an object with `sections: []` so the
+// template can always rely on `normalizedMenu.sections` being an array.
+const normalizedMenu = computed(() => {
+  const m = props.menu
+  if (!m) return { sections: [] }
+  if (Array.isArray(m)) {
+    // already an array of sections
+    return { sections: m }
+  }
+  if (m.sections && Array.isArray(m.sections)) {
+    return m
+  }
+  if (m.items && Array.isArray(m.items)) {
+    // single-section shape -> wrap into sections
+    return { sections: [{ title: m.title || {}, items: m.items }] }
+  }
+  // Unknown shape, try to coerce safe structure
+  return { sections: [] }
+})
 
 function openImage(imageSrc) {
   selectedImage.value = imageSrc

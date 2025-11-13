@@ -8,6 +8,7 @@
 
 <script setup>
 import StructuredMenu from '@/components/StructuredMenu.vue'
+import { computed } from 'vue'
 
 // import projects from '@/data/miyanProjects.js'
 
@@ -15,20 +16,23 @@ import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
 const { data: projects, loading, error } = useDataFetcher(api.getMiyanGallery)
 
-// Map the projects data to the menu shape expected by StructuredMenu
-const menu = {
-  title: { fa: 'پروژه‌ها', en: 'Projects' },
-  subtitle: null,
-  sections: [
-    {
-      title: { fa: 'پروژه‌ها', en: 'Projects' },
-      items: projects.map(p => ({
-        name: p.title,
-        description: p.description,
-        image: p.image,
-        price: null,
-      })),
-    },
-  ],
-}
+// Map the projects data (a ref) to the menu shape expected by StructuredMenu
+const menu = computed(() => {
+  const list = (projects && projects.value) ? projects.value : []
+  return {
+    title: { fa: 'پروژه‌ها', en: 'Projects' },
+    subtitle: null,
+    sections: [
+      {
+        title: { fa: 'پروژه‌ها', en: 'Projects' },
+        items: (Array.isArray(list) ? list : []).map(p => ({
+          name: p.title,
+          description: p.description,
+          image: p.image,
+          price: null,
+        })),
+      },
+    ],
+  }
+})
 </script>
