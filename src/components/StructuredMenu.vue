@@ -1,7 +1,7 @@
 <template>
   <div class="w-full max-w-6xl mx-auto p-4">
-      <div class="space-y-6" v-if="normalizedMenu && normalizedMenu.sections && normalizedMenu.sections.length">
-          <section v-for="(section, sIdx) in normalizedMenu.sections" :key="sIdx" class="pb-8 last:pb-0">
+      <div class="space-y-6" v-if="sections && sections.length">
+          <section v-for="(section, sIdx) in sections" :key="sIdx" class="pb-8 last:pb-0">
             <h2 class="text-2xl mb-6 text-center">
               <span v-if="currentLang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ t(section.title) }}</span>
               <span v-else class="block font-cinzel font-light tracking-wide">{{ t(section.title) }}</span>
@@ -61,12 +61,8 @@ import ImageModal from './ImageModal.vue'
 import { lang } from '@/state/lang'
 
 const props = defineProps({
-  // `menu` can be either:
-  // - an object with a `sections` array: { sections: [...] }
-  // - an array of sections directly: [ { title, items } ]
-  // - a single section-like object with `items`
   menu: {
-    type: [Object, Array],
+    type: Object,
     required: true,
   },
 })
@@ -74,63 +70,18 @@ const props = defineProps({
 const selectedImage = ref(null)
 const currentLang = computed(() => lang.value)
 
-// Normalize incoming `menu` into an object with `sections: []` so the
-// template can always rely on `normalizedMenu.sections` being an array.
-const normalizedMenu = computed(() => {
-  const m = props.menu
-  if (!m) return { sections: [] }
-  // If the backend provided a wrapper that contains 'todays' or 'results', prefer those
-  if (m && typeof m === 'object') {
-    if (Array.isArray(m.todays)) {
-      return { sections: [{ title: m.title || {}, items: m.todays }] }
-    }
-    if (m.todays && m.todays.sections) {
-      return m.todays
-    }
-    if (Array.isArray(m.results)) {
-      return { sections: [{ title: m.title || {}, items: m.results }] }
-    }
-    if (m.results && m.results.sections) {
-      return m.results
-    }
+// Get sections from menu: either menu.sections or wrap menu.items as a single section
+const sections = computed(() => {
+  if (!props.menu) return []
+  // If menu has sections, use them directly
+  if (Array.isArray(props.menu.sections)) {
+    return props.menu.sections
   }
-  if (Array.isArray(m)) {
-    // Distinguish between:
-    // - an array of sections: [{ title, items }]
-    // - an array of items: [{ name, price, image }]
-    const first = m[0]
-    if (first && (first.items || first.title)) {
-      return { sections: m }
-    }
-    // Treat as single-section list of items
-    if (first && (first.name || first.price || first.image || first.description)) {
-      return { sections: [{ title: {}, items: m }] }
-    }
-    // Fallback: treat as sections
-    return { sections: m }
+  // If menu has items, wrap as single section
+  if (Array.isArray(props.menu.items)) {
+    return [{ title: props.menu.title || {}, items: props.menu.items }]
   }
-  if (m.sections && Array.isArray(m.sections)) {
-    return m
-  }
-  // If the object contains a top-level 'menu' or similar wrapper, try that
-  if (m.menu && Array.isArray(m.menu)) {
-    return { sections: [{ title: m.title || {}, items: m.menu }] }
-  }
-  // If the object contains a top-level array field that looks like items, use it
-  if (m && typeof m === 'object') {
-    for (const key of Object.keys(m)) {
-      const val = m[key]
-      if (Array.isArray(val) && val.length && (val[0].name || val[0].title || val[0].image || val[0].description)) {
-        return { sections: [{ title: m.title || {}, items: val }] }
-      }
-    }
-  }
-  if (m.items && Array.isArray(m.items)) {
-    // single-section shape -> wrap into sections
-    return { sections: [{ title: m.title || {}, items: m.items }] }
-  }
-  // Unknown shape, try to coerce safe structure
-  return { sections: [] }
+  return []
 })
 
 function openImage(imageSrc) {
@@ -142,7 +93,6 @@ function t(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
   if (typeof obj !== 'object') return ''
-  // Safely access properties with fallbacks
   const value = obj[currentLang.value] || obj['fa'] || obj['en'] || ''
   return String(value)
 }
