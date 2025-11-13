@@ -80,7 +80,18 @@ const normalizedMenu = computed(() => {
   const m = props.menu
   if (!m) return { sections: [] }
   if (Array.isArray(m)) {
-    // already an array of sections
+    // Distinguish between:
+    // - an array of sections: [{ title, items }]
+    // - an array of items: [{ name, price, image }]
+    const first = m[0]
+    if (first && (first.items || first.title)) {
+      return { sections: m }
+    }
+    // Treat as single-section list of items
+    if (first && (first.name || first.price || first.image || first.description)) {
+      return { sections: [{ title: {}, items: m }] }
+    }
+    // Fallback: treat as sections
     return { sections: m }
   }
   if (m.sections && Array.isArray(m.sections)) {
