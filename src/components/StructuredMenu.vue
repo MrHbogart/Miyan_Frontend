@@ -7,7 +7,7 @@
               <span v-else class="block font-cinzel font-light tracking-wide">{{ t(section.title) }}</span>
             </h2>
         <div class="grid gap-6 md:gap-8">
-          <article v-for="(item, idx) in section.items" :key="idx" class="group">
+          <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group" v-if="item">
             <div class="grid md:grid-cols-2 gap-4 items-start">
               <div :class="currentLang === 'fa' ? 'order-2 md:order-2' : 'order-2 md:order-1'">
                 <div class="mb-4">
@@ -17,13 +17,13 @@
                       <span v-else class="block font-cinzel text-lg font-medium">{{ t(item.name) }}</span>
                     </h3>
 
-                    <div class="text-gray-600 ml-4">
+                    <div v-if="item.price" class="text-gray-600 ml-4">
                       <span v-if="currentLang === 'fa'" class="block font-b-titr text-lg text-right" dir="rtl">{{ t(item.price) }}</span>
                       <span v-else class="block font-cinzel font-light">{{ t(item.price) }}</span>
                     </div>
                   </div>
 
-                  <p class="text-gray-500">
+                  <p v-if="item.description" class="text-gray-500">
                     <span v-if="currentLang === 'fa'" class="block font-b-titr text-sm mb-1" dir="rtl">{{ t(item.description) }}</span>
                     <span v-else class="block font-cinzel text-sm font-light">{{ t(item.description) }}</span>
                   </p>
@@ -79,7 +79,9 @@ function t(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
   if (typeof obj !== 'object') return ''
-  return obj[currentLang.value] ?? obj['fa'] ?? obj['en'] ?? ''
+  // Safely access properties with fallbacks
+  const value = obj[currentLang.value] || obj['fa'] || obj['en'] || ''
+  return String(value)
 }
 </script>
 
