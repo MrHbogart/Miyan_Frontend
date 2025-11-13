@@ -99,18 +99,19 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
 
   /**
    * Sentinel style - takes up space when navbar is fixed
+   * No animation - instantly adjusts to prevent layout jumps
    */
   const sentinelStyle = computed(() => {
     if (isNavFixed.value) {
       return { 
         height: `${navHeight.value || 0}px`, 
-        transition: `height ${TRANSITION_DURATION}ms ${EASING}`,
+        transition: 'none',
         backgroundColor: 'transparent'
       }
     }
     return { 
       height: '0px', 
-      transition: `height 0ms`,
+      transition: 'none',
       backgroundColor: 'transparent'
     }
   })
