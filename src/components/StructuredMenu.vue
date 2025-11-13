@@ -79,6 +79,21 @@ const currentLang = computed(() => lang.value)
 const normalizedMenu = computed(() => {
   const m = props.menu
   if (!m) return { sections: [] }
+  // If the backend provided a wrapper that contains 'todays' or 'results', prefer those
+  if (m && typeof m === 'object') {
+    if (Array.isArray(m.todays)) {
+      return { sections: [{ title: m.title || {}, items: m.todays }] }
+    }
+    if (m.todays && m.todays.sections) {
+      return m.todays
+    }
+    if (Array.isArray(m.results)) {
+      return { sections: [{ title: m.title || {}, items: m.results }] }
+    }
+    if (m.results && m.results.sections) {
+      return m.results
+    }
+  }
   if (Array.isArray(m)) {
     // Distinguish between:
     // - an array of sections: [{ title, items }]
@@ -96,6 +111,19 @@ const normalizedMenu = computed(() => {
   }
   if (m.sections && Array.isArray(m.sections)) {
     return m
+  }
+  // If the object contains a top-level 'menu' or similar wrapper, try that
+  if (m.menu && Array.isArray(m.menu)) {
+    return { sections: [{ title: m.title || {}, items: m.menu }] }
+  }
+  // If the object contains a top-level array field that looks like items, use it
+  if (m && typeof m === 'object') {
+    for (const key of Object.keys(m)) {
+      const val = m[key]
+      if (Array.isArray(val) && val.length && (val[0].name || val[0].title || val[0].image || val[0].description)) {
+        return { sections: [{ title: m.title || {}, items: val }] }
+      }
+    }
   }
   if (m.items && Array.isArray(m.items)) {
     // single-section shape -> wrap into sections
