@@ -10,11 +10,9 @@
 import StructuredMenu from '@/components/StructuredMenu.vue'
 import { computed } from 'vue'
 
-// import projects from '@/data/miyanProjects.js'
-
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'
-const { data: projects, loading, error } = useDataFetcher(api.getMiyanGallery)
+const { data: projects } = useDataFetcher(api.getMiyanGallery)
 
 // Map the gallery/projects data to the menu shape expected by StructuredMenu
 // API returns: { id, title_en, title_fa, image, ... }

@@ -1,12 +1,15 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import { useRouter } from 'vue-router'
+import { lang } from '@/state/lang'
+import { navAttached } from '@/state/headerState'
 
 const scrolled = ref(false)
 const overlayAlpha = ref(0.45)
 const router = useRouter()
+const currentDir = computed(() => (lang.value === 'fa' ? 'rtl' : 'ltr'))
 
 function handleScroll() {
 	const y = window.scrollY || window.pageYOffset
@@ -15,16 +18,34 @@ function handleScroll() {
 	overlayAlpha.value = Math.max(0.05, 0.45 - t * 0.45)
 }
 
+watch(currentDir, (dir) => {
+	if (typeof document !== 'undefined') {
+		document.documentElement.setAttribute('dir', dir)
+		document.documentElement.setAttribute('lang', lang.value)
+	}
+}, { immediate: true })
+
 onMounted(() => {
 	window.addEventListener('scroll', handleScroll, { passive: true })
 	handleScroll()
+
+	router.afterEach(() => {
+		requestAnimationFrame(() => {
+			handleScroll()
+			navAttached.value = false
+		})
+	})
 })
 onUnmounted(() => {
 	window.removeEventListener('scroll', handleScroll)
 })
 </script>
 <template>
-	<div id="app" class="min-h-screen bg-white text-gray-900">
+	<div
+		id="app"
+		class="min-h-screen bg-white text-gray-900"
+		:dir="currentDir"
+	>
 		<Header :scrolled="scrolled" />
 		<main class="pt-0">
 			<router-view />

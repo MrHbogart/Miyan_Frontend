@@ -35,139 +35,38 @@ body {
   --easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* hero kenburns animation */
-@keyframes kenburns {
-  0% { transform: scale(1) translateY(0); }
-  50% { transform: scale(1.08) translateY(-6px); }
-  100% { transform: scale(1) translateY(0); }
+.hero-fill-safe {
+  position: absolute;
+  inset: 0;
+  top: calc(env(safe-area-inset-top, 0px) * -1);
+  height: calc(100% + env(safe-area-inset-top, 0px));
+  width: 100%;
 }
 
-.hero-bg {
-  /* no auto animation for hero now; static background for a luxurious still image */
-  animation: none;
-  filter: saturate(0.95) contrast(1.02) blur(0px);
-  background-attachment: fixed;
-  height: 100vh; /* fullscreen hero */
+.swipe-left-enter-active,
+.swipe-left-leave-active,
+.swipe-right-enter-active,
+.swipe-right-leave-active {
+  transition: transform 600ms cubic-bezier(.2,.8,.2,1), opacity 500ms ease;
+  will-change: transform, opacity;
 }
 
-/* Enhanced image card hover with luxury animations */
-.img-card {
-  transition: transform 400ms var(--easing-luxury), 
-              box-shadow 400ms var(--easing-smooth),
-              filter 400ms var(--easing-smooth);
-  border-left: 1px solid var(--thin-line);
-  border-top: 1px solid var(--thin-line);
-  height: 320px; /* taller gallery tiles */
-  overflow: visible;
-  will-change: transform, box-shadow;
-}
-.img-card:hover { 
-  transform: translateY(-6px) scale(1.02); 
-  box-shadow: var(--luxury-shadow-hover);
-  filter: brightness(1.02);
-}
-.img-card:active {
-  transform: translateY(-3px) scale(1.01);
-  transition: transform 200ms var(--easing-smooth);
+.swipe-left-enter-from,
+.swipe-right-leave-to {
+  transform: translateX(40px);
+  opacity: 0;
 }
 
-/* Enhanced fullscreen modal with luxury animations */
-.fullscreen-modal {
-  position: fixed;
-  /* anchor below header and above device safe-area bottom so fullscreen covers only the usable area */
-  top: var(--header-height, 0px);
-  left: 0;
-  right: 0;
-  bottom: env(safe-area-inset-bottom);
-  z-index: 60;
-  display: flex; 
-  align-items: center; 
-  justify-content: center;
-  overflow: visible;
-}
-.fullscreen-modal video { 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover;
-  transition: transform 600ms var(--easing-smooth), filter 600ms var(--easing-smooth);
-}
-.fullscreen-modal .overlay { 
-  position: absolute; 
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
-  background: rgba(6, 6, 6, 0.45); 
-  transition: opacity 600ms var(--easing-smooth), background 600ms var(--easing-smooth);
-  backdrop-filter: blur(0px);
-}
-.fullscreen-modal .content { 
-  position: relative; 
-  z-index: 10; 
-  color: white;
-  transition: transform 600ms var(--easing-luxury), opacity 600ms var(--easing-smooth);
+.swipe-left-leave-to,
+.swipe-right-enter-from {
+  transform: translateX(-40px);
+  opacity: 0;
 }
 
 /* header style rules */
 header { will-change: transform, background-color }
 .header-hidden { transform: translateY(-100%) }
 
-/* Enhanced subtle glow for modal text */
-.glow { 
-  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.4);
-  transition: text-shadow 400ms var(--easing-smooth);
-}
-
-/* rigid background helper */
-.bg-rigid { background-attachment: fixed; background-position: center; background-size: cover }
-
-/* hard edges */
-.hard-edge { border-radius: 0 !important }
-
-/* Enhanced loading overlay with luxury animations */
-.loading-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(5, 6, 8, 0.98);
-  backdrop-filter: blur(8px);
-  z-index: 10000;
-  transition: opacity 600ms var(--easing-smooth), backdrop-filter 600ms var(--easing-smooth);
-  overflow: visible;
-}
-.loading-overlay.hidden { 
-  opacity: 0; 
-  pointer-events: none;
-  backdrop-filter: blur(0px);
-}
-.loading-image { 
-  width: 160px; 
-  height: 160px; 
-  object-fit: cover; 
-  border-radius: 12px;
-  box-shadow: var(--luxury-shadow);
-  transition: transform 400ms var(--easing-luxury), box-shadow 400ms var(--easing-smooth);
-}
-.loading-image:hover {
-  transform: scale(1.05);
-  box-shadow: var(--luxury-shadow-hover);
-}
-@keyframes spin-quick { 
-  from { transform: rotate(0deg) } 
-  to { transform: rotate(360deg) } 
-}
-.loading-rotate { 
-  animation: spin-quick 1s linear;
-}
-
 /* rtl helpers */
 [dir="rtl"] .ml-4 { margin-left: 0 !important }
 [dir="rtl"] .mr-4 { margin-right: 0 !important }
-

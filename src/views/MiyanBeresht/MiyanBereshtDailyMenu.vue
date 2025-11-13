@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
 import StructuredMenu from '@/components/StructuredMenu.vue'
 import { useDataFetcher } from '@/composables/useDataFetcher'
 import { api } from '@/api/dataService'

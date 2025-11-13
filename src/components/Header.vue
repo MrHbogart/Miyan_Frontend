@@ -1,5 +1,6 @@
 <template>
   <header 
+    dir="ltr"
     class="fixed w-full top-0 left-0 z-40" 
     :style="[headerStyle, { 
       backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, 

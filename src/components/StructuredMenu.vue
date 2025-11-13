@@ -76,7 +76,6 @@ const sections = computed(() => {
   if (!props.menu || !props.menu.sections) {
     return []
   }
-  console.log('[StructuredMenu] Sections count:', props.menu.sections.length, 'items:', props.menu.sections.map(s => s.items?.length || 0))
   return props.menu.sections
 })
 
@@ -102,4 +101,3 @@ function t(obj) {
 
 .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 </style>
-

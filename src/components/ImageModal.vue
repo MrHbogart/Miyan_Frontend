@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 defineProps({
   show: {
     type: Boolean,
@@ -40,16 +40,6 @@ function onScrollClose() {
 function onKey(e) {
   if (e.key === 'Escape') emit('close')
 }
-
-// Scale English title to feel balanced in modal (roughly akin to image)
-const englishTitleStyle = computed(() => ({
-  fontWeight: 500,
-  letterSpacing: '0.02em',
-  // responsive size: around 5-7vh depending on viewport
-  fontSize: 'clamp(28px, 6.2vh, 64px)',
-  lineHeight: 1.1,
-  textShadow: '0 2px 18px rgba(0,0,0,.35)'
-}))
 
 onMounted(() => {
   window.addEventListener('scroll', onScrollClose, { passive: true })

@@ -1,10 +1,8 @@
 // src/api/dataService.js
 import axios from 'axios';
-import { mockBereshtMenu, mockMadiMenu, mockGallery } from './mockData.js'
 
-// Use mock data for development (CSRF/CORS issues with backend)
-const USE_MOCK_DATA = true
 const BASE_URL = 'https://miyan.smartcareer.ir/api';
+const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV;
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -164,7 +162,9 @@ async function refreshInBackground(key, endpoint, storageKey, retryAttempts) {
     const data = await fetchWithRetry(endpoint, retryAttempts);
     const dataToCache = (data && Object.prototype.hasOwnProperty.call(data, 'results')) ? data.results : data;
     setCachedData(storageKey, dataToCache);
-    console.log(`Background refresh completed for ${key}`);
+    if (isDev) {
+      console.info(`Background refresh completed for ${key}`);
+    }
   } catch (error) {
     console.warn(`Background refresh failed for ${key}:`, error.message);
   }
@@ -215,27 +215,18 @@ export function getCacheInfo(key) {
 export const api = {
   // Long-term cache (1 day) for relatively static data
   getMiyanGallery: () => {
-    if (USE_MOCK_DATA) {
-      return Promise.resolve(mockGallery.results)
-    }
     return fetchWithCache(CACHE_KEYS.MIYAN_GALLERY, '/group/miyan_gallery/', {
       maxAge: 24 * 3600000, // 24 hours
     })
   },
   
   getMiyanProjects: () => {
-    if (USE_MOCK_DATA) {
-      return Promise.resolve(mockGallery.results)
-    }
     return fetchWithCache(CACHE_KEYS.MIYAN_PROJECTS, '/group/miyan_gallery/', {
       maxAge: 24 * 3600000, // 24 hours
     })
   },
   
   getSiteMedia: () => {
-    if (USE_MOCK_DATA) {
-      return Promise.resolve([])
-    }
     return fetchWithCache(CACHE_KEYS.SITE_MEDIA, '/siteMedia', {
       maxAge: 24 * 3600000, // 24 hours
     })
@@ -243,53 +234,49 @@ export const api = {
   
   // Beresht Today Menu - returns ready-to-render menu object
   getBereshtTodayMenu: async () => {
-    const results = USE_MOCK_DATA 
-      ? mockBereshtMenu.results
-      : await fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/beresht_menu', {
-          maxAge: 300000, // 5 minutes
-        })
+    const results = await fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/beresht_menu', {
+      maxAge: 300000, // 5 minutes
+    })
     
     // API returns array of menu objects. Index 0 is today's menu (with .todays field)
-    const menu = results[0]?.todays || results[0] || null
+    const list = Array.isArray(results) ? results : []
+    const menu = list[0]?.todays || list[0] || null
     return menu
   },
 
   // Beresht Base/Main Menu - returns ready-to-render menu object
   getBereshtMenu: async () => {
-    const results = USE_MOCK_DATA 
-      ? mockBereshtMenu.results
-      : await fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/beresht_menu', {
-          maxAge: 3600000, // 1 hour
-        })
+    const results = await fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/beresht_menu', {
+      maxAge: 3600000, // 1 hour
+    })
     
     // API returns array of menu objects. Index 1 is main menu, fallback to index 0
-    const menu = results[1] || results[0] || null
+    const list = Array.isArray(results) ? results : []
+    const menu = list[1] || list[0] || null
     return menu
   },
 
   // Madi Today Menu - returns ready-to-render menu object
   getMadiTodayMenu: async () => {
-    const results = USE_MOCK_DATA 
-      ? mockMadiMenu.results
-      : await fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/madi_menu', {
-          maxAge: 300000, // 5 minutes
-        })
+    const results = await fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/madi_menu', {
+      maxAge: 300000, // 5 minutes
+    })
     
     // API returns array of menu objects. Index 0 is today's menu (with .todays field)
-    const menu = results[0]?.todays || results[0] || null
+    const list = Array.isArray(results) ? results : []
+    const menu = list[0]?.todays || list[0] || null
     return menu
   },
 
   // Madi Base/Main Menu - returns ready-to-render menu object
   getMadiMenu: async () => {
-    const results = USE_MOCK_DATA 
-      ? mockMadiMenu.results
-      : await fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/madi_menu', {
-          maxAge: 3600000, // 1 hour
-        })
+    const results = await fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/madi_menu', {
+      maxAge: 3600000, // 1 hour
+    })
     
     // API returns array of menu objects. Index 1 is main menu, fallback to index 0
-    const menu = results[1] || results[0] || null
+    const list = Array.isArray(results) ? results : []
+    const menu = list[1] || list[0] || null
     return menu
   },
 };

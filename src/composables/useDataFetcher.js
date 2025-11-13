@@ -1,5 +1,5 @@
 // src/composables/useDataFetcher.js
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 /**
  * Enhanced data fetcher composable with cache awareness and advanced features
@@ -117,11 +117,10 @@ export function useDataFetcher(fetchFn, options = {}) {
   }
 
   // Cleanup interval on unmount
-  onMounted(() => {
-    return () => {
-      if (refreshIntervalId) {
-        clearInterval(refreshIntervalId)
-      }
+  onUnmounted(() => {
+    if (refreshIntervalId) {
+      clearInterval(refreshIntervalId)
+      refreshIntervalId = null
     }
   })
 

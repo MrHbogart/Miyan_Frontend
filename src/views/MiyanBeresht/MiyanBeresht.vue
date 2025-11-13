@@ -1,6 +1,6 @@
 <template>
   <section class="w-full h-screen flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 z-0 hero-fill-safe">
   <video ref="heroVideo" :src="siteMedia.heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
       <div
         class="absolute inset-0 transition-all"
@@ -18,22 +18,20 @@
   <!-- Toggle Buttons -->
   <div class="nav-placeholder">
   <div ref="navbarSentinel" :style="sentinelStyle"></div>
-  <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle">
+  <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" dir="ltr">
       <div class="max-w-4xl mx-auto px-6">
-        <div class="flex justify-center gap-4">
+        <div class="flex flex-wrap justify-center gap-3 md:gap-4">
           <router-link
-            :to="{ path: getLocalizedPath('beresht') }"
-            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-lg md:text-xl font-semibold"
-            :class="[{ 'font-bold': $route.name === 'MiyanBereshtBaseMenu' }, { 'font-cinzel font-light': lang === 'en' }]"
+            v-for="item in navItems"
+            :key="item.name"
+            :to="{ path: getLocalizedPath(item.path) }"
+            class="px-5 md:px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+            :class="[
+              { 'font-bold': $route.name === item.name },
+              lang === 'en' ? 'font-cinzel font-light' : 'font-b-titr'
+            ]"
           >
-            {{ lang === 'fa' ? 'منوی اصلی' : 'Menu' }}
-          </router-link>
-          <router-link
-            :to="{ path: getLocalizedPath('beresht/daily-menu') }"
-            class="px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-lg md:text-xl font-semibold"
-            :class="[{ 'font-bold': $route.name === 'MiyanBereshtDailyMenu' }, { 'font-cinzel font-light': lang === 'en' }]"
-          >
-            {{ lang === 'fa' ? 'پخت روز' : "Today's Special" }}
+            {{ isRTL ? item.label.fa : item.label.en }}
           </router-link>
         </div>
       </div>
@@ -42,138 +40,86 @@
 
   <!-- Child Router View -->
   <div ref="childSwipe" class="child-swipe-wrapper">
-    <router-view />
+    <Transition :name="childTransition" mode="out-in">
+      <router-view :key="$route.fullPath" />
+    </Transition>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute, useRouter } from 'vue-router'
 import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
-import { headerHeight, navAttached } from '@/state/headerState'
+import { useHeroIntro } from '@/composables/useHeroIntro'
+import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
 
 const route = useRoute()
 const router = useRouter()
 const siteMedia = siteMediaDefaults
 
-// Hero video and overlay animation
-const heroVideo = ref(null)
-const overlayStart = 1
-const overlayBase = 0.4
-const overlayMin = 0
-const maxScroll = 380
-const fadeMs = 1500
-const modalOverlayAlpha = ref(overlayStart)
-const overlayTransition = ref(`background ${fadeMs}ms cubic-bezier(.55,.06,.21,.95)`)
-let animationComplete = false
-
-function setAlphaFromScroll() {
-  if (!animationComplete) return
-  const y = window.scrollY || window.pageYOffset
-  const t = Math.min(1, y / maxScroll)
-  modalOverlayAlpha.value = overlayBase - t * (overlayBase - overlayMin)
-}
-
-function startIntroTransition() {
-  modalOverlayAlpha.value = overlayStart
-  overlayTransition.value = `background ${fadeMs}ms cubic-bezier(.55,.06,.21,.95)`
-  setTimeout(() => {
-    modalOverlayAlpha.value = overlayBase
-    setTimeout(() => {
-      animationComplete = true
-      overlayTransition.value = 'background 340ms cubic-bezier(.46,1.2,.34,1.01)'
-    }, fadeMs)
-  }, 20)
-}
+const { heroVideo, modalOverlayAlpha, overlayTransition } = useHeroIntro({
+  overlayBase: 0.4,
+  scrollRange: 380,
+})
 
 // Navbar attachment using simplified composable
 const navbarRef = ref(null)
 const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
+const childSwipe = ref(null)
+const childTransition = ref('swipe-left')
 
-function getLocalizedPath(p) {
-  const seg = route.path.split('/').filter(Boolean)[0]
-  const currentLang = seg === 'en' || seg === 'fa' ? seg : lang.value
-  return `/${currentLang}/${p}`
+const navItems = [
+  { name: 'MiyanBereshtLanding', path: 'beresht', label: { fa: 'مرور', en: 'Landing' } },
+  { name: 'MiyanBereshtBaseMenu', path: 'beresht/menu', label: { fa: 'منوی اصلی', en: 'Menu' } },
+  { name: 'MiyanBereshtDailyMenu', path: 'beresht/daily-menu', label: { fa: 'پخت روز', en: "Today's Special" } },
+]
+
+const isRTL = computed(() => lang.value === 'fa')
+const childRouteOrder = navItems.map(item => item.name)
+let previousChildName = route.name || childRouteOrder[0]
+
+watch(() => route.name, (nextName) => {
+  if (!nextName) return
+  const fromIndex = childRouteOrder.indexOf(previousChildName)
+  const toIndex = childRouteOrder.indexOf(nextName)
+  if (fromIndex === -1 || toIndex === -1) {
+    previousChildName = nextName
+    return
+  }
+  childTransition.value = toIndex > fromIndex ? 'swipe-left' : 'swipe-right'
+  previousChildName = nextName
+}, { immediate: true })
+
+function resolveLang() {
+  const seg = route.params.lang
+  if (seg === 'en' || seg === 'fa') return seg
+  const pathSeg = route.path.split('/').filter(Boolean)[0]
+  if (pathSeg === 'en' || pathSeg === 'fa') return pathSeg
+  return lang.value
 }
 
-// Lifecycle
-onMounted(() => {
-  animationComplete = false
-  startIntroTransition()
-  
-  // Reset scroll on reload
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
-  window.scrollTo({ top: 0 })
+function getLocalizedPath(p) {
+  const currentLang = resolveLang()
+  const normalized = p ? p.replace(/^\/+/, '') : ''
+  return normalized ? `/${currentLang}/${normalized}` : `/${currentLang}/`
+}
 
-  // Start intro animation when video is ready
-  const v = heroVideo.value
-  if (v && v.readyState >= 3) {
-    startIntroTransition()
-  } else if (v) {
-    const onCan = () => { startIntroTransition(); v.removeEventListener('canplay', onCan) }
-    v.addEventListener('canplay', onCan)
-  }
+function shiftChild(step) {
+  const currentName = route.name
+  const currentIndex = childRouteOrder.indexOf(currentName)
+  if (currentIndex === -1) return
+  const targetIndex = currentIndex + step
+  if (targetIndex < 0 || targetIndex >= childRouteOrder.length) return
+  const targetName = childRouteOrder[targetIndex]
+  router.push({ name: targetName, params: { lang: resolveLang() } })
+}
 
-  window.addEventListener('scroll', setAlphaFromScroll, { passive: true })
-
-  // Swipe gesture handlers for child views
-  const swipeEl = document.querySelector('.child-swipe-wrapper')
-  if (swipeEl) {
-    let startX = 0, startY = 0, dx = 0, dy = 0, moving = false
-    const threshold = 60
-    
-    const onTouchStart = (e) => {
-      const t = e.touches && e.touches[0]
-      startX = t ? t.clientX : e.clientX
-      startY = t ? t.clientY : e.clientY
-      moving = true
-    }
-    
-    const onTouchMove = (e) => {
-      if (!moving) return
-      const t = e.touches && e.touches[0]
-      dx = (t ? t.clientX : e.clientX) - startX
-      dy = (t ? t.clientY : e.clientY) - startY
-      if (Math.abs(dy) > Math.abs(dx)) return
-      e.preventDefault()
-    }
-    
-    const onTouchEnd = () => {
-      moving = false
-      if (Math.abs(dx) > threshold && Math.abs(dx) > Math.abs(dy)) {
-        const path = route.path
-        const seg = path.split('/').filter(Boolean)
-        const langSeg = seg[0] === 'en' || seg[0] === 'fa' ? seg[0] : lang.value
-        const base = `/${langSeg}/beresht`
-        const daily = `/${langSeg}/beresht/daily-menu`
-        
-        if (dx < 0) {
-          if (path !== daily) router.push({ path: daily })
-        } else {
-          if (path !== base) router.push({ path: base })
-        }
-      }
-      dx = 0; dy = 0
-    }
-    
-    swipeEl.addEventListener('touchstart', onTouchStart, { passive: true })
-    swipeEl.addEventListener('touchmove', onTouchMove, { passive: false })
-    swipeEl.addEventListener('touchend', onTouchEnd)
-    swipeEl.__swipeCleanup = () => {
-      swipeEl.removeEventListener('touchstart', onTouchStart)
-      swipeEl.removeEventListener('touchmove', onTouchMove)
-      swipeEl.removeEventListener('touchend', onTouchEnd)
-    }
-  }
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', setAlphaFromScroll)
-  const swipeEl = document.querySelector('.child-swipe-wrapper')
-  if (swipeEl && swipeEl.__swipeCleanup) swipeEl.__swipeCleanup()
+useSwipeNavigation(childSwipe, {
+  onLeft: () => shiftChild(1),
+  onRight: () => shiftChild(-1),
 })
 </script>
 
