@@ -51,8 +51,6 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute, useRouter } from 'vue-router'
 import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
-import { useDataFetcher } from '@/composables/useDataFetcher'
-import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
 import { headerHeight, navAttached } from '@/state/headerState'
 
@@ -94,9 +92,6 @@ function startIntroTransition() {
 const navbarRef = ref(null)
 const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
-
-// Fetch data
-useDataFetcher(api)
 
 function getLocalizedPath(p) {
   const seg = route.path.split('/').filter(Boolean)[0]

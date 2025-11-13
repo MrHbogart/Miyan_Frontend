@@ -51,17 +51,12 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute, useRouter } from 'vue-router'
 import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
-import { useDataFetcher } from '@/composables/useDataFetcher'
-import { api } from '@/api/dataService'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
 import { headerHeight, navAttached } from '@/state/headerState'
 
 const route = useRoute()
 const router = useRouter()
 const siteMedia = siteMediaDefaults
-
-// Fetch madi menu data (optional, not required for navbar functionality)
-useDataFetcher(api)
 
 // Hero video and overlay animation
 const heroVideo = ref(null)

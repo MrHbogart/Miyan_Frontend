@@ -51,7 +51,7 @@ import { computed, ref, onMounted, onUnmounted, provide, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { lang } from '@/state/lang'
 import siteMediaDefaults from '@/utils/siteMediaDefaults'
-import { headerHeight } from '@/state/headerState'
+import { headerHeight, navAttached } from '@/state/headerState'
 
 const { scrolled } = defineProps({ scrolled: { type: Boolean, default: false } })
 
@@ -63,8 +63,14 @@ const siteMedia = siteMediaDefaults
 const headerBottomY = ref(0)
 provide('headerBottomY', headerBottomY)
 
-// Simple background opacity based on scroll state
-const headerTargetOpacity = computed(() => scrolled ? 0.85 : 0)
+// Background opacity: header fades when navbar attaches
+// Initially: 0.85 (when scrolled), becomes 1 when navbar attaches
+const headerTargetOpacity = computed(() => {
+  // When navbar is attached, header becomes fully opaque
+  if (navAttached.value) return 1
+  // Otherwise, follow scroll state (0.85 when scrolled, 0 when not)
+  return scrolled ? 0.85 : 0
+})
 const headerBgOpacity = ref(headerTargetOpacity.value)
 watch(headerTargetOpacity, (v) => {
   headerBgOpacity.value = v

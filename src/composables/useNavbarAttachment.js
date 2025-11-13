@@ -71,8 +71,10 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
 
   /**
    * Opacity changes when navbar becomes fixed
+   * When floating: navbar is fully opaque (1)
+   * When attached: navbar becomes slightly transparent (0.85)
    */
-  const navTargetOpacity = computed(() => (isNavFixed.value ? 0.9 : 1))
+  const navTargetOpacity = computed(() => (isNavFixed.value ? 0.85 : 1))
   const navBgOpacity = ref(navTargetOpacity.value)
   watch(navTargetOpacity, (v) => { 
     navBgOpacity.value = v 
@@ -80,7 +82,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
 
   /**
    * Navbar inline styles - simple fixed positioning
-   * No complex overlay or state flags
+   * Transparency fades from header to navbar during attachment
    */
   const navInlineStyle = computed(() => {
     const baseStyle = {
@@ -89,7 +91,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     }
 
     if (isNavFixed.value) {
-      // Fixed state - attached to header
+      // Fixed state - attached to header with backdrop and shadow
       return {
         ...baseStyle,
         position: 'fixed',
@@ -102,7 +104,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
       }
     }
 
-    // Natural flow state
+    // Natural flow state - no backdrop or shadow
     return {
       ...baseStyle,
       backdropFilter: 'none',
