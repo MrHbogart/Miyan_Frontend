@@ -54,6 +54,19 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     })
   }
 
+  /**
+   * Resize and load handlers
+   */
+  function onResize() {
+    updateNavHeight()
+    checkAttachment()
+  }
+
+  function onLoad() {
+    updateNavHeight()
+    checkAttachment()
+  }
+
   const isNavFixed = computed(() => attached.value)
 
   /**
@@ -121,18 +134,14 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     checkAttachment()
     
     window.addEventListener('scroll', onScrollTrack, { passive: true })
-    window.addEventListener('resize', () => { 
-      updateNavHeight()
-      checkAttachment()
-    })
-    window.addEventListener('load', () => { 
-      updateNavHeight()
-      checkAttachment()
-    })
+    window.addEventListener('resize', onResize)
+    window.addEventListener('load', onLoad)
   })
 
   onUnmounted(() => {
     window.removeEventListener('scroll', onScrollTrack)
+    window.removeEventListener('resize', onResize)
+    window.removeEventListener('load', onLoad)
     if (rafId) cancelAnimationFrame(rafId)
   })
 
