@@ -1,7 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col items-center py-8">
-    <!-- Use the new GalleryGrid component for a gallery-appropriate layout -->
-    <GalleryGrid :items="galleryItems" :galleryTitle="(lang === 'fa' ? 'گالری' : 'Gallery')" />
+  <div class="min-h-screen brand-surface brand-surface--miyan flex flex-col items-center py-8 w-full">
+    <div class="content-shell content-shell--flush w-full">
+      <GalleryGrid :items="galleryItems" :galleryTitle="(lang === 'fa' ? 'گالری' : 'Gallery')" />
+    </div>
   </div>
 </template>
 
@@ -23,4 +24,3 @@ const galleryItems = computed(() => {
   }))
 })
 </script>
-

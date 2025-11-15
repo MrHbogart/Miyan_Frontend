@@ -1,5 +1,5 @@
 <template>
-  <footer class="w-full mt-12 py-8 bg-black" dir="ltr">
+  <footer class="w-full mt-0 py-8 bg-black/90 border-t border-white/10" dir="ltr">
     <div class="max-w-6xl mx-auto px-6 text-sm opacity-100 flex justify-between items-center text-white">
       <div class="font-cinzel">© {{ new Date().getFullYear() }} Miyan Group</div>
 

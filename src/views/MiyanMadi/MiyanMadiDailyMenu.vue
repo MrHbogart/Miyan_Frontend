@@ -1,6 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col items-center py-8">
-    <StructuredMenu :menu="menu" />
+  <div class="min-h-screen brand-surface brand-surface--madi flex flex-col items-center py-8 w-full">
+    <div class="content-shell content-shell--flush w-full">
+      <StructuredMenu :menu="menu" />
+    </div>
   </div>
 </template>
 

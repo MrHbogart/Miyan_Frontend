@@ -1,8 +1,10 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col items-center py-8">
-    <!-- Reuse the StructuredMenu component so project items match menu items in design & behaviour -->
-     
-    <StructuredMenu :menu="menu" />
+  <div class="min-h-screen brand-surface brand-surface--miyan flex flex-col items-center py-8 w-full">
+    <div class="content-shell content-shell--flush w-full">
+      <!-- Reuse the StructuredMenu component so project items match menu items in design & behaviour -->
+       
+      <StructuredMenu :menu="menu" />
+    </div>
   </div>
 </template>
 

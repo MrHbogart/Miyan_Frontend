@@ -1,26 +1,20 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-`src/main.js` bootstraps Vue 3 and tailwind styles, while `App.vue` hosts the global layout shell. Feature UI lives under `src/components/` (reusable atoms) and `src/views/` (route-level pages). Navigation is defined in `src/router/`, shared state primitives in `src/state/`, API clients in `src/api/`, and cross-cutting helpers in `src/utils/`. Store shared media in `src/assets/` when imported by Vite, and drop passthrough files (favicons, robots, etc.) into `public/`. Keep global CSS tokens in `src/styles/`, and run any asset munging scripts from `scripts/` before committing. Built artifacts land in `dist/` and should never be edited manually.
+Source lives in `src/`, with `main.js` bootstrapping Vue 3, Tailwind, and the router. Pages are grouped by site (`views/Miyan*`, `views/MiyanBeresht*`, `views/MiyanMadi*`), while reusable UI sits in `components/` and shared hooks in `composables/`. Static assets belong in `public/` (favicons, optimized media) and the build output lands in `dist/`. Use `scripts/prep-images.js` to generate responsive JPEG/WebP sets for any new gallery imagery; raw inputs stay outside the repo. The `otherVersion/` directory contains experiments and should not be served unless explicitly requested.
 
 ## Build, Test, and Development Commands
-Install dependencies once with `npm install`. During feature work run:
-```bash
-npm run dev        # Launches Vite dev server with HMR
-npm run build      # Produces production-ready `dist/`
-npm run preview    # Serves the latest build for sanity checks
-npm run prep-images # Uses sharp to normalize marketing assets
-```
-Always execute `npm run prep-images` after adding hero/menu imagery so teammates get optimized files.
+- `npm install` — install dependencies after cloning or rebasing.
+- `npm run dev` — start Vite on `http://localhost:5173` with HMR; ideal for daily work.
+- `npm run build` — output the production bundle into `dist/`; run before releasing.
+- `npm run preview` — serve the built assets locally to mimic deployment headers.
+- `npm run prep-images ~/Pictures/NewShoot` — convert source photos into the expected `public/images/{small,medium,large}` hierarchy and regenerate `public/images/srcset.json`.
 
 ## Coding Style & Naming Conventions
-Components use `<script setup>` with the Composition API, single quotes, no trailing semicolons, and tab indents to match the existing codebase (`App.vue`, `main.js`). Name Vue files in PascalCase (`HeroBanner.vue`), composables as `useFeature.js`, and shared stores with a clear domain (`state/menu.js`). Keep tailwind classes in templates for layout, and add long-form overrides inside `src/styles/*.css`, grouping tokens by feature comment blocks. When adding scripts, prefer ES modules and guard Node-side utilities with descriptive function names.
+Follow the existing 2-space indentation and prefer single quotes in JavaScript. Keep script setup blocks lean, push business logic into composables, and co-locate route-specific assets under the relevant `views/<feature>/` folder. Tailwind classes handle most layout; if you add bespoke CSS, extend `src/styles.css` or feature-scoped `<style scoped>` blocks. Name Vue components in PascalCase and files in kebab-case when they represent routes (e.g., `MiyanBereshtLanding.vue`, `miyan-beresht`). Avoid introducing new global mixins or filters—use composables instead.
 
 ## Testing Guidelines
-No automated runner is wired yet, so include manual verification notes in every PR (route visited, data mocked, browsers covered). When you introduce tests, mirror Vue/Vite best practices: colocate `ComponentName.spec.js` next to the component, use Vitest + Vue Test Utils, and expose a future `npm run test` script. Keep describe blocks mapped to user flows, and target at least smoke coverage for new critical UI (menus, routing guards, API adapters).
+No automated test harness currently exists, so manual verification is required. At minimum, smoke-test each localized route (`/fa`, `/en`) and ensure the gallery modals, video hero, and menu sliders behave on mobile and desktop widths. When adding data fetchers or navigation logic, consider writing lightweight Jest/Vitest suites; place future specs under `tests/` or alongside components as `*.spec.js` and document how to run them in your PR.
 
 ## Commit & Pull Request Guidelines
-Recent commits such as `i dont know` and `maybeeee` offer little context; switch to clear, imperative Conventional Commit messages (e.g., `feat: add seasonal menu carousel`). Reference related Linear/Jira issues in the body and mention breaking changes explicitly. PRs must summarize scope, list manual test steps, link assets/scripts touched, and include screenshots or short clips for UI updates. Draft early if work is in progress, then mark ready once lint/build/prep-assets have been rerun locally.
-
-## Assets & Configuration Tips
-Image-heavy features depend on the helpers in `scripts/` (`prep-images.js`, `update-menu-images.js`). Run them whenever source photography changes to avoid bloating the repo. Tailwind tokens live in `tailwind.config.cjs`; update theme colors there instead of scattering hex values. Sensitive keys should stay in local `.env` files consumed by Vite—never commit them.
+Recent commits lack detail; move toward imperative messages (e.g., `Add hero autoplay toggle`). Reference relevant tickets or issues in the body when available. For pull requests, include: a short summary, screenshots or screen recordings for UI changes, a checklist of commands run (`npm run build`, manual route checks), and any localization considerations. Keep PRs focused on a single feature to ease review, and call out risky areas (router changes, asset pipeline) so reviewers can prioritize validation.

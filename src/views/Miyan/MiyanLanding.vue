@@ -1,71 +1,63 @@
 <template>
-  <section ref="landingRoot" class="landing-shell" :dir="dirAttr">
-    <div class="landing-hero" :style="heroAccentStyle">
-      <p class="overline" data-reveal :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-      <h1 class="headline" data-reveal :class="titleClass">
-        <span>{{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}</span>
-        <span class="accent">{{ isRTL ? heroCopy.accent.fa : heroCopy.accent.en }}</span>
-      </h1>
-      <p class="lede" data-reveal :class="textClass">
-        {{ isRTL ? heroCopy.lede.fa : heroCopy.lede.en }}
-      </p>
-      <div class="hero-pillars">
-        <article
-          v-for="(pillar, idx) in pillars"
-          :key="pillar.title.en"
-          class="pillar"
-          :style="{ '--delay': `${idx * 120}ms` }"
-          data-reveal
-        >
-          <span class="pillar-index">{{ idx + 1 }}</span>
-          <div>
-            <p class="pillar-title" :class="titleClass">{{ isRTL ? pillar.title.fa : pillar.title.en }}</p>
-            <p class="pillar-copy" :class="textClass">{{ isRTL ? pillar.copy.fa : pillar.copy.en }}</p>
-          </div>
-        </article>
-      </div>
-    </div>
-
-    <div class="landing-panels">
-      <div class="panel intro-panel" data-reveal :style="panelGlowStyle">
-        <h2 :class="titleClass">{{ isRTL ? 'ورود آرام' : 'Slow arrival' }}</h2>
-        <p :class="textClass">
-          {{ isRTL ? 'سطوح روشن و صداهای کم جان کمک می‌کنند ذهن آرام شود.' : 'Quiet light and soft audio help guests settle.' }}
-        </p>
-        <p :class="textClass">
-          {{ isRTL ? 'هر مسیر کوتاه و بدون شتاب طراحی شده است.' : 'Paths stay short and unhurried.' }}
-        </p>
-      </div>
-
-      <div class="panel gallery-panel" data-reveal>
-        <div class="panel-grid">
-          <div
-            v-for="(moment, idx) in galleryMoments"
-            :key="moment.title.en"
-            class="moment-card"
-            :style="{ transform: `translateY(${momentParallax(idx)}px)` }"
-          >
-            <p class="moment-title" :class="titleClass">{{ isRTL ? moment.title.fa : moment.title.en }}</p>
-            <p class="moment-copy" :class="textClass">{{ isRTL ? moment.copy.fa : moment.copy.en }}</p>
+<section
+  ref="landingRoot"
+  class="landing-shell brand-surface brand-surface--miyan content-shell"
+  :dir="dirAttr"
+  :style="landingStyle"
+>
+    <div class="viewport-stack">
+      <article
+        v-for="(scene, idx) in heroScenes"
+        :key="scene.title.en"
+        class="viewport-panel"
+        :class="[`viewport-panel--${scene.kind}`]"
+        :style="[panelSurface(scene.image), sceneStylePanel(idx)]"
+        :ref="el => setScene(el, idx)"
+      >
+        <div class="panel-overlay"></div>
+        <div class="panel-media">
+          <div class="media-fill"></div>
+        </div>
+        <div class="panel-copy" :class="textClass">
+          <p class="panel-overline">{{ isRTL ? scene.overline.fa : scene.overline.en }}</p>
+          <h2 :class="titleClass">{{ isRTL ? scene.title.fa : scene.title.en }}</h2>
+          <p>{{ isRTL ? scene.lede.fa : scene.lede.en }}</p>
+          <div class="panel-meta" v-if="scene.meta">
+            <span>{{ isRTL ? scene.meta.fa : scene.meta.en }}</span>
           </div>
         </div>
-      </div>
+      </article>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed } from 'vue'
 import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
+import { useScrollVelocity } from '@/composables/useScrollVelocity'
+import { useSceneProgress } from '@/composables/useSceneProgress'
+import miyanGallery from '@/assets/images/miyan-gallery-sunrise.jpg'
+import miyanTexture from '@/assets/images/miyan-texture-close.jpg'
+import miyanEvening from '@/assets/images/miyan-gathering-night.jpg'
 
 const landingRoot = ref(null)
-const scrollY = ref(0)
+const { scrollY, speedFactor } = useScrollVelocity({
+  smoothing: 0.22,
+  multiplier: 10,
+  max: 1.45,
+  min: 0.85,
+})
 const isRTL = computed(() => lang.value === 'fa')
 const dirAttr = computed(() => (isRTL.value ? 'rtl' : 'ltr'))
+const pxToRem = (valuePx) => `${parseFloat((valuePx / 16).toFixed(4))}rem`
 
-const textClass = computed(() => (isRTL.value ? 'font-b-titr' : 'font-sans'))
-const titleClass = computed(() => (isRTL.value ? 'font-b-titr' : 'font-cinzel font-light'))
+const landingStyle = computed(() => ({
+  '--viz-velocity': speedFactor.value.toFixed(3)
+}))
+
+const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
+const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
 
 const heroCopy = {
   overline: { fa: 'میان', en: 'Miyan' },
@@ -77,99 +69,144 @@ const heroCopy = {
   }
 }
 
-const pillars = [
+const heroScenes = [
   {
-    title: { fa: 'نور نرم', en: 'Soft light' },
-    copy: {
-      fa: 'شدت نور فقط به اندازه خواندن منو است.',
-      en: 'Levels stay just bright enough to read.'
-    }
+    kind: 'arrival',
+    image: miyanGallery,
+    overline: { fa: 'میهمان', en: 'Guest' },
+    title: { fa: 'ورود آرام', en: 'Slow arrival' },
+    lede: {
+      fa: 'نور سفید با لایه‌ای از رز ملایم، گام اول را نرم می‌کند.',
+      en: 'White light with a faint rose tint cushions the first step.',
+    },
+    meta: { fa: '٠٨:٣٠ صبح', en: '08:30' },
   },
   {
-    title: { fa: 'مواد طبیعی', en: 'Honest materials' },
-    copy: {
-      fa: 'چوب، بتن و فلز بدون تزئین اضافی استفاده می‌شوند.',
-      en: 'Wood, concrete, and metal stay honest.'
-    }
+    kind: 'material',
+    image: miyanTexture,
+    overline: { fa: 'مواد', en: 'Materials' },
+    title: { fa: 'بافت صمیمی', en: 'Tactile notes' },
+    lede: {
+      fa: 'چوب صیقل‌خورده و فولاد مات با مه سفید ترکیب می‌شوند.',
+      en: 'Polished wood and matte steel blend beneath white mist.',
+    },
+    meta: { fa: 'تنفس ٣٢ ثانیه', en: '32 second breath' },
   },
   {
-    title: { fa: 'ریتم سرو', en: 'Service rhythm' },
-    copy: {
-      fa: 'حرکت میزبان کوتاه و دقیق است.',
-      en: 'Hosts move in short, precise steps.'
-    }
-  }
-]
-
-const galleryMoments = [
-  {
-    title: { fa: 'سکوت صبح', en: 'Morning quiet' },
-    copy: {
-      fa: 'صدای قهوه و آب تنها لایه صوتی فضا است.',
-      en: 'Coffee and water are the only sounds.'
-    }
+    kind: 'sound',
+    image: miyanEvening,
+    overline: { fa: 'ریتم', en: 'Cadence' },
+    title: { fa: 'صداهای آهسته', en: 'Muted cadence' },
+    lede: {
+      fa: 'تن‌های پایین هم‌زمان با نور گرم حرکت می‌کنند.',
+      en: 'Low tones move in sync with the amber glow.',
+    },
+    meta: { fa: '٦٢ دسی‌بل', en: '62 dB' },
   },
   {
-    title: { fa: 'گالری', en: 'Gallery line' },
-    copy: {
-      fa: 'عکس‌ها بدون قاب و با نور نقطه‌ای نمایش داده می‌شوند.',
-      en: 'Prints hang frameless with narrow light.'
-    }
+    kind: 'gallery',
+    image: miyanEvening,
+    overline: { fa: 'گالری', en: 'Gallery' },
+    title: { fa: 'سایه‌های بلند', en: 'Long shadows' },
+    lede: {
+      fa: 'سایه‌ها روی بتن حرکت می‌کنند و قاب‌ها نفس می‌کشند.',
+      en: 'Shadows sweep across concrete while frames exhale.',
+    },
+    meta: { fa: '٢٢ قاب', en: '22 frames' },
   },
-  {
-    title: { fa: 'نفس عمیق', en: 'Deep breath' },
-    copy: {
-      fa: 'رایحه مرکبات و هل برای تمام فضا مشترک است.',
-      en: 'A light citrus-cardamom scent ties rooms together.'
-    }
-  }
 ]
 
 const heroAccentStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 600, 1), 0.8)
+  const offsetPx = curve * -45 * speedFactor.value
   return {
-    transform: `translate3d(0, ${curve * -65}px, 0)`
+    transform: `translate3d(0, ${pxToRem(offsetPx)}, 0)`
   }
 })
 
-const panelGlowStyle = computed(() => {
-  const curve = Math.pow(Math.min(scrollY.value / 800, 1), 0.6)
+const panelGlowStyle = computed(() => ({}))
+
+function panelSurface(image) {
+  return { '--panel-image': `url("${image}")` }
+}
+
+const heroSections = ref([])
+const storySections = ref([])
+
+const setScene = (el, idx) => {
+  heroSections.value[idx] = el || null
+}
+const setStoryScene = (el, idx) => {
+  storySections.value[idx] = el || null
+}
+
+const { sceneProgress: heroProgress } = useSceneProgress(heroSections, {
+  easePower: 1.1,
+  springPoint: 0.55,
+  holdFactor: 0.35,
+})
+
+const { sceneProgress } = useSceneProgress(storySections, {
+  easePower: 1.25,
+  springPoint: 0.62,
+  holdFactor: 0.4,
+  releaseCurve: 0.8,
+})
+function sceneStylePanel(idx) {
+  const p = heroProgress.value?.[idx] ?? 0
+  const translate = (1 - p) * 60
+  const scale = 0.94 + p * 0.06
+  const blur = 2 + (1 - p) * 6
   return {
-    boxShadow: `0 20px 60px rgba(0,0,0,${0.15 + curve * 0.25})`
+    transform: `translate3d(0, ${pxToRem(translate)}, 0) scale(${scale})`,
+    filter: `hue-rotate(${(idx + 1) * 8 * p}deg) blur(${blur}px)`,
+    opacity: 0.45 + p * 0.55,
   }
-})
-
-function momentParallax(idx) {
-  const base = scrollY.value * (0.04 + idx * 0.01)
-  return Math.min(base, 60)
 }
 
-function handleScroll() {
-  scrollY.value = window.scrollY || 0
+function sceneStyle(idx) {
+  const p = sceneProgress.value[idx] ?? 0
+  const translate = (1 - p) * 50
+  const scale = 0.88 + p * 0.12
+  return {
+    transform: `translate3d(0, ${pxToRem(translate)}, 0) scale(${scale})`,
+    opacity: 0.35 + p * 0.65
+  }
 }
 
-onMounted(() => {
-  handleScroll()
-  window.addEventListener('scroll', handleScroll, { passive: true })
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+function storySurface(image) {
+  return { '--story-image': `url("${image}")` }
+}
 
 useRevealObserver(landingRoot, { threshold: 0.2 })
 </script>
 
 <style scoped>
 .landing-shell {
+  position: relative;
   min-height: 100vh;
   padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(6rem + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, #f7f7f7 0%, #fdfdfd 45%, #f5f1ee 100%);
+  background: transparent;
   color: #0b0b0b;
+  --viz-velocity: 1;
+}
+.landing-shell::before {
+  content: '';
+  position: absolute;
+  inset: 3rem;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: clamp(1.5rem, 4vw, 3rem);
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 0;
+}
+.landing-shell > * {
+  position: relative;
+  z-index: 1;
 }
 
 .landing-hero {
-  max-width: 960px;
+  max-width: 60rem;
   margin: 0 auto 4rem;
   transition: transform 600ms cubic-bezier(.32,.72,.29,.99);
 }
@@ -194,7 +231,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 }
 
 .lede {
-  max-width: 620px;
+  max-width: 38.75rem;
   font-size: 1.1rem;
   line-height: 1.8;
   opacity: 0.8;
@@ -203,22 +240,22 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 .hero-pillars {
   margin-top: 2.5rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
   gap: 1.25rem;
 }
 
 .pillar {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(11, 11, 11, 0.06);
-  padding: 1.5rem;
+  background: transparent;
+  border: none;
+  padding-bottom: 1rem;
   display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  backdrop-filter: blur(6px);
-  transform: translateY(24px);
+  gap: 0.875rem;
+  align-items: center;
+  transform: translateY(1.5rem);
   opacity: 0;
   transition: transform 700ms cubic-bezier(.2,.8,.2,1), opacity 700ms ease;
-  transition-delay: var(--delay);
+  transition-delay: calc(var(--delay) / var(--viz-velocity, 1));
+  border-bottom: 1px solid rgba(11, 11, 11, 0.08);
 }
 
 .pillar.is-visible {
@@ -227,7 +264,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 }
 
 .pillar-index {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   letter-spacing: 0.2em;
   opacity: 0.5;
 }
@@ -244,28 +281,19 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 
 .landing-panels {
   display: grid;
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
 }
 
 .panel {
-  border: 1px solid rgba(11, 11, 11, 0.08);
-  border-radius: 0;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  background: #ffffff;
+  border: none;
+  padding: 0;
+  background: transparent;
   position: relative;
-  overflow: hidden;
-  transform: translateY(30px);
+  transform: translateY(1.875rem);
   opacity: 0;
-  transition: transform 750ms cubic-bezier(.2,.8,.2,1), opacity 750ms ease, box-shadow 400ms ease;
-}
-
-.panel::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.6), transparent 60%);
-  pointer-events: none;
+  transition: transform calc(750ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1),
+    opacity calc(750ms / var(--viz-velocity, 1)) ease;
 }
 
 .panel.is-visible {
@@ -274,7 +302,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 }
 
 .panel h2 {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   margin-bottom: 1rem;
   font-weight: 500;
 }
@@ -286,14 +314,14 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 
 .panel-grid {
   display: grid;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .moment-card {
-  border: 1px solid rgba(11, 11, 11, 0.08);
-  padding: 1.4rem;
-  background: linear-gradient(135deg, #fdfdfd, #f7f1ee);
-  transition: transform 400ms cubic-bezier(.2,.8,.2,1);
+  border: none;
+  padding: 0.5rem 0;
+  background: transparent;
+  transition: transform calc(400ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
 }
 
 .moment-title {
@@ -308,7 +336,71 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   line-height: 1.6;
 }
 
-@media (max-width: 768px) {
+.immersive-stack {
+  margin-top: clamp(3rem, 6vw, 5rem);
+  display: grid;
+  gap: clamp(2rem, 5vw, 3rem);
+  position: relative;
+  overflow: visible;
+  scroll-snap-type: y proximity;
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.story-scene {
+  position: sticky;
+  top: clamp(3rem, 18vh, 8rem);
+  isolation: isolate;
+  width: 100%;
+  min-height: clamp(20rem, 75vh, 34rem);
+  padding: clamp(2rem, 4vw, 3.5rem);
+  border-radius: clamp(0.6rem, 1.5vw, 1rem);
+  overflow: hidden;
+  color: #f9f7f2;
+  opacity: 0.85;
+  scroll-snap-align: start;
+}
+
+.story-scene::before {
+  content: '';
+  position: absolute;
+  inset: -5%;
+  background-image: var(--story-image);
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.15) contrast(1.05);
+  transform: scale(1.05);
+  transition: transform 900ms cubic-bezier(.22,.74,.28,.96), opacity 600ms ease;
+}
+
+.story-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(4,7,11,0.75), rgba(14,17,23,0.35));
+  mix-blend-mode: multiply;
+}
+
+.story-scene:hover::before {
+  transform: scale(1.1);
+}
+
+.story-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  color: rgba(249, 247, 242, 0.92);
+}
+
+.story-overline {
+  letter-spacing: 0.4em;
+  font-size: 0.72rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+@media (max-width: 48rem) {
   .landing-shell {
     padding-top: 4rem;
   }
