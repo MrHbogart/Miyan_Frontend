@@ -200,15 +200,14 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   min-height: 100vh;
   padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   background: transparent;
-  color: #2b1c12;
+  color: #241308;
   --viz-velocity: 1;
 }
 .landing-shell::before {
   content: '';
   position: absolute;
-  inset: 2.5rem;
-  border: 1px solid rgba(187, 150, 110, 0.25);
-  border-radius: clamp(1.25rem, 3vw, 2.5rem);
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 247, 228, 0.5), transparent 65%);
   pointer-events: none;
   z-index: 0;
   opacity: 0.25;
@@ -220,9 +219,9 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 
 .landing-shell--beresht {
   background-image:
-    radial-gradient(circle at 30% 20%, rgba(255, 229, 208, 0.7), transparent 60%),
-    radial-gradient(circle at 70% 10%, rgba(255, 205, 178, 0.55), transparent 55%),
-    linear-gradient(180deg, #fff7ec 0%, #ffeeda 60%, #ffe4ca 100%);
+    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.92), transparent 55%),
+    radial-gradient(circle at 82% 2%, rgba(255, 255, 255, 0.7), transparent 60%),
+    linear-gradient(185deg, #ffffff 0%, #fffefb 42%, #fffdf5 78%, #ffffff 100%);
 }
 
 .beresht-hero {
@@ -245,8 +244,8 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   box-shadow: none;
   transform: translateY(2.5rem);
   opacity: 0;
-  transition: transform calc(800ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
-    opacity calc(800ms / var(--viz-velocity, 1)) ease;
+  transition: transform calc(1200ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
+    opacity calc(1200ms / var(--viz-velocity, 1)) ease;
 }
 
 .hero-emblem img {
@@ -259,8 +258,8 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   min-width: 17.5rem;
   transform: translateY(2.5rem);
   opacity: 0;
-  transition: transform calc(800ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
-    opacity calc(800ms / var(--viz-velocity, 1)) ease;
+  transition: transform calc(1200ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
+    opacity calc(1200ms / var(--viz-velocity, 1)) ease;
 }
 
 .hero-copy h1 {
@@ -271,7 +270,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 }
 
 .hero-copy p {
-  color: rgba(64, 38, 23, 0.85);
+  color: rgba(38, 28, 18, 0.8);
   line-height: 1.7;
 }
 
@@ -290,9 +289,9 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   letter-spacing: 0.4em;
   text-transform: uppercase;
   opacity: 0.55;
-  color: rgba(178, 117, 82, 0.9);
+  color: rgba(178, 117, 82, 0.75);
   margin-bottom: 3rem;
-  transition: transform calc(700ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
+  transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
 }
 
 @media (min-width: 768px) {
@@ -315,8 +314,8 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   position: relative;
   transform: translateY(2.5rem);
   opacity: 0;
-  transition: transform calc(800ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
-    opacity calc(800ms / var(--viz-velocity, 1)) ease;
+  transition: transform calc(1200ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
+    opacity calc(1200ms / var(--viz-velocity, 1)) ease;
 }
 
 .panel h2 {
@@ -334,7 +333,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 .panel ul {
   padding-left: 0;
   list-style: none;
-  border-left: 2px solid rgba(178, 117, 82, 0.25);
+  border-left: none;
   margin-left: 0.5rem;
   padding-left: 1.25rem;
 }
@@ -363,10 +362,12 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   width: 100%;
   min-height: clamp(18rem, 70vh, 32rem);
   padding: clamp(1.75rem, 3vw, 2.75rem);
-  border-radius: clamp(0.5rem, 1vw, 0.9rem);
   overflow: hidden;
   color: rgba(40, 24, 15, 0.92);
+  box-shadow: 0 12px 36px rgba(8, 4, 2, 0.15);
   scroll-snap-align: start;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .story-scene::before {
@@ -376,21 +377,20 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   background-image: var(--story-image);
   background-size: cover;
   background-position: center;
-  transform: scale(1.03);
-  filter: saturate(1.2) contrast(1.05);
-  transition: transform 800ms cubic-bezier(.2,.8,.2,1);
+  transform: scale(1.02);
+  filter: none;
+  transition: transform 1400ms ease;
 }
 
 .story-scene::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 245, 236, 0.9), rgba(255, 225, 203, 0.65));
-  mix-blend-mode: lighten;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.2));
 }
 
 .story-scene:hover::before {
-  transform: scale(1.08);
+  transform: scale(1.025);
 }
 
 .story-copy {
@@ -399,14 +399,15 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  color: rgba(78, 43, 24, 0.9);
+  color: rgba(30, 20, 12, 0.9);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
 .story-overline {
   text-transform: uppercase;
   letter-spacing: 0.35em;
   font-size: 0.7rem;
-  color: rgba(178, 117, 82, 0.85);
+  color: rgba(188, 142, 103, 0.75);
 }
 
 @media (max-width: 48rem) {
