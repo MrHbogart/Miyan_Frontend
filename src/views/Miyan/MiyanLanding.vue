@@ -69,9 +69,9 @@ import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
-import heroImage from '@/assets/images/miyan-gallery-sunrise.jpg'
-import textureImage from '@/assets/images/miyan-texture-close.jpg'
-import nightImage from '@/assets/images/miyan-gathering-night.jpg'
+
+
+import siteMediaDefaults from '@/state/siteMediaDefaults'
 
 const landingRoot = ref(null)
 const { scrollY, speedFactor } = useScrollVelocity({
@@ -138,7 +138,7 @@ const modalFocus = [
 ]
 
 const heroBackgroundStyle = computed(() => ({
-  backgroundImage: `url("${heroImage}")`,
+  backgroundImage: `url("${siteMediaDefaults.miyanImg1}")`,
 }))
 
 const heroMediaMotion = computed(() => {
@@ -157,7 +157,7 @@ const heroCopyMotion = computed(() => {
 
 const photoStories = [
   {
-    image: textureImage,
+    image: siteMediaDefaults.miyanImg2,
     overline: { fa: 'بافت', en: 'Texture' },
     title: { fa: 'ضربه‌های نقره‌ای', en: 'Silver pulses' },
     copy: {
@@ -166,7 +166,7 @@ const photoStories = [
     },
   },
   {
-    image: nightImage,
+    image: siteMediaDefaults.miyanImg3,
     overline: { fa: 'شب', en: 'Night' },
     title: { fa: 'مه‌تاب', en: 'Moon mist' },
     copy: {
@@ -175,7 +175,7 @@ const photoStories = [
     },
   },
   {
-    image: heroImage,
+    image: siteMediaDefaults.miyanImg1,
     overline: { fa: 'نفس', en: 'Breath' },
     title: { fa: 'پرواز آهسته', en: 'Slow lift' },
     copy: {

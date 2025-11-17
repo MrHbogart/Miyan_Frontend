@@ -54,7 +54,12 @@ const router = createRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
-    return { top: 0 }
+    const parentTo = to.matched?.[0]?.name
+    const parentFrom = from.matched?.[0]?.name
+    if (!parentFrom || parentFrom !== parentTo) {
+      return { top: 0 }
+    }
+    return false
   },
 })
 

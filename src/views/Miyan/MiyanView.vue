@@ -4,7 +4,7 @@
     <section class="w-full h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0 hero-fill-safe">
           <video ref="heroVideo" 
-            :src="siteMedia.heroVideo" 
+            :src="siteMedia.miyanHeroVideo" 
             autoplay 
             muted 
             loop 
@@ -70,7 +70,7 @@ import { ref, watch, computed } from 'vue'
 import { lang } from '@/state/lang'
 import { useRoute, useRouter } from 'vue-router'
 import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
-import siteMediaDefaults from '@/utils/siteMediaDefaults'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
 import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
 

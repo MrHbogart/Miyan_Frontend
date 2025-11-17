@@ -74,13 +74,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import siteMediaDefaults from '@/utils/siteMediaDefaults'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
-import proofingImage from '@/assets/images/beresht-proofing-table.jpg'
-import teaSteamImage from '@/assets/images/beresht-tea-steam.jpg'
+
 
 const landingRoot = ref(null)
 const { scrollY, speedFactor } = useScrollVelocity({
@@ -131,7 +130,7 @@ const marqueeStyle = computed(() => {
 
 const photoStories = [
   {
-    image: proofingImage,
+    image: siteMedia.bereshtImg1,
     overline: { fa: 'کارگاه', en: 'Workshop' },
     title: { fa: 'خمير آرام', en: 'Composed dough' },
     copy: {
@@ -140,7 +139,7 @@ const photoStories = [
     }
   },
   {
-    image: proofingImage,
+    image: siteMedia.bereshtImg2,
     overline: { fa: 'فرم', en: 'Form' },
     title: { fa: 'سطوح روشن', en: 'Silent forms' },
     copy: {
@@ -149,7 +148,7 @@ const photoStories = [
     }
   },
   {
-    image: teaSteamImage,
+    image: siteMedia.bereshtImg3,
     overline: { fa: 'چایخانه', en: 'Tea room' },
     title: { fa: 'بخار مرکبات', en: 'Citrus steam' },
     copy: {
@@ -158,7 +157,7 @@ const photoStories = [
     }
   },
   {
-    image: teaSteamImage,
+    image: siteMedia.bereshtImg4,
     overline: { fa: 'امروز', en: 'Today' },
     title: { fa: 'پخت عصر', en: 'Evening proof' },
     copy: {
@@ -386,7 +385,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(140deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.2));
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
 }
 
 .story-scene:hover::before {
@@ -399,7 +398,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  color: rgba(30, 20, 12, 0.9);
+  color: rgba(255, 215, 72, 0.9);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
@@ -407,7 +406,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   text-transform: uppercase;
   letter-spacing: 0.35em;
   font-size: 0.7rem;
-  color: rgba(188, 142, 103, 0.75);
+  color: rgba(255, 145, 0, 0.962);
 }
 
 @media (max-width: 48rem) {

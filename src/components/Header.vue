@@ -51,7 +51,7 @@
 import { computed, ref, onMounted, onUnmounted, provide, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { lang } from '@/state/lang'
-import siteMediaDefaults from '@/utils/siteMediaDefaults'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { headerHeight, navAttached } from '@/state/headerState'
 
 const { scrolled } = defineProps({ scrolled: { type: Boolean, default: false } })

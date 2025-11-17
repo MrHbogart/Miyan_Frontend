@@ -64,9 +64,9 @@ import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
-import soundstageImg from '@/assets/images/madi-soundstage.jpg'
-import mistLightsImg from '@/assets/images/madi-mist-lights.jpg'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
 
+const siteMedia = siteMediaDefaults
 const landingRoot = ref(null)
 const { scrollY, speedFactor } = useScrollVelocity({
   smoothing: 0.2,
@@ -135,7 +135,7 @@ function mistStyle(index) {
 
 const photoStories = [
   {
-    image: soundstageImg,
+    image: siteMedia.madiImg1,
     overline: { fa: 'صدا', en: 'Sound' },
     title: { fa: 'کمان موسیقی', en: 'Arc of sound' },
     copy: {
@@ -144,7 +144,7 @@ const photoStories = [
     }
   },
   {
-    image: mistLightsImg,
+    image: siteMedia.madiImg2,
     overline: { fa: 'نور', en: 'Light' },
     title: { fa: 'موج آبی', en: 'Azure wave' },
     copy: {
