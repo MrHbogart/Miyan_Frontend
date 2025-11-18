@@ -9,7 +9,7 @@
             muted 
             loop 
             playsinline 
-            class="absolute inset-0 w-full h-full object-cover" 
+            class="absolute inset-0 w-full h-full object-cover"
           />
         <div
           class="absolute inset-0 transition-all"
@@ -38,12 +38,12 @@
         dir="ltr"
       >
         <div class="max-w-4xl mx-auto px-6">
-        <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+        <div class="flex flex-wrap justify-around">
             <router-link
               v-for="item in navItems"
               :key="item.name"
               :to="{ path: getLocalizedPath(item.path) }"
-              class="px-5 md:px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+              class="px-3 md:px-4 py-3 w-1/4 text-center transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
               :class="[
                 { 'font-bold': $route.name === item.name },
                 lang === 'en' ? 'font-cinzel font-light' : 'font-b-titr'
@@ -91,8 +91,8 @@ const childSwipe = ref(null)
 const childTransition = ref('swipe-left')
 
 const navItems = [
-  { name: 'MiyanLanding', path: '', label: { fa: 'خانه', en: 'Landing' } },
   { name: 'MiyanGallery', path: 'gallery', label: { fa: 'گالری', en: 'Gallery' } },
+  { name: 'MiyanLanding', path: '', label: { fa: 'خانه', en: 'Home' } },
   { name: 'MiyanProjects', path: 'projects', label: { fa: 'پروژه‌ها', en: 'Projects' } },
 ]
 

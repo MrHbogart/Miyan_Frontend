@@ -2,9 +2,9 @@ import miyanHeroVideo from '@/assets/videos/miyan/madi_cat.mp4'
 import madiHeroVideo from '@/assets/videos/madi/madi_hero.mp4'
 import bereshtHeroVideo from '@/assets/videos/beresht/beresht_hero.mp4'
 
-import miyanLogo from '@/assets/images/miyan_logo.png'
-import bereshtLogo from '@/assets/images/miyan_beresht_logo.png'
-import madiLogo from '@/assets/images/miyan_madi_logo.png'
+import miyanLogo from '@/assets/images/miyan_logo.webp'
+import bereshtLogo from '@/assets/images/miyan_beresht_logo.webp'
+import madiLogo from '@/assets/images/miyan_madi_logo.webp'
 
 import miyanImg1 from '@/assets/images/miyan/miyan_gibsen.webp'
 import miyanImg2 from '@/assets/images/miyan/miyan_green_bean.jpg'

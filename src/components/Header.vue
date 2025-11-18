@@ -201,7 +201,6 @@ header {
 .logo-img {
   height: 100%;
   width: auto;
-  max-width: 82px;
   aspect-ratio: 4/1;
   object-fit: contain;
   filter: brightness(0.96) grayscale(0);

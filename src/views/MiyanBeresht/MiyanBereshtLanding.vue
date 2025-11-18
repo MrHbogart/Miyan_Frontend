@@ -7,7 +7,7 @@
   >
     <div class="beresht-hero">
       <div class="hero-emblem" data-reveal>
-        <img :src="siteMedia.bereshtLogo" alt="Miyan Beresht" />
+        <img :src="siteMedia.miyanImg5" alt="Miyan Beresht" />
       </div>
       <div class="hero-copy" data-reveal>
         <p class="overline" :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
@@ -26,7 +26,7 @@
       </span>
     </div>
 
-    <div class="beresht-panels">
+    <!-- <div class="beresht-panels">
       <article class="panel" data-reveal>
         <h2 :class="titleClass">{{ isRTL ? 'میز آماده' : 'Prep table' }}</h2>
         <p :class="textClass">
@@ -53,7 +53,7 @@
           </li>
         </ul>
       </article>
-    </div>
+    </div> -->
     <div class="immersive-stack">
       <article
         v-for="(story, idx) in photoStories"
@@ -99,24 +99,19 @@ const landingStyle = computed(() => ({
 }))
 
 const marqueeWords = [
-  { fa: 'استراحت', en: 'Proof' },
-  { fa: 'فرم', en: 'Shape' },
-  { fa: 'پخت', en: 'Bake' },
-  { fa: 'سرو', en: 'Serve' }
-]
-
-const todaysDetails = [
-  { fa: 'کروسان کره قهوه‌ای', en: 'Brown butter croissant' },
-  { fa: 'لیموناد هل و لیمو', en: 'Cardamom lime lemonade' },
-  { fa: 'نان ترد گندم سیاه', en: 'Buckwheat crispbread' }
+  { fa: 'آزمون', en: 'ُAnalyze' },
+  { fa: 'علم', en: 'Science' },
+  { fa: 'تجربه', en: 'Eperience' },
+  { fa: 'هنر', en: 'Art' },
+  { fa: 'تمایز', en: '' },
 ]
 
 const heroCopy = {
-  overline: { fa: 'کارگاه نان', en: 'Bake studio' },
-  title: { fa: 'خمیر آرام، شعله کم', en: 'Calm dough, low flame' },
+  overline: { fa: 'حانه برشته کاری میان', en: 'Miyan Roastry Home' },
+  title: { fa: 'میان زندگی و قهوه', en: 'Between Life and Coffee' },
   body: {
-    fa: 'هر خمیر با دست کشیده و در عطر کره گرم می‌شود.',
-    en: 'Each dough is hand-stretched and warmed with quiet butter notes.'
+    fa: 'عطف تخصص و هنر برشته کاری اینجاست',
+    en: 'Expertise and Artistry of Roastry, Meets Here'
   }
 }
 
@@ -131,20 +126,20 @@ const marqueeStyle = computed(() => {
 const photoStories = [
   {
     image: siteMedia.bereshtImg1,
-    overline: { fa: 'کارگاه', en: 'Workshop' },
-    title: { fa: 'خمير آرام', en: 'Composed dough' },
+    overline: { fa: 'تلاش', en: 'Effort' },
+    title: { fa: 'مسیر درست', en: 'Right Path' },
     copy: {
-      fa: 'آرد روی میز سنگی می‌رقصد و بخار سرد به آرامی از ظرف‌ها بالا می‌رود.',
-      en: 'Flour drifts across the stone bench while cool vapor rises from the bowls.'
+      fa: 'همراهی بینش و تلاش',
+      en: 'Vision Accompanied by Hard Work'
     }
   },
   {
     image: siteMedia.bereshtImg2,
-    overline: { fa: 'فرم', en: 'Form' },
-    title: { fa: 'سطوح روشن', en: 'Silent forms' },
+    overline: { fa: 'اصالت', en: 'Authenticity' },
+    title: { fa: 'تمایز توجه به جزئیات', en: 'Excellence in Attention to Detail' },
     copy: {
-      fa: 'سنگ روشن و ورق فولاد در نور خورشید محو می‌شوند.',
-      en: 'Pale stone and steel sheets fade inside the morning light.'
+      fa: 'توجه به جزئیات، تعهد به اصالت',
+      en: 'Attention to Detail, Commitment to Authenticity'
     }
   },
   {
@@ -197,7 +192,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 .landing-shell {
   position: relative;
   min-height: 100vh;
-  padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
+  padding: clamp(2rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem) calc(3rem + env(safe-area-inset-bottom));
   background: transparent;
   color: #241308;
   --viz-velocity: 1;
@@ -385,7 +380,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
 }
 
 .story-scene:hover::before {
@@ -393,11 +388,12 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 }
 
 .story-copy {
-  position: relative;
+  position: absolute;
+  bottom: 1.5rem;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.15rem;
   color: rgba(255, 215, 72, 0.9);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }

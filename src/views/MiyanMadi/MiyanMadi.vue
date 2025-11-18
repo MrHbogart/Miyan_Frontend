@@ -21,14 +21,14 @@
   <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" dir="ltr">
       <div class="max-w-4xl mx-auto px-6">
         <div
-          class="flex flex-wrap justify-center gap-3 md:gap-4"
+          class="flex flex-wrap justify-around"
           :class="isRTL ? 'flex-row-reverse text-right' : 'text-left'"
         >
           <router-link
             v-for="item in navItems"
             :key="item.name"
             :to="{ path: getLocalizedPath(item.path) }"
-            class="px-5 md:px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+            class="px-3 md:px-4 py-3 w-1/4 text-center transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
             :class="[
               { 'font-bold': $route.name === item.name },
               { 'font-cinzel font-light': !isRTL },
@@ -76,8 +76,8 @@ const childSwipe = ref(null)
 const childTransition = ref('swipe-left')
 
 const navItems = [
-  { name: 'MiyanMadiLanding', path: 'madi', label: { fa: 'مرور', en: 'Landing' } },
-  { name: 'MiyanMadiBaseMenu', path: 'madi/menu', label: { fa: 'منوی اصلی', en: 'Menu' } },
+  { name: 'MiyanMadiLanding', path: 'madi', label: { fa: 'خانه مادی', en: 'Madi Home' } },
+  { name: 'MiyanMadiBaseMenu', path: 'madi/menu', label: { fa: 'منو', en: 'Menu' } },
   { name: 'MiyanMadiDailyMenu', path: 'madi/daily-menu', label: { fa: 'پخت روز', en: "Today's Special" } },
 ]
 

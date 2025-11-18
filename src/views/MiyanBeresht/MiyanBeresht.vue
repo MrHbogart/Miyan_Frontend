@@ -20,12 +20,12 @@
   <div ref="navbarSentinel" :style="sentinelStyle"></div>
   <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" dir="ltr">
       <div class="max-w-4xl mx-auto px-6">
-        <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+        <div class="flex flex-wrap justify-around">
           <router-link
             v-for="item in navItems"
             :key="item.name"
             :to="{ path: getLocalizedPath(item.path) }"
-            class="px-5 md:px-6 py-3 rounded-[1px] transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+            class="px-4 md:px-3 py-3 w-1/4 text-center transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
             :class="[
               { 'font-bold': $route.name === item.name },
               lang === 'en' ? 'font-cinzel font-light' : 'font-b-titr'
@@ -72,9 +72,9 @@ const childSwipe = ref(null)
 const childTransition = ref('swipe-left')
 
 const navItems = [
-  { name: 'MiyanBereshtLanding', path: 'beresht', label: { fa: 'مرور', en: 'Landing' } },
-  { name: 'MiyanBereshtBaseMenu', path: 'beresht/menu', label: { fa: 'منوی اصلی', en: 'Menu' } },
   { name: 'MiyanBereshtDailyMenu', path: 'beresht/daily-menu', label: { fa: 'پخت روز', en: "Today's Special" } },
+  { name: 'MiyanBereshtBaseMenu', path: 'beresht/menu', label: { fa: 'منو', en: 'Beresht Menu' } },
+  { name: 'MiyanBereshtLanding', path: 'beresht', label: { fa: 'خانه برشت', en: 'Beresht Home' } },
 ]
 
 const isRTL = computed(() => lang.value === 'fa')

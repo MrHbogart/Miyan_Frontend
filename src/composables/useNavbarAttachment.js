@@ -26,7 +26,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     
     const rect = sent.getBoundingClientRect()
     const headerH = headerHeight.value || 0
-    const shouldAttach = rect.top <= headerH + 1
+    const shouldAttach = rect.top <= headerH
     
     if (shouldAttach !== attached.value) {
       attached.value = shouldAttach
