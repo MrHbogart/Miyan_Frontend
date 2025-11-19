@@ -15,28 +15,15 @@
       </p>
     </div>
 
-    <div class="madi-grid">
-      <article
-        v-for="(ritual, index) in rituals"
-        :key="ritual.title.en"
-        class="ritual-card"
-        data-reveal
-        :style="{ '--delay': `${index * 90}ms` }"
-      >
-        <p class="ritual-title" :class="titleClass">{{ isRTL ? ritual.title.fa : ritual.title.en }}</p>
-        <p class="ritual-copy" :class="textClass">{{ isRTL ? ritual.copy.fa : ritual.copy.en }}</p>
-      </article>
-    </div>
-
     <div class="madi-atmosphere">
       <div class="mist-line" v-for="n in 3" :key="n" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? 'اتمسفر شب' : 'Night air' }}</h2>
+        <h2 :class="titleClass">{{ isRTL ? 'میان کوچه ها و خیابان های شهر' : 'Among the Alleys and Streets of the City' }}</h2>
         <p :class="textClass">
-          {{ isRTL ? 'نور خطی مه را روشن می‌کند و لبه فنجان را می‌درخشد.' : 'Linear light lifts the mist and trims each cup.' }}
+          {{ isRTL ? 'میان صمیمیت و احترام' : 'Where Intimacy Meets Respect' }}
         </p>
         <p :class="textClass">
-          {{ isRTL ? 'گیاه خیس و صدای آب پس‌زمینه را می‌سازد.' : 'Damp foliage and water loops complete the scene.' }}
+          {{ isRTL ? 'میان سکوت و موسیقی' : 'Where Silence Meets Music' }}
         </p>
       </div>
     </div>
@@ -85,36 +72,12 @@ const landingStyle = computed(() => ({
 
 const heroCopy = {
   overline: { fa: 'مادی', en: 'Madi' },
-  title: { fa: 'بخار سرد، نور ماه', en: 'Cool mist, moon light' },
+  title: { fa: 'میان شهر و شهروند', en: 'Between the City and the Citizen' },
   body: {
-    fa: 'نوشیدنی گیاهی، مه معطر و موسیقی مینیمال کنار هم قرار می‌گیرند.',
-    en: 'Botanical pours, scented mist, and minimal beats live together.'
+    fa: 'توقف میان لحظه ها', 
+    en: 'A Pause Between Moments'
   }
 }
-
-const rituals = [
-  {
-    title: { fa: 'مه دمایی', en: 'Thermal mist' },
-    copy: {
-      fa: 'چشم را آرام می‌کند و بو را تازه نگه می‌دارد.',
-      en: 'It calms the gaze and resets aroma.'
-    }
-  },
-  {
-    title: { fa: 'کالکشن شب', en: 'Night collection' },
-    copy: {
-      fa: 'نوشیدنی گیاهی با یخ دست‌ساز سرو می‌شود.',
-      en: 'Botanical drinks meet hand-cut ice.'
-    }
-  },
-  {
-    title: { fa: 'ایستگاه صدا', en: 'Sound booth' },
-    copy: {
-      fa: 'کوک پایین قوس سقف را برجسته می‌کند.',
-      en: 'Low notes highlight the ceiling arcs.'
-    }
-  }
-]
 
 const heroOrbitStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 500, 1), 0.75)

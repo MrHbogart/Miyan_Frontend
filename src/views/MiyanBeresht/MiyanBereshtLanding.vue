@@ -5,19 +5,14 @@
     :dir="dirAttr"
     :style="landingStyle"
   >
-    <div class="beresht-hero">
-      <div class="hero-emblem" data-reveal>
-        <img :src="siteMedia.miyanImg5" alt="Miyan Beresht" />
-      </div>
-      <div class="hero-copy" data-reveal>
-        <p class="overline" :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-        <h1 :class="titleClass">
-          {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
-        </h1>
-        <p :class="textClass">
-          {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
-        </p>
-      </div>
+    <div class="hero-copy" data-reveal>
+      <p class="overline" :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
+      <h1 :class="titleClass">
+        {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
+      </h1>
+      <p :class="textClass">
+        {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
+      </p>
     </div>
 
     <div class="beresht-marquee" :style="marqueeStyle">
@@ -26,34 +21,6 @@
       </span>
     </div>
 
-    <!-- <div class="beresht-panels">
-      <article class="panel" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? 'میز آماده' : 'Prep table' }}</h2>
-        <p :class="textClass">
-          {{ isRTL ? 'سطح سنگی همیشه خنک است تا لایه‌ها جمع نشوند.' : 'Chilled stone keeps layers relaxed.' }}
-        </p>
-        <p :class="textClass">
-          {{ isRTL ? 'تمام ابزار فقط یک ریتم آهسته دارند.' : 'Tools move in one quiet tempo.' }}
-        </p>
-      </article>
-      <article class="panel" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? 'اتاق چای' : 'Tea room' }}</h2>
-        <p :class="textClass">
-          {{ isRTL ? 'چای سفید با پوست مرکبات تعادل مزه‌ها را نگه می‌دارد.' : 'White tea with citrus peel balances the sweets.' }}
-        </p>
-        <p :class="textClass">
-          {{ isRTL ? 'میزبان فقط با اشاره آرام سرو می‌کند.' : 'Service works with simple hand cues.' }}
-        </p>
-      </article>
-      <article class="panel" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? 'امروز' : 'Today' }}</h2>
-        <ul :class="textClass">
-          <li v-for="item in todaysDetails" :key="item.en">
-            {{ isRTL ? item.fa : item.en }}
-          </li>
-        </ul>
-      </article>
-    </div> -->
     <div class="immersive-stack">
       <article
         v-for="(story, idx) in photoStories"
@@ -107,10 +74,10 @@ const marqueeWords = [
 ]
 
 const heroCopy = {
-  overline: { fa: 'حانه برشته کاری میان', en: 'Miyan Roastry Home' },
+  overline: { fa: 'حانه میان برشت', en: 'Miyan Beresht Home' },
   title: { fa: 'میان زندگی و قهوه', en: 'Between Life and Coffee' },
   body: {
-    fa: 'عطف تخصص و هنر برشته کاری اینجاست',
+    fa: 'عطف تخصص و هنر برشته کاری',
     en: 'Expertise and Artistry of Roastry, Meets Here'
   }
 }
@@ -126,10 +93,10 @@ const marqueeStyle = computed(() => {
 const photoStories = [
   {
     image: siteMedia.bereshtImg1,
-    overline: { fa: 'تلاش', en: 'Effort' },
+    overline: { fa: 'کوشش', en: 'Effort' },
     title: { fa: 'مسیر درست', en: 'Right Path' },
     copy: {
-      fa: 'همراهی بینش و تلاش',
+      fa: 'همراهی بینش و کوشش',
       en: 'Vision Accompanied by Hard Work'
     }
   },
@@ -144,20 +111,20 @@ const photoStories = [
   },
   {
     image: siteMedia.bereshtImg3,
-    overline: { fa: 'چایخانه', en: 'Tea room' },
-    title: { fa: 'بخار مرکبات', en: 'Citrus steam' },
+    overline: { fa: 'کیفیت', en: 'Quality' },
+    title: { fa: 'احترام', en: 'Respect' },
     copy: {
-      fa: 'لیوان‌ها در نور طلایی می‌درخشند و خدمت آرام با اشاره دست هدایت می‌شود.',
-      en: 'Glasses glow in amber light while quiet hand cues guide the service.'
+      fa: 'کیفیت، احترام به شماست',
+      en: 'Quality is Our Way of Respecting You'
     }
   },
   {
     image: siteMedia.bereshtImg4,
-    overline: { fa: 'امروز', en: 'Today' },
-    title: { fa: 'پخت عصر', en: 'Evening proof' },
+    overline: { fa: 'این لحظه', en: 'This Moment' },
+    title: { fa: 'میان خاطره و بینش', en: 'Between Memory and Vision' },
     copy: {
-      fa: 'هوای گرم با وانیل سفید ترکیب می‌شود و فضا را جمع می‌کند.',
-      en: 'Warm air blends with white vanilla to close the room.',
+      fa: 'حس این لحظه،  حس خاطرات، حس آینده',
+      en: 'Feel the moment, feel the memories, feel the future',
     }
   },
 ]
