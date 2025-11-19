@@ -27,6 +27,7 @@
         />
       </div>
     </section>
+
     <MiyanLanding />
   </div>
 </template>
@@ -58,9 +59,7 @@ const childSwipe = ref(null)
 const childTransition = ref('swipe-left')
 
 const navItems = [
-  { name: 'MiyanGallery', path: 'gallery', label: { fa: 'گالری', en: 'Gallery' } },
   { name: 'MiyanLanding', path: '', label: { fa: 'خانه', en: 'Home' } },
-  { name: 'MiyanProjects', path: 'projects', label: { fa: 'پروژه‌ها', en: 'Projects' } },
 ]
 
 const isRTL = computed(() => lang.value === 'fa')
@@ -116,5 +115,10 @@ useSwipeNavigation(childSwipe, {
 
 .nav-placeholder section {
   width: 100%;
+}
+@media (max-width: 768px) {
+  video {
+    object-position: calc(50% - 150px) center !important;
+  }
 }
 </style>

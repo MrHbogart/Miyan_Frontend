@@ -19,13 +19,13 @@
   <div class="nav-placeholder">
   <div ref="navbarSentinel" :style="sentinelStyle"></div>
   <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" dir="ltr">
-      <div class="max-w-4xl mx-auto px-6">
+      <div class="max-w-4xl mx-auto px-12">
         <div class="flex flex-wrap justify-around">
           <router-link
             v-for="item in navItems"
             :key="item.name"
             :to="{ path: getLocalizedPath(item.path) }"
-            class="px-4 md:px-3 py-3 w-1/4 text-center transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+            class="px-4 md:px-3 py-3 w-1/3 text-center transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
             :class="[
               { 'font-bold': $route.name === item.name },
               lang === 'en' ? 'font-cinzel font-light' : 'font-b-titr'

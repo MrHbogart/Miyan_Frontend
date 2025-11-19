@@ -321,6 +321,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   top: clamp(2.5rem, 18vh, 7rem);
   isolation: isolate;
   width: 100%;
+  margin: auto;
   min-height: clamp(18rem, 70vh, 32rem);
   padding: clamp(1.75rem, 3vw, 2.75rem);
   overflow: hidden;
@@ -328,7 +329,6 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   box-shadow: 0 12px 36px rgba(8, 4, 2, 0.15);
   scroll-snap-align: start;
   background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .story-scene::before {
@@ -356,7 +356,8 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 
 .story-copy {
   position: absolute;
-  bottom: 1.5rem;
+  bottom: 2.75rem;
+  right: 2.75rem;
   z-index: 1;
   display: flex;
   flex-direction: column;

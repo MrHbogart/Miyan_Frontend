@@ -1,12 +1,11 @@
 /* Global custom styles. Tailwind directives are in src/tailwind.css */
-
 html, body, #app {
   height: 100%;
 }
 
 /* keep overscroll surface consistent with the app */
-html { background: #fdfcfa }
-body { background: var(--surface, #FFFFFF) }
+html { background: #fdfcfa; box-sizing: border-box; }
+body { background: var(--surface, #FFFFFF);}
 
 body {
   -webkit-font-smoothing: antialiased;
@@ -67,9 +66,10 @@ header { will-change: transform, background-color }
 
 /* opt-in presentation helpers */
 .content-shell {
-  width: min(100%, 68rem);
+  /* width: min(100%, 68rem); */
+
   margin: 0 auto;
-  padding: 0;
+  padding: 0 20rem;
 }
 
 .content-shell--flush {

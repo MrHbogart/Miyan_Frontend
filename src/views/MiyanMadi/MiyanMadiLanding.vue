@@ -99,11 +99,11 @@ function mistStyle(index) {
 const photoStories = [
   {
     image: siteMedia.madiImg1,
-    overline: { fa: 'صدا', en: 'Sound' },
-    title: { fa: 'کمان موسیقی', en: 'Arc of sound' },
+    overline: { fa: 'تصویر', en: 'Sight' },
+    title: { fa: 'صدا', en: 'Sound' },
     copy: {
-      fa: 'فرکانس پایین روی دیوار می‌لغزد و ریتم را در فضای مه‌آلود نگه می‌دارد.',
-      en: 'Low frequency grazes the wall and keeps rhythm suspended in the mist.'
+      fa: 'صدا   ریتم زندگی',
+      en: 'Sound Life\'s Rhythm'
     }
   },
   {
@@ -156,8 +156,6 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   content: '';
   position: absolute;
   inset: 2.5rem;
-  border: 1px solid rgba(74, 115, 164, 0.25);
-  border-radius: clamp(1.25rem, 3vw, 2.5rem);
   pointer-events: none;
   opacity: 0.25;
 }
@@ -297,12 +295,11 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   isolation: isolate;
   display: flex;
   padding: clamp(1.75rem, 3vw, 2.75rem);
-  border-radius: 0.6rem;
   background: transparent;
   border: none;
   box-shadow: none;
-  width: 100%;
-  max-width: 100%;
+  width: 80%;
+  margin: auto;
   scroll-snap-align: start;
 }
 
@@ -327,7 +324,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 }
 
 .story-scene:hover::before {
-  transform: scale(1.12);
+  transform: scale(1.06);
 }
 
 .story-copy {

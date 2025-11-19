@@ -4,7 +4,7 @@
     class="fixed w-full top-0 left-0 z-40" 
     :style="[headerStyle, { 
       backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, 
-      borderBottom: headerBgOpacity ? '1px solid rgba(255,255,255,0.06)' : 'none', 
+      borderBottom: headerBgOpacity ? '0px solid rgba(255,255,255,0.06)' : 'none', 
       transition: `background 400ms ease, backdrop-filter 400ms ease` 
     }]"
   >
@@ -195,7 +195,7 @@ header {
   align-items: center;
   height: 100%;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 0px;
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
 }
 .logo-img {

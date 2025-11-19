@@ -5,15 +5,32 @@
     :dir="dirAttr"
     :style="landingStyle"
   >
+    <div class="hero-copy" data-reveal>
+      <p class="overline" :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
+      <h1 :class="titleClass">
+        {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
+      </h1>
+      <p :class="textClass">
+        {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
+      </p>
+    </div>
+
+    <!-- HYBRID MARQUEE: Beresht-style scroll-driven translateX, keeps Miyan word list -->
+    <div class="miyan-marquee" :style="marqueeStyle" aria-hidden="true">
+      <span v-for="(word, index) in marqueeWords" :key="word.en + index" class="marquee-item">
+        {{ isRTL ? word.fa : word.en }}
+      </span>
+    </div>
+
     <div class="miyan-hero-panel" data-reveal>
       <div class="hero-media" :style="[heroBackgroundStyle, heroMediaMotion]">
-        <div class="hero-media-gradient"></div>
+        <div class="hero-media-gradient" aria-hidden="true"></div>
       </div>
       <div class="hero-copy-block" :class="textClass" :style="heroCopyMotion">
         <p class="overline">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
         <h1 :class="titleClass">{{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}</h1>
         <p>{{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}</p>
-        <div class="hero-highlights">
+        <div class="hero-highlights" aria-hidden="true">
           <span v-for="entry in heroHighlights" :key="entry.en">
             {{ isRTL ? entry.fa : entry.en }}
           </span>
@@ -45,6 +62,7 @@
       </div>
     </div>
 
+    <!-- Immersive stack: larger images, less overlay shadow, smoother animations -->
     <div class="immersive-stack">
       <article
         v-for="(story, idx) in photoStories"
@@ -70,7 +88,6 @@ import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
 
-
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 
 const landingRoot = ref(null)
@@ -88,6 +105,11 @@ const landingStyle = computed(() => ({
   '--viz-velocity': speedFactor.value.toFixed(3),
 }))
 
+// helper classes (left as minimal additions — they match how Beresht computed them previously)
+// If you already define textClass/titleClass globally, these will not conflict.
+const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
+const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
+
 const heroCopy = {
   overline: { fa: 'میان', en: 'Miyan' },
   title: { fa: 'نور معلق، لمسِ لغزان', en: 'Suspended light, gliding tactility' },
@@ -96,6 +118,31 @@ const heroCopy = {
     en: 'Layers of calm light and mist let every guest navigate at their own pace.',
   },
 }
+
+// fixed marquee words (typos corrected, last word filled)
+const marqueeWords = [
+  { fa: 'آزمون', en: 'Analyze' },
+  { fa: 'علم', en: 'Science' },
+  { fa: 'تجربه', en: 'Experience' },
+  { fa: 'هنر', en: 'Art' },
+  { fa: 'تمایز', en: 'Distinction' },
+]
+
+// HYBRID MARQUEE: scroll-driven translateX (Beresht style) with medium speed multiplier
+const MARQUEE_SPEED = 0.25 // medium as requested
+
+const marqueeStyle = computed(() => {
+  // curve smooths the start of motion (same idea as Beresht)
+  const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
+  // base offset (px) scaled by viz speed and chosen marquee speed
+  // for LTR we translate left (negative), for RTL we reverse
+  const direction = isRTL.value ? 1 : -1
+  const offsetPx = curve * 80 * speedFactor.value * MARQUEE_SPEED * direction
+  return {
+    transform: `translateX(${pxToRem(offsetPx)})`,
+    transition: `transform calc(900ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1)`,
+  }
+})
 
 const heroHighlights = [
   { fa: 'سایه‌های بلند', en: 'Drawn shadows' },
@@ -198,11 +245,13 @@ const { sceneProgress } = useSceneProgress(storySections, {
 
 function sceneStyle(idx) {
   const progress = sceneProgress.value[idx] ?? 0
-  const translate = (1 - progress) * 52
-  const scale = 0.9 + progress * 0.1
+  const translate = (1 - progress) * 34 // less heavy; smoother
+  const scale = 0.94 + progress * 0.06
   return {
     transform: `translate3d(0, ${pxToRem(translate)}, 0) scale(${scale})`,
-    opacity: 0.35 + progress * 0.6,
+    opacity: 0.4 + progress * 0.6,
+    transition: 'transform 800ms cubic-bezier(.2,.9,.25,1), opacity 700ms ease',
+    willChange: 'transform, opacity',
   }
 }
 
@@ -210,10 +259,11 @@ function storySurface(image) {
   return { '--story-image': `url("${image}")` }
 }
 
-useRevealObserver(landingRoot, { threshold: 0.2 })
+useRevealObserver(landingRoot, { threshold: 0.18 })
 </script>
 
 <style scoped>
+/* Base shell */
 .landing-shell {
   position: relative;
   min-height: 100vh;
@@ -223,6 +273,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   --viz-velocity: 1;
 }
 
+/* HERO PANEL */
 .miyan-hero-panel {
   display: grid;
   width: 100%;
@@ -233,55 +284,53 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   align-items: stretch;
 }
 
+/* media: larger, cleaner shadow */
 .hero-media {
   position: relative;
-  min-height: 70vh;
+  min-height: 76vh;
   background-size: cover;
   background-position: center;
   overflow: hidden;
-  box-shadow: 0 14px 35px rgba(10, 5, 0, 0.2);
-  transition: transform 1.6s ease, box-shadow 1.6s ease;
+  /* subtle elevated surface rather than heavy shadow */
+  box-shadow: 0 8px 24px rgba(10, 7, 5, 0.08);
+  transition: transform 1.2s ease, box-shadow 1.2s ease;
+  will-change: transform;
 }
 
+/* gradient overlay kept but lighter for luxury-minimal */
 .hero-media-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(210deg, rgba(255, 255, 255, 0) 35%, rgba(11, 8, 4, 0.9) 100%);
+  background: linear-gradient(210deg, rgba(255, 255, 255, 0) 40%, rgba(12, 10, 8, 0.55) 100%);
   mix-blend-mode: multiply;
-  opacity: 0.95;
-}
-
-.hero-copy-block {
-  background: linear-gradient(150deg, rgba(255, 255, 255, 0.97), rgba(255, 245, 230, 0.9));
-  padding: clamp(1.75rem, 4vw, 3.25rem);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  box-shadow: 0 14px 30px rgba(20, 12, 0, 0.1);
-  transition: transform 1.2s ease, box-shadow 1.2s ease;
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(22px);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-}
-
-.hero-copy-block::before {
-  content: '';
-  position: absolute;
-  inset: -30%;
-  background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.75), transparent 45%);
-  filter: blur(40px);
   opacity: 0.9;
   pointer-events: none;
 }
 
-.hero-copy-block::after {
+/* copy block: refined backdrop, reduced noise */
+.hero-copy-block {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 243, 0.95));
+  padding: clamp(1.75rem, 4vw, 3.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 10px;
+  transition: transform 1s ease, box-shadow 1s ease;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  box-shadow: 0 6px 18px rgba(16, 11, 7, 0.06);
+}
+
+/* reduce heavy bright halos, keep subtle artistic sheen */
+.hero-copy-block::before {
   content: '';
   position: absolute;
-  inset: 20%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent);
-  filter: blur(30px);
-  opacity: 0.7;
+  inset: -20%;
+  background: radial-gradient(circle at 12% 18%, rgba(255,255,255,0.65), transparent 40%);
+  filter: blur(28px);
+  opacity: 0.85;
   pointer-events: none;
 }
 
@@ -298,6 +347,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   color: rgba(21, 16, 12, 0.9);
 }
 
+/* highlights: refined chips */
 .hero-highlights {
   display: flex;
   flex-wrap: wrap;
@@ -306,15 +356,16 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 }
 
 .hero-highlights span {
-  padding: 0.4rem 0.9rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  letter-spacing: 0.3em;
+  padding: 0.36rem 0.85rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  border: none;
-  background: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 2px 8px rgba(12,8,6,0.04);
 }
 
+/* overline */
 .overline {
   letter-spacing: 0.35em;
   text-transform: uppercase;
@@ -323,6 +374,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   margin: 0;
 }
 
+/* modal panel */
 .miyan-modal-panel {
   min-height: 85vh;
   width: 100%;
@@ -334,23 +386,23 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 .modal-body {
   width: min(72rem, 100%);
   padding: clamp(2.25rem, 4vw, 4rem);
-  background: linear-gradient(145deg, rgba(255, 248, 232, 0.95), rgba(255, 232, 204, 0.85));
-  box-shadow: 0 12px 30px rgba(15, 10, 0, 0.16);
+  background: linear-gradient(145deg, rgba(255, 248, 232, 0.97), rgba(255, 240, 224, 0.92));
+  box-shadow: 0 10px 28px rgba(15, 10, 0, 0.08);
   display: flex;
   flex-direction: column;
   gap: 1rem;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(18px);
+  backdrop-filter: blur(12px);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
 .modal-body::after {
   content: '';
   position: absolute;
-  inset: -10%;
-  background: radial-gradient(circle at 60% 0%, rgba(255, 255, 255, 0.6), transparent 50%);
-  filter: blur(30px);
+  inset: -6%;
+  background: radial-gradient(circle at 60% 0%, rgba(255, 255, 255, 0.45), transparent 45%);
+  filter: blur(28px);
   opacity: 0.9;
   pointer-events: none;
   z-index: -1;
@@ -376,12 +428,12 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   font-size: 0.78rem;
   letter-spacing: 0.35em;
   text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.78);
   padding: 0.35rem 1.2rem;
   border-radius: 999px;
-  border: none;
 }
 
+/* modal grid items */
 .modal-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
@@ -391,11 +443,11 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 
 .modal-focus {
   padding: 1rem 1.1rem;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.72);
   min-height: 8rem;
-  transition: transform 1100ms ease, opacity 1100ms ease;
+  transition: transform 700ms cubic-bezier(.2,.9,.25,1), opacity 700ms ease;
   opacity: 0;
-  transform: translateY(0.8rem);
+  transform: translateY(0.6rem);
 }
 
 .modal-focus.is-visible {
@@ -418,6 +470,7 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   color: rgba(24, 16, 9, 0.85);
 }
 
+/* IMMERSIVE STACK: images are larger, almost full screen */
 .immersive-stack {
   margin-top: 3rem;
   padding: 0 clamp(1.25rem, 3vw, 3rem) clamp(3rem, 5vw, 4rem);
@@ -426,63 +479,69 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
   scroll-snap-type: y proximity;
 }
 
+/* story scene: bigger, less overlay, improved animation */
 .story-scene {
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: clamp(18rem, 55vh, 32rem);
+  min-height: clamp(40rem, 80vh, 92vh); /* much larger for almost fullscreen feel */
   overflow: hidden;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  box-shadow: 0 12px 35px rgba(12, 7, 4, 0.14);
+  padding: clamp(1.25rem, 2.5vw, 2rem);
   scroll-snap-align: start;
+  background: transparent;
 }
 
+/* image surface: cover and sit behind content; bigger scale so edges feel immersive */
 .story-scene::before {
   content: '';
   position: absolute;
-  inset: -6%;
+  inset: -10%;
   background-image: var(--story-image);
   background-size: cover;
   background-position: center;
-  filter: saturate(1.25) contrast(1.05);
-  transform: scale(1.03);
-  transition: transform 1200ms ease, filter 1200ms ease;
+  filter: saturate(1.08) contrast(1.02) brightness(0.98);
+  transform: scale(1.06);
+  transition: transform 1000ms cubic-bezier(.2,.9,.25,1), filter 900ms ease;
+  will-change: transform, filter;
+  z-index: 0;
 }
 
+/* remove heavy color overlay; keep a subtle warm tone for consistency */
 .story-scene::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0) 30%, rgba(255, 183, 122, 0.75));
-  mix-blend-mode: multiply;
+  background: linear-gradient(165deg, rgba(255,255,255,0) 28%, rgba(255, 245, 235, 0.18));
+  mix-blend-mode: overlay;
+  opacity: 0.95;
+  z-index: 0;
+  pointer-events: none;
 }
 
-.story-scene:hover::before {
-  transform: scale(1.04);
+/* hover/pointer interactions: gentle parallax */
+.story-scene:hover::before,
+.story-scene.is-active::before {
+  transform: scale(1.09) translateY(-1%);
+  filter: saturate(1.12) contrast(1.04) brightness(1.01);
 }
 
+/* STORY COPY: remove the shadowy 'glow' behind text — keep clarity and contrast */
 .story-copy {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  color: rgba(19, 14, 9, 0.92);
+  color: rgba(19, 14, 9, 0.94);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-  overflow: hidden;
+  max-width: min(56ch, 58%);
+  margin: clamp(2rem, 6vw, 8rem);
+  backdrop-filter: none; /* remove blurred/ghostly background */
 }
 
-.story-copy::before {
-  content: '';
-  position: absolute;
-  inset: -15%;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
-  filter: blur(45px);
-  opacity: 0.6;
-  pointer-events: none;
-  z-index: -1;
-}
+/* Removed the previous story-copy::before blurred overlay to satisfy user's request */
 
+/* story typography */
 .story-overline {
   letter-spacing: 0.35em;
   text-transform: uppercase;
@@ -493,20 +552,92 @@ useRevealObserver(landingRoot, { threshold: 0.2 })
 
 .story-copy h3 {
   margin: 0;
-  font-size: clamp(1.45rem, 3vw, 2.3rem);
-  line-height: 1.2;
+  font-size: clamp(1.8rem, 3.7vw, 2.6rem);
+  line-height: 1.12;
 }
 
 .story-copy p {
   line-height: 1.6;
   margin: 0;
-  color: rgba(22, 14, 8, 0.78);
+  color: rgba(22, 14, 8, 0.82);
 }
 
+/* --------------------------------- */
+/* MARQUEE: Beresht-style hybrid     */
+/* scroll-driven translateX, subtle */
+/* --------------------------------- */
+.miyan-marquee {
+  display: flex;
+  gap: 2rem;
+  overflow: hidden;
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  color: rgba(80, 80, 80, 0.78);
+  margin: 2rem 0;
+  transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
+  will-change: transform;
+}
+
+.marquee-item {
+  display: inline-block;
+  padding: 0 0.4rem;
+  letter-spacing: 0.28em;
+  color: rgba(30, 24, 18, 0.9);
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+/* responsive grid tweaks */
 @media (min-width: 1024px) {
   .miyan-hero-panel {
     grid-template-columns: 1.05fr 0.95fr;
     padding: clamp(2rem, 4vw, 4rem);
+  }
+}
+
+/* hero top copy reveal */
+.hero-copy {
+  flex: 1;
+  min-width: 17.5rem;
+  transform: translateY(2rem);
+  opacity: 0;
+  transition: transform calc(1000ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
+    opacity calc(1000ms / var(--viz-velocity, 1)) ease;
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 1.2;
+  margin: 1rem 0;
+  font-weight: 400;
+}
+
+.hero-copy p {
+  color: rgba(38, 28, 18, 0.8);
+  line-height: 1.7;
+}
+
+/* subtle color accent for overline */
+.overline {
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: rgba(84, 62, 49, 0.62);
+}
+
+/* small adaptive tweaks for very small screens */
+@media (max-width: 640px) {
+  .story-copy {
+    margin: 1.25rem;
+    max-width: 100%;
+  }
+  .story-scene {
+    min-height: 60vh;
+  }
+  .hero-media {
+    min-height: 48vh;
   }
 }
 </style>

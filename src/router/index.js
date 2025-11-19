@@ -4,8 +4,6 @@ import MiyanView from '@/views/Miyan/MiyanView.vue'
 import MiyanBereshtView from '@/views/MiyanBeresht/MiyanBeresht.vue'
 import MiyanMadiView from '@/views/MiyanMadi/MiyanMadi.vue'
 import MiyanLanding from '@/views/Miyan/MiyanLanding.vue'
-import MiyanGallery from '@/views/Miyan/MiyanGallery.vue'
-import MiyanProjects from '@/views/Miyan/MiyanProjects.vue'
 import MiyanBereshtLanding from '@/views/MiyanBeresht/MiyanBereshtLanding.vue'
 import MiyanBereshtBaseMenu from '@/views/MiyanBeresht/MiyanBereshtBaseMenu.vue'
 import MiyanBereshtDailyMenu from '@/views/MiyanBeresht/MiyanBereshtDailyMenu.vue'
@@ -21,8 +19,6 @@ const routes = [
     component: MiyanView,
     children: [
       { path: '', name: 'MiyanLanding', component: MiyanLanding },
-      { path: 'gallery', name: 'MiyanGallery', component: MiyanGallery },
-      { path: 'projects', name: 'MiyanProjects', component: MiyanProjects },
     ],
   },
   {
