@@ -73,6 +73,10 @@ header { will-change: transform, background-color }
 }
 
 .content-shell--flush {
+  /* Flush variant removes the large horizontal padding so inner content
+     (e.g., menus) can align to the viewport without overflow. */
+  padding-left: 0;
+  padding-right: 0;
   padding-bottom: 0;
 }
 
@@ -129,3 +133,20 @@ header { will-change: transform, background-color }
 /* rtl helpers */
 [dir="rtl"] .ml-4 { margin-left: 0 !important }
 [dir="rtl"] .mr-4 { margin-right: 0 !important }
+
+/* Reduce excessive letter-spacing for Persian (RTL) content */
+[dir="rtl"] .tracking-wide,
+[dir="rtl"] .tracking-wider,
+[dir="rtl"] .tracking-tight,
+[dir="rtl"] .uppercase {
+  letter-spacing: 0.02em !important;
+}
+
+/* Normalize display chips/overlines in RTL to avoid spaced-out Arabic script */
+[dir="rtl"] .overline,
+[dir="rtl"] .modal-overline,
+[dir="rtl"] .modal-chip,
+[dir="rtl"] .story-overline,
+[dir="rtl"] .hero-highlights span {
+  letter-spacing: 0.06em !important;
+}

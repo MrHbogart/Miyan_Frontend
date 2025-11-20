@@ -25,10 +25,10 @@
             v-for="item in displayNavItems"
             :key="item.name"
             :to="{ path: getLocalizedPath(item.path) }"
-            class="flex-1 min-w-0 px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+            class="flex-1 min-w-0 px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold"
             :class="[
               { 'font-bold': $route.name === item.name },
-              lang === 'en' ? 'font-cinzel font-light' : 'font-b-titr'
+              lang === 'en' ? 'font-cinzel font-light tracking-wide' : 'font-b-titr tracking-normal'
             ]"
           >
             {{ isRTL ? item.label.fa : item.label.en }}
