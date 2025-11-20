@@ -30,12 +30,12 @@
     <div class="madi-atmosphere">
       <div class="mist-line" v-for="n in 3" :key="`primary-${n}`" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? 'میان کوچه ها و خیابان های شهر' : 'Among the Alleys and Streets of the City' }}</h2>
+        <h2 :class="titleClass">{{ isRTL ? 'میان کوچه‌ها و میدان‌ها' : 'Between alleys and squares' }}</h2>
         <p :class="textClass">
-          {{ isRTL ? 'میان صمیمیت و احترام' : 'Where Intimacy Meets Respect' }}
+          {{ isRTL ? 'صدای شهر را نرم می‌کنیم تا مکالمه‌ها طولانی‌تر شوند.' : 'We soften the city’s voice so conversations can stretch longer.' }}
         </p>
         <p :class="textClass">
-          {{ isRTL ? 'میان سکوت و موسیقی' : 'Where Silence Meets Music' }}
+          {{ isRTL ? 'هر صندلی با هاله‌ای از نور خنک تعریف می‌شود.' : 'Each seat is framed by its own pool of cool light.' }}
         </p>
       </div>
     </div>
@@ -79,12 +79,12 @@ const landingStyle = computed(() => ({
 }))
 
 const heroCopy = {
-  overline: { fa: 'مادی', en: 'Madi' },
-  title: { fa: 'میان شهر و شهروند', en: 'Between the City and the Citizen' },
+  overline: { fa: 'مادی نو', en: 'Madi Nouveau' },
+  title: { fa: 'گفت‌وگوی شهر و حرکت', en: 'Dialogue between city and motion' },
   body: {
-    fa: 'توقف میان لحظه ها', 
-    en: 'A Pause Between Moments'
-  }
+    fa: 'هر توقف، مکثی کوتاه میان شتاب خیابان و آرامش فنجان است.',
+    en: 'Every pause is a brief negotiation between the rush outside and the calm inside the cup.',
+  },
 }
 
 const heroOrbitStyle = computed(() => {
@@ -107,22 +107,22 @@ function mistStyle(index) {
 const photoStories = [
   {
     image: siteMedia.madiImg1,
-    overline: { fa: 'تصویر', en: 'Sight' },
-    title: { fa: 'صدا', en: 'Sound' },
+    overline: { fa: 'نغمه', en: 'Melody' },
+    title: { fa: 'تنفس میدان', en: 'Square breathing' },
     copy: {
-      fa: 'صدا   ریتم زندگی',
-      en: 'Sound Life\'s Rhythm'
-    }
+      fa: 'در کنار میدان، صدای گام‌ها و ترمز اتوبوس‌ها را به موجی نرم از موسیقی آرام تبدیل می‌کنیم.',
+      en: 'Beside the square we translate footsteps and bus brakes into a soft wave of ambience.',
+    },
   },
   {
     image: siteMedia.madiImg2,
     overline: { fa: 'نور', en: 'Light' },
     title: { fa: 'موج آبی', en: 'Azure wave' },
     copy: {
-      fa: 'مه سرد نور ماه مصنوعی را می‌شکند و فنجان را درخشان می‌کند.',
-      en: 'Cool haze refracts the fabricated moonlight and tips the cup in glow.'
-    }
-  }
+      fa: 'مه‌ی سرد به نور مصنوعی ماه می‌خورد و سطح فنجان را مانند آبراهی آرام می‌درخشد.',
+      en: 'Cool haze meets the artificial moonlight and lets the cup shimmer like a calm canal.',
+    },
+  },
 ]
 
 function storySurface(image) {

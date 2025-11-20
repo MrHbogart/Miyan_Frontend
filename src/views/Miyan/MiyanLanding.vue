@@ -526,7 +526,6 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 /* IMMERSIVE STACK: images are larger, almost full screen */
 .immersive-stack {
   margin-top: 3rem;
-  padding: 0 clamp(1.25rem, 3vw, 3rem) clamp(3rem, 5vw, 4rem);
   display: grid;
   gap: clamp(1.5rem, 4vw, 2.5rem);
   scroll-snap-type: y proximity;

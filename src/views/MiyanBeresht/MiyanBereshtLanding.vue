@@ -66,19 +66,19 @@ const landingStyle = computed(() => ({
 }))
 
 const marqueeWords = [
-  { fa: 'آزمون', en: 'Analyze' },
-  { fa: 'علم', en: 'Science' },
-  { fa: 'تجربه', en: 'Experience' },
-  { fa: 'هنر', en: 'Art' },
-  { fa: 'تمایز', en: 'Distinction' },
+  { fa: 'تعادل', en: 'Balance' },
+  { fa: 'بو', en: 'Aroma' },
+  { fa: 'ریتم', en: 'Rhythm' },
+  { fa: 'جزئیات', en: 'Details' },
+  { fa: 'مهمان‌نوازی', en: 'Hospitality' },
 ]
 
 const heroCopy = {
-  overline: { fa: 'خانه میان برشت', en: 'Miyan Beresht Home' },
-  title: { fa: 'میان زندگی و قهوه', en: 'Between Life and Coffee' },
+  overline: { fa: 'سالن میان برشت', en: 'Miyan Beresht Salon' },
+  title: { fa: 'روایت‌های گرم در قاب سنگی', en: 'Warm narratives framed in stone' },
   body: {
-    fa: 'عطف تخصص و هنر برشته کاری',
-    en: 'Expertise and artistry of the roastery meet here.',
+    fa: 'هر فنجان با دست‌خطی تازه و سرویس دقیقی که از آشپزخانه باز می‌رسد معرفی می‌شود.',
+    en: 'Each cup arrives with a fresh handwriting and the precise service flowing from the open kitchen.',
   },
 }
 
@@ -93,39 +93,39 @@ const marqueeStyle = computed(() => {
 const photoStories = [
   {
     image: siteMedia.bereshtImg1,
-    overline: { fa: 'کوشش', en: 'Effort' },
-    title: { fa: 'مسیر درست', en: 'Right Path' },
+    overline: { fa: 'ریشه', en: 'Roots' },
+    title: { fa: 'تمرین آتش', en: 'Fire practice' },
     copy: {
-      fa: 'همراهی بینش و کوشش',
-      en: 'Vision Accompanied by Hard Work'
-    }
+      fa: 'برشته‌کاران ما پیش از طلوع، زمان را با شعله می‌سنجند تا هر دانه دقیقاً همان‌گونه که باید بیدار شود.',
+      en: 'Our roasters measure time against the flame before dawn so every bean wakes exactly as intended.',
+    },
   },
   {
     image: siteMedia.bereshtImg2,
-    overline: { fa: 'اصالت', en: 'Authenticity' },
-    title: { fa: 'تمایز توجه به جزئیات', en: 'Excellence in Attention to Detail' },
+    overline: { fa: 'فضا', en: 'Space' },
+    title: { fa: 'نور خطی', en: 'Linear light' },
     copy: {
-      fa: 'توجه به جزئیات، تعهد به اصالت',
-      en: 'Attention to Detail, Commitment to Authenticity'
-    }
+      fa: 'پنجره‌های خطی، سایه‌ها را روی میزهای چوبی می‌کشند و گفتگو را آرام‌تر می‌کنند.',
+      en: 'Strip windows pull shadows across the wooden tables and slow every conversation.',
+    },
   },
   {
     image: siteMedia.bereshtImg3,
-    overline: { fa: 'کیفیت', en: 'Quality' },
-    title: { fa: 'احترام', en: 'Respect' },
+    overline: { fa: 'سرویس', en: 'Service' },
+    title: { fa: 'میزبان خاموش', en: 'Silent host' },
     copy: {
-      fa: 'کیفیت، احترام به شماست',
-      en: 'Quality is Our Way of Respecting You'
-    }
+      fa: 'حرکت تیم سرویس عمدی و بی‌صداست تا مهمان لحظه‌ی خود را بدون مزاحمت بنویسد.',
+      en: 'Service moves deliberately and quietly so each guest can write their moment without interruption.',
+    },
   },
   {
     image: siteMedia.bereshtImg4,
-    overline: { fa: 'این لحظه', en: 'This Moment' },
-    title: { fa: 'میان خاطره و بینش', en: 'Between Memory and Vision' },
+    overline: { fa: 'طعم', en: 'Flavor' },
+    title: { fa: 'انعکاس کهربایی', en: 'Amber reflection' },
     copy: {
-      fa: 'حس این لحظه،  حس خاطرات، حس آینده',
-      en: 'Feel the moment, feel the memories, feel the future',
-    }
+      fa: 'نور کهربایی روی فنجان می‌افتد و لایه‌های کارامل، شکلات و میوه خشک را نمایان می‌کند.',
+      en: 'Amber light settles on the cup, revealing layers of caramel, chocolate, and dried fruit.',
+    },
   },
 ]
 

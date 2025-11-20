@@ -54,12 +54,13 @@ const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
 const childSwipe = ref(null)
 
-const navItems = [
+const navConfig = [
   { name: 'MiyanLanding', path: '', label: { fa: 'خانه', en: 'Home' } },
 ]
 
-const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(navItems)
 const isRTL = computed(() => lang.value === 'fa')
+const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))
+const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(displayNavItems)
 
 useSwipeNavigation(childSwipe, {
   onLeft: () => shiftChild(1),

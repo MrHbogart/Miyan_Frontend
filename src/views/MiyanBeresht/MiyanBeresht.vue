@@ -19,13 +19,13 @@
   <div class="nav-placeholder">
   <div ref="navbarSentinel" :style="sentinelStyle"></div>
   <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" dir="ltr">
-      <div class="max-w-4xl mx-auto px-12">
-        <div class="flex flex-wrap justify-around">
+      <div class="max-w-4xl mx-auto px-4 md:px-12">
+        <div class="flex flex-row w-full items-center justify-between gap-2 text-center">
           <router-link
-            v-for="item in navItems"
+            v-for="item in displayNavItems"
             :key="item.name"
             :to="{ path: getLocalizedPath(item.path) }"
-            class="px-4 md:px-3 py-3 w-1/3 text-center transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
+            class="flex-1 min-w-0 px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase tracking-wide text-base md:text-lg font-semibold"
             :class="[
               { 'font-bold': $route.name === item.name },
               lang === 'en' ? 'font-cinzel font-light' : 'font-b-titr'
@@ -67,14 +67,15 @@ const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
 const childSwipe = ref(null)
 
-const navItems = [
+const navConfig = [
   { name: 'MiyanBereshtDailyMenu', path: 'beresht/daily-menu', label: { fa: 'پخت روز', en: "Today's Special" } },
   { name: 'MiyanBereshtBaseMenu', path: 'beresht/menu', label: { fa: 'منو', en: 'Beresht Menu' } },
   { name: 'MiyanBereshtLanding', path: 'beresht', label: { fa: 'خانه برشت', en: 'Beresht Home' } },
 ]
 
-const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(navItems)
 const isRTL = computed(() => lang.value === 'fa')
+const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))
+const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(displayNavItems)
 
 useSwipeNavigation(childSwipe, {
   onLeft: () => shiftChild(1),
