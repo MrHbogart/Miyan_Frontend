@@ -103,6 +103,7 @@ import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
 
 import siteMediaDefaults from '@/state/siteMediaDefaults'
+import { miyanLandingCopy } from '@/state/siteCopy'
 
 const landingRoot = ref(null)
 const { scrollY, speedFactor } = useScrollVelocity({
@@ -124,23 +125,10 @@ const landingStyle = computed(() => ({
 const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
 const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
 
-const heroCopy = {
-  overline: { fa: 'میان', en: 'Miyan' },
-  title: { fa: 'نور معلق، لمسِ لغزان', en: 'Suspended light, gliding tactility' },
-  body: {
-    fa: 'در لایه‌های صاف نور و مه، هر مهمان با نفس خود جلو می‌رود.',
-    en: 'Layers of calm light and mist let every guest navigate at their own pace.',
-  },
-}
+const heroCopy = miyanLandingCopy.hero
 
 // fixed marquee words (typos corrected, last word filled)
-const marqueeWords = [
-  { fa: 'آزمون', en: 'Analyze' },
-  { fa: 'علم', en: 'Science' },
-  { fa: 'تجربه', en: 'Experience' },
-  { fa: 'هنر', en: 'Art' },
-  { fa: 'تمایز', en: 'Distinction' },
-]
+const marqueeWords = miyanLandingCopy.marqueeWords
 
 // HYBRID MARQUEE: scroll-driven translateX (Beresht style) with medium speed multiplier
 const MARQUEE_SPEED = 0.25 // medium as requested
@@ -158,84 +146,15 @@ const marqueeStyle = computed(() => {
   }
 })
 
-const heroHighlights = [
-  { fa: 'سایه‌های بلند', en: 'Drawn shadows' },
-  { fa: 'سرو آهسته', en: 'Gentle service' },
-  { fa: 'مه سفید', en: 'White mist' },
-]
+const heroHighlights = miyanLandingCopy.heroHighlights
 
-const heroMeta = [
-  {
-    label: { fa: 'موقعیت', en: 'Location' },
-    value: { fa: 'تهران · ولنجک', en: 'Tehran · Velenjak' },
-  },
-  {
-    label: { fa: 'سرویس', en: 'Service' },
-    value: { fa: '۰۷:۰۰ – ۲۳:۳۰', en: '07:00 – 23:30' },
-  },
-  {
-    label: { fa: 'ضوابط', en: 'Approach' },
-    value: { fa: 'رِزرو محور', en: 'Reservation-led' },
-  },
-]
+const heroMeta = miyanLandingCopy.heroMeta
 
-const heroPillars = [
-  {
-    title: { fa: 'فضای معلق', en: 'Suspended space' },
-    copy: {
-      fa: 'سطوح شیشه‌ای و فلزی، نور طبیعی را به موجی نرم تبدیل می‌کنند.',
-      en: 'Glass and metal planes translate daylight into a calm tidal motion.',
-    },
-  },
-  {
-    title: { fa: 'روایت طعم', en: 'Flavor narratives' },
-    copy: {
-      fa: 'هر نوشیدنی با داستانی کوتاه و بافت صوتی سرو می‌شود.',
-      en: 'Every pour arrives with a brief story and sonic backdrop.',
-    },
-  },
-  {
-    title: { fa: 'تعادل حسی', en: 'Sensory balance' },
-    copy: {
-      fa: 'حرکت کارمندان به عمد آرام است تا میهمان ریتم خود را پیدا کند.',
-      en: 'Staff movement stays intentionally slow so guests set the rhythm.',
-    },
-  },
-]
+const heroPillars = miyanLandingCopy.heroPillars
 
-const modalCopy = {
-  overline: { fa: 'مدال', en: 'Modal' },
-  title: { fa: 'حالت تمام‌صفحه', en: 'Fullscreen state' },
-  body: {
-    fa: 'با کادر بی‌پایان و پرتو رنگی، طراحی ما به استقبال سکوت می‌آید.',
-    en: 'An endless frame and warm halos invite stillness across the space.',
-  },
-  accent: { fa: 'نور برای نفس کشیدن', en: 'Light for breathing' },
-}
+const modalCopy = miyanLandingCopy.modal
 
-const modalFocus = [
-  {
-    title: { fa: 'نور بندی', en: 'Light bands' },
-    copy: {
-      fa: 'خط‌های صعودی نور را روی سطوح بتنی می‌نشاند.',
-      en: 'Ascending bands of light settle on the concrete planes.',
-    },
-  },
-  {
-    title: { fa: 'حالت فیلمی', en: 'Filmic calm' },
-    copy: {
-      fa: 'حرکت دوربین را با ریتم آهسته نیم‌پرده تقلید می‌کنیم.',
-      en: 'A slow, semi-tone rhythm mirrors a drifting camera move.',
-    },
-  },
-  {
-    title: { fa: 'بافت آب', en: 'Water texture' },
-    copy: {
-      fa: 'رویه‌ی شیشه‌ی مات، با قطراتِ کوچک تنفس می‌کند.',
-      en: 'Matte glass breathes with tiny beads of vapor.',
-    },
-  },
-]
+const modalFocus = miyanLandingCopy.modalFocus
 
 const heroBackgroundStyle = computed(() => ({
   backgroundImage: `url("${siteMediaDefaults.miyanImg1}")`,
@@ -255,35 +174,10 @@ const heroCopyMotion = computed(() => {
   }
 })
 
-const photoStories = [
-  {
-    image: siteMediaDefaults.miyanImg2,
-    overline: { fa: 'بافت', en: 'Texture' },
-    title: { fa: 'ضربه‌های نقره‌ای', en: 'Silver pulses' },
-    copy: {
-      fa: 'برگ‌های نقره‌ای روی بتن به آرامی نوسان می‌کنند.',
-      en: 'Silver surfaces dance softly across the concrete stage.',
-    },
-  },
-  {
-    image: siteMediaDefaults.miyanImg3,
-    overline: { fa: 'شب', en: 'Night' },
-    title: { fa: 'مه‌تاب', en: 'Moon mist' },
-    copy: {
-      fa: 'مهرِ رنگی روی قاب‌ها نور را به نرمی نشان می‌دهد.',
-      en: 'Colorful halos rest on frames to show light gently.',
-    },
-  },
-  {
-    image: siteMediaDefaults.miyanImg1,
-    overline: { fa: 'نفس', en: 'Breath' },
-    title: { fa: 'پرواز آهسته', en: 'Slow lift' },
-    copy: {
-      fa: 'نقطه‌هایی از روشنایی روی صحنه شناور می‌شوند.',
-      en: 'Specks of brightness glide across the stage.',
-    },
-  },
-]
+const photoStories = miyanLandingCopy.photoStories.map((story) => ({
+  ...story,
+  image: siteMediaDefaults[story.imageKey],
+}))
 
 const storySections = ref([])
 const setStoryScene = (el, idx) => {
@@ -587,7 +481,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   color: rgba(255, 255, 255, 0.95);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   max-width: min(56ch, 58%);
-  margin: clamp(2rem, 6vw, 8rem);
+  margin: var(--story-copy-gutter);
   text-shadow: 0 0.35rem 1.5rem rgba(0, 0, 0, 0.45);
 }
 
@@ -761,7 +655,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
     padding-right: 0;
   }
   .story-copy {
-    margin: 1.25rem;
+    margin: var(--story-copy-gutter);
     max-width: 100%;
   }
   .story-scene {

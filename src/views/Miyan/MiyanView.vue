@@ -40,6 +40,7 @@ import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
 import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
 import { useLocalizedChildRoutes } from '@/composables/useLocalizedChildRoutes'
+import { navigationCopy } from '@/state/siteCopy'
 import MiyanLanding from './MiyanLanding.vue'
 
 const siteMedia = siteMediaDefaults
@@ -54,9 +55,7 @@ const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
 const childSwipe = ref(null)
 
-const navConfig = [
-  { name: 'MiyanLanding', path: '', label: { fa: 'خانه', en: 'Home' } },
-]
+const navConfig = navigationCopy.miyan
 
 const isRTL = computed(() => lang.value === 'fa')
 const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))

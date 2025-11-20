@@ -30,12 +30,13 @@
     <div class="madi-atmosphere">
       <div class="mist-line" v-for="n in 3" :key="`primary-${n}`" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? 'میان کوچه‌ها و میدان‌ها' : 'Between alleys and squares' }}</h2>
-        <p :class="textClass">
-          {{ isRTL ? 'صدای شهر را نرم می‌کنیم تا مکالمه‌ها طولانی‌تر شوند.' : 'We soften the city’s voice so conversations can stretch longer.' }}
-        </p>
-        <p :class="textClass">
-          {{ isRTL ? 'هر صندلی با هاله‌ای از نور خنک تعریف می‌شود.' : 'Each seat is framed by its own pool of cool light.' }}
+        <h2 :class="titleClass">{{ isRTL ? atmosphereCopy.title.fa : atmosphereCopy.title.en }}</h2>
+        <p
+          v-for="(paragraph, idx) in atmosphereCopy.paragraphs"
+          :key="`atmo-${idx}`"
+          :class="textClass"
+        >
+          {{ isRTL ? paragraph.fa : paragraph.en }}
         </p>
       </div>
     </div>
@@ -60,6 +61,7 @@ import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
+import { miyanMadiLandingCopy } from '@/state/siteCopy'
 
 const siteMedia = siteMediaDefaults
 const landingRoot = ref(null)
@@ -78,14 +80,8 @@ const landingStyle = computed(() => ({
   '--viz-velocity': speedFactor.value.toFixed(3)
 }))
 
-const heroCopy = {
-  overline: { fa: 'مادی نو', en: 'Madi Nouveau' },
-  title: { fa: 'گفت‌وگوی شهر و حرکت', en: 'Dialogue between city and motion' },
-  body: {
-    fa: 'هر توقف، مکثی کوتاه میان شتاب خیابان و آرامش فنجان است.',
-    en: 'Every pause is a brief negotiation between the rush outside and the calm inside the cup.',
-  },
-}
+const heroCopy = miyanMadiLandingCopy.hero
+const atmosphereCopy = miyanMadiLandingCopy.atmosphere
 
 const heroOrbitStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 500, 1), 0.75)
@@ -104,26 +100,10 @@ function mistStyle(index) {
   }
 }
 
-const photoStories = [
-  {
-    image: siteMedia.madiImg1,
-    overline: { fa: 'نغمه', en: 'Melody' },
-    title: { fa: 'تنفس میدان', en: 'Square breathing' },
-    copy: {
-      fa: 'در کنار میدان، صدای گام‌ها و ترمز اتوبوس‌ها را به موجی نرم از موسیقی آرام تبدیل می‌کنیم.',
-      en: 'Beside the square we translate footsteps and bus brakes into a soft wave of ambience.',
-    },
-  },
-  {
-    image: siteMedia.madiImg2,
-    overline: { fa: 'نور', en: 'Light' },
-    title: { fa: 'موج آبی', en: 'Azure wave' },
-    copy: {
-      fa: 'مه‌ی سرد به نور مصنوعی ماه می‌خورد و سطح فنجان را مانند آبراهی آرام می‌درخشد.',
-      en: 'Cool haze meets the artificial moonlight and lets the cup shimmer like a calm canal.',
-    },
-  },
-]
+const photoStories = miyanMadiLandingCopy.photoStories.map((story) => ({
+  ...story,
+  image: siteMedia[story.imageKey],
+}))
 
 function storySurface(image) {
   return { '--story-image': `url("${image}")` }
@@ -242,8 +222,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 }
 
 .madi-story-copy {
-  margin: clamp(1.5rem, 4vw, 3rem);
-  max-width: min(38rem, 80%);
+  margin: var(--story-copy-gutter);
+  max-width: min(38rem, calc(100% - (var(--story-copy-gutter) * 2)));
   color: #fff;
   text-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.55);
 }

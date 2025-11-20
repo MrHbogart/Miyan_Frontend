@@ -18,11 +18,13 @@
   <!-- Toggle Buttons -->
   <div class="nav-placeholder">
   <div ref="navbarSentinel" :style="sentinelStyle"></div>
-  <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" dir="ltr">
+  <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" :dir="isRTL ? 'rtl' : 'ltr'">
       <div class="max-w-4xl mx-auto px-4 md:px-12">
         <div
-          class="flex flex-row w-full items-center justify-between gap-2 text-center"
-          :class="isRTL ? 'flex-row-reverse' : ''"
+          :class="[
+            'flex flex-row w-full items-center justify-between gap-2 text-center',
+            isRTL ? 'flex-row-reverse' : ''
+          ]"
         >
           <router-link
             v-for="item in displayNavItems"
@@ -58,6 +60,7 @@ import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
 import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
 import { useLocalizedChildRoutes } from '@/composables/useLocalizedChildRoutes'
+import { navigationCopy } from '@/state/siteCopy'
 
 const siteMedia = siteMediaDefaults
 
@@ -71,11 +74,7 @@ const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
 const childSwipe = ref(null)
 
-const navConfig = [
-  { name: 'MiyanMadiLanding', path: 'madi', label: { fa: 'خانه مادی', en: 'Madi Home' } },
-  { name: 'MiyanMadiBaseMenu', path: 'madi/menu', label: { fa: 'منو', en: 'Menu' } },
-  { name: 'MiyanMadiDailyMenu', path: 'madi/daily-menu', label: { fa: 'پخت روز', en: "Today's Special" } },
-]
+const navConfig = navigationCopy.miyanMadi
 
 const isRTL = computed(() => lang.value === 'fa')
 const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))

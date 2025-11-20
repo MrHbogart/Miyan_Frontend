@@ -46,6 +46,7 @@ import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
+import { miyanBereshtLandingCopy } from '@/state/siteCopy'
 
 
 const landingRoot = ref(null)
@@ -65,22 +66,9 @@ const landingStyle = computed(() => ({
   '--viz-velocity': speedFactor.value.toFixed(3)
 }))
 
-const marqueeWords = [
-  { fa: 'تعادل', en: 'Balance' },
-  { fa: 'بو', en: 'Aroma' },
-  { fa: 'ریتم', en: 'Rhythm' },
-  { fa: 'جزئیات', en: 'Details' },
-  { fa: 'مهمان‌نوازی', en: 'Hospitality' },
-]
+const marqueeWords = miyanBereshtLandingCopy.marqueeWords
 
-const heroCopy = {
-  overline: { fa: 'سالن میان برشت', en: 'Miyan Beresht Salon' },
-  title: { fa: 'روایت‌های گرم در قاب سنگی', en: 'Warm narratives framed in stone' },
-  body: {
-    fa: 'هر فنجان با دست‌خطی تازه و سرویس دقیقی که از آشپزخانه باز می‌رسد معرفی می‌شود.',
-    en: 'Each cup arrives with a fresh handwriting and the precise service flowing from the open kitchen.',
-  },
-}
+const heroCopy = miyanBereshtLandingCopy.hero
 
 const marqueeStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
@@ -90,44 +78,10 @@ const marqueeStyle = computed(() => {
   }
 })
 
-const photoStories = [
-  {
-    image: siteMedia.bereshtImg1,
-    overline: { fa: 'ریشه', en: 'Roots' },
-    title: { fa: 'تمرین آتش', en: 'Fire practice' },
-    copy: {
-      fa: 'برشته‌کاران ما پیش از طلوع، زمان را با شعله می‌سنجند تا هر دانه دقیقاً همان‌گونه که باید بیدار شود.',
-      en: 'Our roasters measure time against the flame before dawn so every bean wakes exactly as intended.',
-    },
-  },
-  {
-    image: siteMedia.bereshtImg2,
-    overline: { fa: 'فضا', en: 'Space' },
-    title: { fa: 'نور خطی', en: 'Linear light' },
-    copy: {
-      fa: 'پنجره‌های خطی، سایه‌ها را روی میزهای چوبی می‌کشند و گفتگو را آرام‌تر می‌کنند.',
-      en: 'Strip windows pull shadows across the wooden tables and slow every conversation.',
-    },
-  },
-  {
-    image: siteMedia.bereshtImg3,
-    overline: { fa: 'سرویس', en: 'Service' },
-    title: { fa: 'میزبان خاموش', en: 'Silent host' },
-    copy: {
-      fa: 'حرکت تیم سرویس عمدی و بی‌صداست تا مهمان لحظه‌ی خود را بدون مزاحمت بنویسد.',
-      en: 'Service moves deliberately and quietly so each guest can write their moment without interruption.',
-    },
-  },
-  {
-    image: siteMedia.bereshtImg4,
-    overline: { fa: 'طعم', en: 'Flavor' },
-    title: { fa: 'انعکاس کهربایی', en: 'Amber reflection' },
-    copy: {
-      fa: 'نور کهربایی روی فنجان می‌افتد و لایه‌های کارامل، شکلات و میوه خشک را نمایان می‌کند.',
-      en: 'Amber light settles on the cup, revealing layers of caramel, chocolate, and dried fruit.',
-    },
-  },
-]
+const photoStories = miyanBereshtLandingCopy.photoStories.map((story) => ({
+  ...story,
+  image: siteMedia[story.imageKey],
+}))
 
 const storySections = ref([])
 const setStoryScene = (el, idx) => {
@@ -356,14 +310,16 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 
 .story-copy {
   position: absolute;
-  bottom: 2.75rem;
-  right: 2.75rem;
+  bottom: var(--story-copy-gutter);
+  left: var(--story-copy-gutter);
+  right: var(--story-copy-gutter);
   z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
   color: rgba(255, 215, 72, 0.9);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  max-width: min(36rem, calc(100% - (var(--story-copy-gutter) * 2)));
 }
 
 .story-overline {
@@ -373,15 +329,8 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   color: rgba(255, 145, 0, 0.962);
 }
 
-[dir="ltr"] .story-copy {
-  right: auto;
-  left: 2.75rem;
-  text-align: left;
-}
-
-[dir="rtl"] .story-copy {
-  text-align: right;
-}
+[dir="ltr"] .story-copy { text-align: left; }
+[dir="rtl"] .story-copy { text-align: right; }
 
 @media (max-width: 48rem) {
   .beresht-hero {
