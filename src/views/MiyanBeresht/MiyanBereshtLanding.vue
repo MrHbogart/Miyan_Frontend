@@ -66,20 +66,20 @@ const landingStyle = computed(() => ({
 }))
 
 const marqueeWords = [
-  { fa: 'آزمون', en: 'ُAnalyze' },
+  { fa: 'آزمون', en: 'Analyze' },
   { fa: 'علم', en: 'Science' },
-  { fa: 'تجربه', en: 'Eperience' },
+  { fa: 'تجربه', en: 'Experience' },
   { fa: 'هنر', en: 'Art' },
-  { fa: 'تمایز', en: '' },
+  { fa: 'تمایز', en: 'Distinction' },
 ]
 
 const heroCopy = {
-  overline: { fa: 'حانه میان برشت', en: 'Miyan Beresht Home' },
+  overline: { fa: 'خانه میان برشت', en: 'Miyan Beresht Home' },
   title: { fa: 'میان زندگی و قهوه', en: 'Between Life and Coffee' },
   body: {
     fa: 'عطف تخصص و هنر برشته کاری',
-    en: 'Expertise and Artistry of Roastry, Meets Here'
-  }
+    en: 'Expertise and artistry of the roastery meet here.',
+  },
 }
 
 const marqueeStyle = computed(() => {
@@ -159,7 +159,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
 .landing-shell {
   position: relative;
   min-height: 100vh;
-  padding: clamp(2rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem) calc(3rem + env(safe-area-inset-bottom));
+  padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   background: transparent;
   color: #241308;
   --viz-velocity: 1;
@@ -322,7 +322,7 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   isolation: isolate;
   width: 100%;
   margin: auto;
-  min-height: clamp(18rem, 70vh, 32rem);
+  min-height: min(100vh, 60rem);
   padding: clamp(1.75rem, 3vw, 2.75rem);
   overflow: hidden;
   color: rgba(40, 24, 15, 0.92);
@@ -371,6 +371,16 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   letter-spacing: 0.35em;
   font-size: 0.7rem;
   color: rgba(255, 145, 0, 0.962);
+}
+
+[dir="ltr"] .story-copy {
+  right: auto;
+  left: 2.75rem;
+  text-align: left;
+}
+
+[dir="rtl"] .story-copy {
+  text-align: right;
 }
 
 @media (max-width: 48rem) {

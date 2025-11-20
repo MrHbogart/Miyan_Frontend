@@ -3,8 +3,8 @@
       <div class="space-y-6" v-if="sections && sections.length">
           <section v-for="(section, sIdx) in sections" :key="sIdx" class="pb-8 last:pb-0">
             <h2 class="text-2xl mb-6 text-center">
-              <span v-if="currentLang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ t(section.title) }}</span>
-              <span v-else class="block font-cinzel font-light tracking-wide">{{ t(section.title) }}</span>
+              <span v-if="currentLang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(section.title) }}</span>
+              <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
             </h2>
         <div class="grid gap-6 md:gap-8">
           <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group">
@@ -13,8 +13,8 @@
                 <div class="mb-4">
                   <div :class="['flex items-baseline justify-between gap-4', currentLang === 'fa' ? 'flex-row-reverse text-right' : 'text-left']">
                     <h3 class="mb-2">
-                      <span v-if="currentLang === 'fa'" class="block font-b-titr text-xl mb-1" dir="rtl">{{ t(item.name) }}</span>
-                      <span v-else class="block font-cinzel text-lg font-medium">{{ t(item.name) }}</span>
+                      <span v-if="currentLang === 'fa'" class="block font-b-titr text-xl mb-1" dir="rtl">{{ translateCopy(item.name) }}</span>
+                      <span v-else class="block font-cinzel text-lg font-medium">{{ translateCopy(item.name) }}</span>
                     </h3>
 
                     <div
@@ -22,13 +22,13 @@
                       class="text-gray-700"
                       :class="currentLang === 'fa' ? 'font-b-titr text-lg order-first' : 'font-cinzel font-light text-base'"
                     >
-                      {{ t(item.price) }}
+                      {{ translateCopy(item.price) }}
                     </div>
                   </div>
 
                   <p v-if="item.description" class="text-gray-500" :class="currentLang === 'fa' ? 'text-right' : ''">
-                    <span v-if="currentLang === 'fa'" class="block font-b-titr text-sm mb-1" dir="rtl">{{ t(item.description) }}</span>
-                    <span v-else class="block font-cinzel text-sm font-light">{{ t(item.description) }}</span>
+                    <span v-if="currentLang === 'fa'" class="block font-b-titr text-sm mb-1" dir="rtl">{{ translateCopy(item.description) }}</span>
+                    <span v-else class="block font-cinzel text-sm font-light">{{ translateCopy(item.description) }}</span>
                   </p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ function openImage(imageSrc) {
 }
 
 // Helper to read localized field (expects object with { fa, en })
-function t(obj) {
+function translateCopy(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
   if (typeof obj !== 'object') return ''

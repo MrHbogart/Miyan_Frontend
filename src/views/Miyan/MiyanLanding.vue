@@ -1,25 +1,39 @@
 <template>
   <section
     ref="landingRoot"
-    class="landing-shell landing-shell--miyan brand-surface brand-surface--miyan"
+    class="landing-shell landing-shell--miyan brand-surface brand-surface--miyan content-shell"
     :dir="dirAttr"
     :style="landingStyle"
   >
-    <div class="hero-copy" data-reveal>
-      <p class="overline" :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-      <h1 :class="titleClass">
-        {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
-      </h1>
-      <p :class="textClass">
-        {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
-      </p>
-    </div>
-
-    <!-- HYBRID MARQUEE: Beresht-style scroll-driven translateX, keeps Miyan word list -->
-    <div class="miyan-marquee" :style="marqueeStyle" aria-hidden="true">
-      <span v-for="(word, index) in marqueeWords" :key="word.en + index" class="marquee-item">
-        {{ isRTL ? word.fa : word.en }}
-      </span>
+    <div class="miyan-hero-intro" data-reveal>
+      <div class="hero-intro-text" :class="textClass">
+        <p class="overline">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
+        <h1 :class="titleClass">
+          {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
+        </h1>
+        <p>
+          {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
+        </p>
+        <div class="hero-intro-meta">
+          <div class="meta-card" v-for="meta in heroMeta" :key="meta.label.en">
+            <span class="meta-label">{{ isRTL ? meta.label.fa : meta.label.en }}</span>
+            <span class="meta-value">{{ isRTL ? meta.value.fa : meta.value.en }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-intro-dynamic">
+        <div class="miyan-marquee" :style="marqueeStyle" aria-hidden="true">
+          <span v-for="(word, index) in marqueeWords" :key="word.en + index" class="marquee-item">
+            {{ isRTL ? word.fa : word.en }}
+          </span>
+        </div>
+        <div class="intro-pillars">
+          <article v-for="pillar in heroPillars" :key="pillar.title.en" class="pillar-card">
+            <h3>{{ isRTL ? pillar.title.fa : pillar.title.en }}</h3>
+            <p>{{ isRTL ? pillar.copy.fa : pillar.copy.en }}</p>
+          </article>
+        </div>
+      </div>
     </div>
 
     <div class="miyan-hero-panel" data-reveal>
@@ -150,6 +164,45 @@ const heroHighlights = [
   { fa: 'مه سفید', en: 'White mist' },
 ]
 
+const heroMeta = [
+  {
+    label: { fa: 'موقعیت', en: 'Location' },
+    value: { fa: 'تهران · ولنجک', en: 'Tehran · Velenjak' },
+  },
+  {
+    label: { fa: 'سرویس', en: 'Service' },
+    value: { fa: '۰۷:۰۰ – ۲۳:۳۰', en: '07:00 – 23:30' },
+  },
+  {
+    label: { fa: 'ضوابط', en: 'Approach' },
+    value: { fa: 'رِزرو محور', en: 'Reservation-led' },
+  },
+]
+
+const heroPillars = [
+  {
+    title: { fa: 'فضای معلق', en: 'Suspended space' },
+    copy: {
+      fa: 'سطوح شیشه‌ای و فلزی، نور طبیعی را به موجی نرم تبدیل می‌کنند.',
+      en: 'Glass and metal planes translate daylight into a calm tidal motion.',
+    },
+  },
+  {
+    title: { fa: 'روایت طعم', en: 'Flavor narratives' },
+    copy: {
+      fa: 'هر نوشیدنی با داستانی کوتاه و بافت صوتی سرو می‌شود.',
+      en: 'Every pour arrives with a brief story and sonic backdrop.',
+    },
+  },
+  {
+    title: { fa: 'تعادل حسی', en: 'Sensory balance' },
+    copy: {
+      fa: 'حرکت کارمندان به عمد آرام است تا میهمان ریتم خود را پیدا کند.',
+      en: 'Staff movement stays intentionally slow so guests set the rhythm.',
+    },
+  },
+]
+
 const modalCopy = {
   overline: { fa: 'مدال', en: 'Modal' },
   title: { fa: 'حالت تمام‌صفحه', en: 'Fullscreen state' },
@@ -267,7 +320,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .landing-shell {
   position: relative;
   min-height: 100vh;
-  padding: 0;
+  padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   background: transparent;
   color: #0f0f0f;
   --viz-velocity: 1;
@@ -484,11 +537,12 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: clamp(40rem, 80vh, 92vh); /* much larger for almost fullscreen feel */
+  min-height: min(100vh, 60rem);
   overflow: hidden;
   padding: clamp(1.25rem, 2.5vw, 2rem);
   scroll-snap-align: start;
   background: transparent;
+  margin: 0 auto;
 }
 
 /* image surface: cover and sit behind content; bigger scale so edges feel immersive */
@@ -511,9 +565,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(165deg, rgba(255,255,255,0) 28%, rgba(255, 245, 235, 0.18));
-  mix-blend-mode: overlay;
-  opacity: 0.95;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 12%, rgba(0, 0, 0, 0.25) 58%, rgba(0, 0, 0, 0));
+  opacity: 1;
   z-index: 0;
   pointer-events: none;
 }
@@ -532,11 +585,11 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  color: rgba(19, 14, 9, 0.94);
+  color: rgba(255, 255, 255, 0.95);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   max-width: min(56ch, 58%);
   margin: clamp(2rem, 6vw, 8rem);
-  backdrop-filter: none; /* remove blurred/ghostly background */
+  text-shadow: 0 0.35rem 1.5rem rgba(0, 0, 0, 0.45);
 }
 
 /* Removed the previous story-copy::before blurred overlay to satisfy user's request */
@@ -546,7 +599,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   letter-spacing: 0.35em;
   text-transform: uppercase;
   font-size: 0.65rem;
-  opacity: 0.6;
+  opacity: 0.8;
   margin: 0;
 }
 
@@ -559,7 +612,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .story-copy p {
   line-height: 1.6;
   margin: 0;
-  color: rgba(22, 14, 8, 0.82);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* --------------------------------- */
@@ -568,24 +621,30 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 /* --------------------------------- */
 .miyan-marquee {
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 2rem;
   overflow: hidden;
   font-size: clamp(1rem, 2vw, 1.3rem);
   letter-spacing: 0.4em;
   text-transform: uppercase;
-  opacity: 0.55;
-  color: rgba(80, 80, 80, 0.78);
-  margin: 2rem 0;
+  opacity: 0.6;
+  color: rgba(80, 80, 80, 0.82);
+  margin: 2rem 0 3rem;
   transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
   will-change: transform;
+  text-align: center;
 }
 
 .marquee-item {
-  display: inline-block;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: clamp(6rem, 32vw, 12rem);
   padding: 0 0.4rem;
   letter-spacing: 0.28em;
   color: rgba(30, 24, 18, 0.9);
-  opacity: 0.85;
+  opacity: 0.88;
   font-weight: 500;
 }
 
@@ -597,29 +656,98 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   }
 }
 
-/* hero top copy reveal */
-.hero-copy {
-  flex: 1;
-  min-width: 17.5rem;
-  transform: translateY(2rem);
-  opacity: 0;
-  transition: transform calc(1000ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
-    opacity calc(1000ms / var(--viz-velocity, 1)) ease;
+/* hero intro */
+.miyan-hero-intro {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: clamp(1.5rem, 3vw, 3rem) 0;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  position: relative;
 }
 
-.hero-copy h1 {
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
+.hero-intro-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hero-intro-text h1 {
+  font-size: clamp(2.4rem, 4.6vw, 4rem);
   line-height: 1.2;
-  margin: 1rem 0;
+  margin: 0;
   font-weight: 400;
 }
 
-.hero-copy p {
-  color: rgba(38, 28, 18, 0.8);
-  line-height: 1.7;
+.hero-intro-text p {
+  color: rgba(38, 28, 18, 0.82);
+  line-height: 1.8;
+  margin: 0;
 }
 
-/* subtle color accent for overline */
+.hero-intro-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.meta-card {
+  flex: 1 1 8rem;
+  min-width: 9rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(26, 18, 12, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.meta-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.meta-value {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.hero-intro-dynamic {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.intro-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1.25rem;
+}
+
+.pillar-card {
+  padding: 0;
+  border: none;
+}
+
+.pillar-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.pillar-card p {
+  margin: 0;
+  line-height: 1.6;
+  color: rgba(32, 24, 17, 0.85);
+}
+
 .overline {
   letter-spacing: 0.4em;
   text-transform: uppercase;
@@ -629,12 +757,17 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 
 /* small adaptive tweaks for very small screens */
 @media (max-width: 640px) {
+  .miyan-hero-panel {
+    padding-left: 0;
+    padding-right: 0;
+  }
   .story-copy {
     margin: 1.25rem;
     max-width: 100%;
   }
   .story-scene {
-    min-height: 60vh;
+    min-height: 100vh;
+    padding: 1rem;
   }
   .hero-media {
     min-height: 48vh;

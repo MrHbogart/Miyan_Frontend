@@ -15,8 +15,20 @@
       </p>
     </div>
 
+    <article
+      v-if="photoStories[0]"
+      class="madi-story-feature"
+      :style="storySurface(photoStories[0].image)"
+    >
+      <div class="madi-story-copy">
+        <p class="story-overline" :class="textClass">{{ isRTL ? photoStories[0].overline.fa : photoStories[0].overline.en }}</p>
+        <h3 :class="titleClass">{{ isRTL ? photoStories[0].title.fa : photoStories[0].title.en }}</h3>
+        <p :class="textClass">{{ isRTL ? photoStories[0].copy.fa : photoStories[0].copy.en }}</p>
+      </div>
+    </article>
+
     <div class="madi-atmosphere">
-      <div class="mist-line" v-for="n in 3" :key="n" :style="mistStyle(n)"></div>
+      <div class="mist-line" v-for="n in 3" :key="`primary-${n}`" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
         <h2 :class="titleClass">{{ isRTL ? 'میان کوچه ها و خیابان های شهر' : 'Among the Alleys and Streets of the City' }}</h2>
         <p :class="textClass">
@@ -27,21 +39,18 @@
         </p>
       </div>
     </div>
-    <div class="immersive-stack">
-      <article
-        v-for="(story, idx) in photoStories"
-        :key="story.title.en"
-        class="story-scene"
-        :ref="el => setStoryScene(el, idx)"
-        :style="[sceneStyle(idx), storySurface(story.image)]"
-      >
-        <div class="story-copy">
-          <p class="story-overline" :class="textClass">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
-          <h3 :class="titleClass">{{ isRTL ? story.title.fa : story.title.en }}</h3>
-          <p :class="textClass">{{ isRTL ? story.copy.fa : story.copy.en }}</p>
-        </div>
-      </article>
-    </div>
+
+    <article
+      v-if="photoStories[1]"
+      class="madi-story-feature"
+      :style="storySurface(photoStories[1].image)"
+    >
+      <div class="madi-story-copy">
+        <p class="story-overline" :class="textClass">{{ isRTL ? photoStories[1].overline.fa : photoStories[1].overline.en }}</p>
+        <h3 :class="titleClass">{{ isRTL ? photoStories[1].title.fa : photoStories[1].title.en }}</h3>
+        <p :class="textClass">{{ isRTL ? photoStories[1].copy.fa : photoStories[1].copy.en }}</p>
+      </div>
+    </article>
   </section>
 </template>
 
@@ -50,7 +59,6 @@ import { ref, computed } from 'vue'
 import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
-import { useSceneProgress } from '@/composables/useSceneProgress'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 
 const siteMedia = siteMediaDefaults
@@ -117,26 +125,6 @@ const photoStories = [
   }
 ]
 
-const storySections = ref([])
-const setStoryScene = (el, idx) => {
-  storySections.value[idx] = el || null
-}
-const { sceneProgress } = useSceneProgress(storySections, {
-  easePower: 1.35,
-  springPoint: 0.6,
-  holdFactor: 0.38,
-  releaseCurve: 0.85,
-})
-function sceneStyle(idx) {
-  const p = sceneProgress.value[idx] ?? 0
-  const translate = (1 - p) * 60
-  const scale = 0.88 + p * 0.12
-  return {
-    transform: `translate3d(0, ${pxToRem(translate)}, 0) scale(${scale})`,
-    opacity: 0.35 + p * 0.65
-  }
-}
-
 function storySurface(image) {
   return { '--story-image': `url("${image}")` }
 }
@@ -195,44 +183,6 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   color: rgba(28, 67, 95, 0.8);
 }
 
-.madi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
-  gap: 0.75rem;
-  margin: 2rem 0;
-}
-
-.ritual-card {
-  background: transparent;
-  border: none;
-  padding: clamp(1rem, 2vw, 1.5rem) 0;
-  min-height: auto;
-  --delay: 0ms;
-  transform: translateY(2.1875rem);
-  opacity: 0;
-  transition: transform calc(700ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1),
-    opacity calc(700ms / var(--viz-velocity, 1)) ease;
-  transition-delay: calc(var(--delay) / var(--viz-velocity, 1));
-  box-shadow: none;
-}
-
-.ritual-card.is-visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.ritual-title {
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.ritual-copy {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: rgba(25, 60, 88, 0.78);
-}
-
 .madi-atmosphere {
   position: relative;
   border: none;
@@ -279,68 +229,39 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   opacity: 1;
 }
 
-.immersive-stack {
-  margin-top: clamp(3rem, 6vw, 5rem);
-  display: grid;
-  gap: clamp(1.5rem, 4vw, 3rem);
+.madi-story-feature {
   position: relative;
-  overflow: visible;
-  scroll-snap-type: y proximity;
-  padding-bottom: clamp(3rem, 5vw, 4rem);
-}
-
-.story-scene {
-  position: sticky;
-  top: clamp(3rem, 18vh, 8rem);
-  isolation: isolate;
-  display: flex;
-  padding: clamp(1.75rem, 3vw, 2.75rem);
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  width: 80%;
-  margin: auto;
-  scroll-snap-align: start;
-}
-
-.story-scene::before {
-  position: absolute;
-  content: '';
-  inset: -6%;
+  width: 100%;
+  min-height: min(100vh, 60rem);
+  margin: clamp(2rem, 5vw, 3.5rem) 0;
   background-image: var(--story-image);
   background-size: cover;
   background-position: center;
-  filter: saturate(1.15) contrast(1.1);
-  transform: scale(1.05);
-  transition: transform 900ms cubic-bezier(.22,.74,.28,.96);
-}
-
-.story-scene::after {
-  position: absolute;
-  content: '';
-  inset: 0;
-  background: linear-gradient(150deg, rgba(17,38,64,0.65), rgba(110,148,199,0.35));
-  mix-blend-mode: screen;
-}
-
-.story-scene:hover::before {
-  transform: scale(1.06);
-}
-
-.story-copy {
-  position: relative;
-  z-index: 1;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  color: rgba(240, 248, 255, 0.9);
+  align-items: flex-end;
+}
+
+.madi-story-copy {
+  margin: clamp(1.5rem, 4vw, 3rem);
+  max-width: min(38rem, 80%);
+  color: #fff;
+  text-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.55);
+}
+
+.madi-story-copy h3 {
+  margin: 0.25rem 0 0.75rem;
+}
+
+.madi-story-copy p {
+  margin: 0;
+  line-height: 1.7;
 }
 
 .story-overline {
   text-transform: uppercase;
   letter-spacing: 0.35em;
   font-size: 0.7rem;
-  color: rgba(183, 214, 255, 0.8);
+  color: rgba(183, 214, 255, 0.85);
 }
 
 @keyframes mistDrift {

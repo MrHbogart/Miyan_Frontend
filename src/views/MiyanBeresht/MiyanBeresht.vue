@@ -47,16 +47,14 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { lang } from '@/state/lang'
-import { useRoute, useRouter } from 'vue-router'
 import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
 import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
+import { useLocalizedChildRoutes } from '@/composables/useLocalizedChildRoutes'
 
-const route = useRoute()
-const router = useRouter()
 const siteMedia = siteMediaDefaults
 
 const { heroVideo, modalOverlayAlpha, overlayTransition } = useHeroIntro({
@@ -64,12 +62,10 @@ const { heroVideo, modalOverlayAlpha, overlayTransition } = useHeroIntro({
   scrollRange: 380,
 })
 
-// Navbar attachment using simplified composable
 const navbarRef = ref(null)
 const navbarSentinel = ref(null)
 const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
 const childSwipe = ref(null)
-const childTransition = ref('swipe-left')
 
 const navItems = [
   { name: 'MiyanBereshtDailyMenu', path: 'beresht/daily-menu', label: { fa: 'پخت روز', en: "Today's Special" } },
@@ -77,45 +73,8 @@ const navItems = [
   { name: 'MiyanBereshtLanding', path: 'beresht', label: { fa: 'خانه برشت', en: 'Beresht Home' } },
 ]
 
+const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(navItems)
 const isRTL = computed(() => lang.value === 'fa')
-const childRouteOrder = navItems.map(item => item.name)
-let previousChildName = route.name || childRouteOrder[0]
-
-watch(() => route.name, (nextName) => {
-  if (!nextName) return
-  const fromIndex = childRouteOrder.indexOf(previousChildName)
-  const toIndex = childRouteOrder.indexOf(nextName)
-  if (fromIndex === -1 || toIndex === -1) {
-    previousChildName = nextName
-    return
-  }
-  childTransition.value = toIndex > fromIndex ? 'swipe-left' : 'swipe-right'
-  previousChildName = nextName
-}, { immediate: true })
-
-function resolveLang() {
-  const seg = route.params.lang
-  if (seg === 'en' || seg === 'fa') return seg
-  const pathSeg = route.path.split('/').filter(Boolean)[0]
-  if (pathSeg === 'en' || pathSeg === 'fa') return pathSeg
-  return lang.value
-}
-
-function getLocalizedPath(p) {
-  const currentLang = resolveLang()
-  const normalized = p ? p.replace(/^\/+/, '') : ''
-  return normalized ? `/${currentLang}/${normalized}` : `/${currentLang}/`
-}
-
-function shiftChild(step) {
-  const currentName = route.name
-  const currentIndex = childRouteOrder.indexOf(currentName)
-  if (currentIndex === -1) return
-  const targetIndex = currentIndex + step
-  if (targetIndex < 0 || targetIndex >= childRouteOrder.length) return
-  const targetName = childRouteOrder[targetIndex]
-  router.push({ name: targetName, params: { lang: resolveLang() } })
-}
 
 useSwipeNavigation(childSwipe, {
   onLeft: () => shiftChild(1),

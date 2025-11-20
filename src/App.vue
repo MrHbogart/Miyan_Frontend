@@ -7,7 +7,6 @@ import { lang } from '@/state/lang'
 import { navAttached } from '@/state/headerState'
 
 const scrolled = ref(false)
-const overlayAlpha = ref(0.45)
 const router = useRouter()
 const route = useRoute()
 const currentDir = computed(() => (lang.value === 'fa' ? 'rtl' : 'ltr'))
@@ -66,42 +65,51 @@ const pageGradientStyle = computed(() => {
 })
 
 function handleScroll() {
-	const y = window.scrollY || window.pageYOffset
-	scrolled.value = y > 40
-	const t = Math.min(1, y / 300)
-	overlayAlpha.value = Math.max(0.05, 0.45 - t * 0.45)
+  if (typeof window === 'undefined') return
+  const y = window.scrollY || window.pageYOffset
+  scrolled.value = y > 40
 }
 
 watch(currentDir, (dir) => {
-	if (typeof document !== 'undefined') {
-		document.documentElement.setAttribute('dir', dir)
-		document.documentElement.setAttribute('lang', lang.value)
-	}
+  if (typeof document === 'undefined') return
+  document.documentElement.setAttribute('dir', dir)
+  document.documentElement.setAttribute('lang', lang.value)
 }, { immediate: true })
 
-onMounted(() => {
-	window.addEventListener('scroll', handleScroll, { passive: true })
-	handleScroll()
+let removeRouteHook = null
 
-	router.afterEach(() => {
-		requestAnimationFrame(() => {
-			handleScroll()
-			navAttached.value = false
-		})
-	})
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+  }
+
+  removeRouteHook = router.afterEach(() => {
+    requestAnimationFrame(() => {
+      handleScroll()
+      navAttached.value = false
+    })
+  })
 })
+
 onUnmounted(() => {
-	window.removeEventListener('scroll', handleScroll)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', handleScroll)
+  }
+  if (typeof removeRouteHook === 'function') {
+    removeRouteHook()
+    removeRouteHook = null
+  }
 })
 </script>
 <template>
-	<div id="app" class="min-h-screen flex flex-col text-gray-900" :dir="currentDir">
-		<Header :scrolled="scrolled" />
-		<main class="flex-1" :style="pageGradientStyle">
-			<router-view />
-		</main>
-		<Footer />
-	</div>
+  <div id="app" class="min-h-screen flex flex-col text-gray-900" :dir="currentDir">
+    <Header :scrolled="scrolled" />
+    <main class="flex-1" :style="pageGradientStyle">
+      <router-view />
+    </main>
+    <Footer />
+  </div>
 </template>
 <style>
 .fade-load-enter-active, .fade-load-leave-active {

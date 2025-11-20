@@ -1,17 +1,17 @@
 <template>
-  <header 
+  <header
     dir="ltr"
-    class="fixed w-full top-0 left-0 z-40" 
-    :style="[headerStyle, { 
-      backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`, 
-      borderBottom: headerBgOpacity ? '0px solid rgba(255,255,255,0.06)' : 'none', 
-      transition: `background 400ms ease, backdrop-filter 400ms ease` 
+    class="fixed w-full top-0 left-0 z-40"
+    :style="[headerStyle, {
+      backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`,
+      borderBottom: headerBgOpacity ? '0px solid rgba(255,255,255,0.06)' : 'none',
+      transition: `background 400ms ease, backdrop-filter 400ms ease`
     }]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
     <div class="status-safe-area" :style="statusStyle" />
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
-            <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
+      <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
           <router-link to="/beresht" class="logo-link" :class="{ 'is-active': isActive('/beresht') }">
             <template v-if="lang === 'fa'">
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted, provide, watch } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { lang } from '@/state/lang'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
@@ -61,9 +61,6 @@ const isActive = (to) => route.path === to
 const siteMedia = siteMediaDefaults
 
 // Header state
-const headerBottomY = ref(0)
-provide('headerBottomY', headerBottomY)
-
 // Background opacity: header fades when navbar attaches
 // Initially: 0.85 (when scrolled), becomes 1 when navbar attaches
 const headerTargetOpacity = computed(() => {
@@ -88,12 +85,10 @@ const headerStyle = computed(() => ({
 function updateHeaderBottom() {
   const el = document.querySelector('header')
   if (!el) {
-    headerBottomY.value = -1
     return
   }
   const rect = el.getBoundingClientRect()
-  headerBottomY.value = Math.ceil(rect.bottom + window.scrollY)
-  
+
   // Expose header height via CSS variable
   try {
     const h = Math.ceil(rect.height)
@@ -123,7 +118,6 @@ function ensureThemeMeta() {
 }
 
 const themeMeta = (typeof window !== 'undefined') ? ensureThemeMeta() : null
-document.documentElement.style.setProperty('--top-bg-color', '#000000')
 if (themeMeta) try { themeMeta.setAttribute('content', '#000000') } catch (e) {}
 
 // Watch header opacity to update theme meta

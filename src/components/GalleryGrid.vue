@@ -2,8 +2,8 @@
   <div class="w-full max-w-6xl mx-auto p-4">
     <div class="space-y-6">
       <h2 class="text-2xl mb-6 text-center">
-        <span v-if="lang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ t(galleryTitle) }}</span>
-        <span v-else class="block font-cinzel font-light tracking-wide">{{ t(galleryTitle) }}</span>
+        <span v-if="lang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(galleryTitle) }}</span>
+        <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(galleryTitle) }}</span>
       </h2>
 
       <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
@@ -21,10 +21,10 @@
             />
             <div class="gallery-item-overlay">
               <div v-if="lang === 'fa'" class="gallery-item-title font-b-titr text-md" dir="rtl">
-                {{ t(item.title) }}
+                {{ translateCopy(item.title) }}
               </div>
               <div v-else class="gallery-item-title font-cinzel text-sm font-light">
-                {{ t(item.title) }}
+                {{ translateCopy(item.title) }}
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@ function openImage(src) {
   selectedImage.value = src
 }
 
-function t(obj) {
+function translateCopy(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
   return obj[lang.value] ?? obj['fa'] ?? obj['en'] ?? ''
