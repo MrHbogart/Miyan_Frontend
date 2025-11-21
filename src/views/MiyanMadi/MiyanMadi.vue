@@ -19,7 +19,7 @@
   <div class="nav-placeholder">
   <div ref="navbarSentinel" :style="sentinelStyle"></div>
   <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" :dir="isRTL ? 'rtl' : 'ltr'">
-      <div class="max-w-4xl mx-auto px-4 md:px-12">
+      <div class="max-w-4xl mx-auto px-12">
         <div
           :class="[
             'flex flex-row w-full items-center justify-between gap-2 text-center',

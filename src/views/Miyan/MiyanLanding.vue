@@ -41,13 +41,24 @@
         <div class="hero-media-gradient" aria-hidden="true"></div>
       </div>
       <div class="hero-copy-block" :class="textClass" :style="heroCopyMotion">
-        <p class="overline">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-        <h1 :class="titleClass">{{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}</h1>
-        <p>{{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}</p>
-        <div class="hero-highlights" aria-hidden="true">
-          <span v-for="entry in heroHighlights" :key="entry.en">
-            {{ isRTL ? entry.fa : entry.en }}
-          </span>
+        <p class="overline">{{ isRTL ? branchSection.overline.fa : branchSection.overline.en }}</p>
+        <h1 :class="titleClass">{{ isRTL ? branchSection.title.fa : branchSection.title.en }}</h1>
+        <p>{{ isRTL ? branchSection.body.fa : branchSection.body.en }}</p>
+        <div class="branch-grid">
+          <router-link
+            v-for="branch in branchSection.cards"
+            :key="branch.path"
+            :to="localizedBranchPath(branch.path)"
+            class="branch-card"
+            :class="textClass"
+          >
+            <span class="branch-name">{{ isRTL ? branch.name.fa : branch.name.en }}</span>
+            <span class="branch-area">{{ isRTL ? branch.area.fa : branch.area.en }}</span>
+            <p>{{ isRTL ? branch.copy.fa : branch.copy.en }}</p>
+            <span class="branch-cta">
+              {{ isRTL ? branch.cta.fa : branch.cta.en }}
+            </span>
+          </router-link>
         </div>
       </div>
     </div>
@@ -127,6 +138,8 @@ const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'fon
 
 const heroCopy = miyanLandingCopy.hero
 
+const branchSection = miyanLandingCopy.branches
+
 // fixed marquee words (typos corrected, last word filled)
 const marqueeWords = miyanLandingCopy.marqueeWords
 
@@ -145,8 +158,6 @@ const marqueeStyle = computed(() => {
     transition: `transform calc(900ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1)`,
   }
 })
-
-const heroHighlights = miyanLandingCopy.heroHighlights
 
 const heroMeta = miyanLandingCopy.heroMeta
 
@@ -178,6 +189,13 @@ const photoStories = miyanLandingCopy.photoStories.map((story) => ({
   ...story,
   image: siteMediaDefaults[story.imageKey],
 }))
+
+const localizedBranchPath = (rawPath = '') => {
+  const normalized = rawPath.replace(/^\/+|\/+$/g, '')
+  const currentLang = lang.value || 'fa'
+  if (!normalized) return `/${currentLang}/`
+  return `/${currentLang}/${normalized}`
+}
 
 const storySections = ref([])
 const setStoryScene = (el, idx) => {
@@ -294,22 +312,64 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   color: rgba(21, 16, 12, 0.9);
 }
 
-/* highlights: refined chips */
-.hero-highlights {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
+/* branch grid */
+.branch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.9rem;
+  margin-top: 1.25rem;
 }
 
-.hero-highlights span {
-  padding: 0.36rem 0.85rem;
-  font-size: 0.74rem;
-  letter-spacing: 0.28em;
+.branch-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(15, 10, 6, 0.08);
+  box-shadow: 0 8px 18px rgba(12, 8, 6, 0.08);
+  transition: transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
+}
+
+.branch-card:hover {
+  transform: translateY(-0.2rem);
+  box-shadow: 0 20px 35px rgba(15, 10, 6, 0.12);
+  border-color: rgba(15, 10, 6, 0.18);
+}
+
+.branch-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(18, 12, 8, 0.85);
+}
+
+.branch-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.branch-area {
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.branch-cta {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.86);
-  box-shadow: 0 2px 8px rgba(12,8,6,0.04);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: rgba(18, 12, 8, 0.8);
+}
+
+:deep([dir="rtl"] .branch-cta) {
+  letter-spacing: 0.06em !important;
 }
 
 /* overline */

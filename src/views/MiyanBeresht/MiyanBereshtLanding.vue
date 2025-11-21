@@ -21,6 +21,39 @@
       </span>
     </div>
 
+    <div class="beresht-roastery" data-reveal>
+      <div class="roastery-copy" :class="textClass">
+        <p class="overline">{{ isRTL ? roasterySection.overline.fa : roasterySection.overline.en }}</p>
+        <h2 :class="titleClass">{{ isRTL ? roasterySection.title.fa : roasterySection.title.en }}</h2>
+        <p>{{ isRTL ? roasterySection.body.fa : roasterySection.body.en }}</p>
+        <div class="roastery-stats">
+          <div class="stat-card" v-for="stat in roasterySection.stats" :key="stat.label.en">
+            <span class="stat-label">{{ isRTL ? stat.label.fa : stat.label.en }}</span>
+            <span class="stat-value">{{ isRTL ? stat.value.fa : stat.value.en }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="roastery-pillars">
+        <article v-for="pillar in roasterySection.pillars" :key="pillar.title.en" :class="textClass">
+          <h3 :class="titleClass">{{ isRTL ? pillar.title.fa : pillar.title.en }}</h3>
+          <p>{{ isRTL ? pillar.copy.fa : pillar.copy.en }}</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="beresht-tasting" data-reveal>
+      <div class="tasting-copy" :class="textClass">
+        <p class="overline">{{ isRTL ? tastingSection.overline.fa : tastingSection.overline.en }}</p>
+        <h2 :class="titleClass">{{ isRTL ? tastingSection.title.fa : tastingSection.title.en }}</h2>
+        <p>{{ isRTL ? tastingSection.body.fa : tastingSection.body.en }}</p>
+      </div>
+      <ul class="tasting-highlights">
+        <li v-for="entry in tastingSection.highlights" :key="entry.en">
+          {{ isRTL ? entry.fa : entry.en }}
+        </li>
+      </ul>
+    </div>
+
     <div class="immersive-stack">
       <article
         v-for="(story, idx) in photoStories"
@@ -35,6 +68,33 @@
           <p :class="textClass">{{ isRTL ? story.copy.fa : story.copy.en }}</p>
         </div>
       </article>
+    </div>
+
+    <div class="beresht-location" data-reveal>
+      <div class="location-copy" :class="textClass">
+        <p class="overline">{{ isRTL ? locationInfo.overline.fa : locationInfo.overline.en }}</p>
+        <h2 :class="titleClass">{{ isRTL ? locationInfo.title.fa : locationInfo.title.en }}</h2>
+        <p>{{ isRTL ? locationInfo.body.fa : locationInfo.body.en }}</p>
+        <ul class="location-list">
+          <li v-for="(line, idx) in locationLines" :key="`addr-${idx}`">{{ line }}</li>
+        </ul>
+        <p class="location-hours">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
+        <p class="location-phone">{{ isRTL ? locationInfo.phone.fa : locationInfo.phone.en }}</p>
+      </div>
+      <div class="location-map" role="img" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
+        <div class="map-canvas">
+          <div class="map-grid"></div>
+          <div class="map-ring"></div>
+          <div class="map-marker">
+            <span>{{ isRTL ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en }}</span>
+            <small>{{ locationCoordinates }}</small>
+          </div>
+        </div>
+        <div class="map-meta">
+          <span>{{ locationCoordinates }}</span>
+          <span>{{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}</span>
+        </div>
+      </div>
     </div>
   </section>
 </template>
@@ -69,6 +129,12 @@ const landingStyle = computed(() => ({
 const marqueeWords = miyanBereshtLandingCopy.marqueeWords
 
 const heroCopy = miyanBereshtLandingCopy.hero
+
+const roasterySection = miyanBereshtLandingCopy.roastery
+
+const tastingSection = miyanBereshtLandingCopy.tasting
+
+const locationInfo = miyanBereshtLandingCopy.location
 
 const marqueeStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
@@ -105,6 +171,10 @@ function sceneStyle(idx) {
 function storySurface(image) {
   return { '--story-image': `url("${image}")` }
 }
+
+const locationLines = computed(() => (isRTL.value ? locationInfo.addressLines.fa : locationInfo.addressLines.en))
+
+const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinates.fa : locationInfo.coordinates.en))
 
 useRevealObserver(landingRoot, { threshold: 0.15 })
 </script>
@@ -207,6 +277,222 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   color: rgba(178, 117, 82, 0.75);
   margin-bottom: 3rem;
   transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
+}
+
+.beresht-roastery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+  padding: clamp(1.75rem, 4vw, 3rem);
+  background: rgba(255, 255, 255, 0.78);
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.roastery-copy p {
+  color: rgba(38, 28, 18, 0.8);
+  line-height: 1.7;
+}
+
+.roastery-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.stat-card {
+  padding: 0.6rem 0;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.stat-value {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.roastery-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.roastery-pillars article {
+  background: transparent;
+  border-radius: 0;
+  padding: 1rem 0;
+  box-shadow: none;
+  border: none;
+}
+
+.beresht-tasting {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 0;
+  border: none;
+  background: rgba(255, 255, 255, 0.7);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+  box-shadow: none;
+}
+
+.tasting-highlights {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.tasting-highlights li {
+  padding: 0.65rem 0.85rem;
+  border-radius: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: transparent;
+  color: rgba(36, 19, 8, 0.8);
+  border: none;
+}
+
+.beresht-location {
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 0;
+  border: none;
+  background: rgba(19, 10, 6, 0.92);
+  color: #f9f6f0;
+}
+
+.beresht-location p,
+.beresht-location li {
+  color: rgba(249, 246, 240, 0.85);
+}
+
+.location-list {
+  margin: 0.75rem 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-weight: 500;
+}
+
+.location-map {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.map-canvas {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.35));
+  min-height: 14rem;
+  border: none;
+}
+
+.map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  opacity: 0.25;
+}
+
+.map-ring {
+  display: none;
+}
+
+.map-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  background: transparent;
+  color: #f9f6f0;
+  padding: 0;
+  border-radius: 0;
+  text-align: center;
+  box-shadow: none;
+  min-width: 10rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.map-marker small {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+.map-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  border-radius: 0;
+  border: none;
+}
+
+.location-hours {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 0.6rem;
+}
+
+.location-phone {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+  letter-spacing: 0.12em;
+}
+
+.roastery-copy h2,
+.tasting-copy h2,
+.location-copy h2 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.roastery-copy p,
+.tasting-copy p,
+.location-copy p,
+.roastery-pillars article p,
+.tasting-highlights li {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 @media (min-width: 768px) {

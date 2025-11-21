@@ -16,120 +16,145 @@ export const navigationCopy = {
 
 export const miyanLandingCopy = {
   hero: {
-    overline: { fa: 'میان', en: 'Miyan' },
-    title: { fa: 'نور معلق، لمسِ لغزان', en: 'Suspended light, gliding tactility' },
+    overline: { fa: 'گروه میان', en: 'Miyan Group' },
+    title: { fa: 'قهوه حرفه‌ای، رستری، کافه و بیکری', en: 'Professional coffee, roastery, café & bakery' },
     body: {
-      fa: 'در لایه‌های صاف نور و مه، هر مهمان با نفس خود جلو می‌رود.',
-      en: 'Layers of calm light and mist let every guest navigate at their own pace.',
+      fa: 'گروه میان برنامه قهوه تخصصی، رستری درون‌سازمانی، دو کافه مقصد و بیکری معاصر را گرد هم آورده تا هر فنجان، نان و شیرینی با همان انضباط شکل بگیرد.',
+      en: 'Miyan Group unites a specialty coffee program, in-house roastery, two destination cafés, and a contemporary bakery so every pour and pastry follows the same discipline.',
     },
   },
   marqueeWords: [
-    { fa: 'آزمون', en: 'Analyze' },
-    { fa: 'علم', en: 'Science' },
-    { fa: 'تجربه', en: 'Experience' },
-    { fa: 'هنر', en: 'Art' },
-    { fa: 'تمایز', en: 'Distinction' },
-  ],
-  heroHighlights: [
-    { fa: 'سایه‌های بلند', en: 'Drawn shadows' },
-    { fa: 'سرو آهسته', en: 'Gentle service' },
-    { fa: 'مه سفید', en: 'White mist' },
+    { fa: 'مهارت', en: 'Craft' },
+    { fa: 'رستری', en: 'Roastery' },
+    { fa: 'بیکری', en: 'Bakery' },
+    { fa: 'کافه', en: 'Café' },
+    { fa: 'سرویس', en: 'Service' },
   ],
   heroMeta: [
     {
-      label: { fa: 'موقعیت', en: 'Location' },
-      value: { fa: 'تهران · ولنجک', en: 'Tehran · Velenjak' },
+      label: { fa: 'حوزه‌ها', en: 'Disciplines' },
+      value: { fa: 'قهوه · رستری · بیکری', en: 'Coffee · Roastery · Bakery' },
     },
     {
-      label: { fa: 'سرویس', en: 'Service' },
-      value: { fa: '۰۷:۰۰ – ۲۳:۳۰', en: '07:00 – 23:30' },
+      label: { fa: 'آغاز', en: 'Since' },
+      value: { fa: '۱۳۹۳', en: '2014' },
     },
     {
-      label: { fa: 'ضوابط', en: 'Approach' },
-      value: { fa: 'رِزرو محور', en: 'Reservation-led' },
+      label: { fa: 'دفتر مرکزی', en: 'Headquarters' },
+      value: { fa: 'تهران، ایران', en: 'Tehran, Iran' },
     },
   ],
   heroPillars: [
     {
-      title: { fa: 'فضای معلق', en: 'Suspended space' },
+      title: { fa: 'برنامه قهوه', en: 'Coffee program' },
       copy: {
-        fa: 'سطوح شیشه‌ای و فلزی، نور طبیعی را به موجی نرم تبدیل می‌کنند.',
-        en: 'Glass and metal planes translate daylight into a calm tidal motion.',
+        fa: 'کوپینگ، آموزش و استانداردهای سرو باعث می‌شود هر اسپرسو و فیلتری در تمام شعبه‌ها هم‌سطح باشد.',
+        en: 'Cupping, training, and service standards keep every espresso and filter consistent across the group.',
       },
     },
     {
-      title: { fa: 'روایت طعم', en: 'Flavor narratives' },
+      title: { fa: 'آزمایشگاه رستری', en: 'Roastery lab' },
       copy: {
-        fa: 'هر نوشیدنی با داستانی کوتاه و بافت صوتی سرو می‌شود.',
-        en: 'Every pour arrives with a brief story and sonic backdrop.',
+        fa: 'رست در حجم‌های کوچک و پایش دقیق پروفایل به ما اجازه می‌دهد منحنی هر قهوه را برای هر دو کافه و همکاران عمده تنظیم کنیم.',
+        en: 'Small-batch roasting with profile tracking lets us dial curves for both cafés and wholesale partners.',
       },
     },
     {
-      title: { fa: 'تعادل حسی', en: 'Sensory balance' },
+      title: { fa: 'آتلیه بیکری', en: 'Bakery atelier' },
       copy: {
-        fa: 'حرکت کارمندان به عمد آرام است تا میهمان ریتم خود را پیدا کند.',
-        en: 'Staff movement stays intentionally slow so guests set the rhythm.',
+        fa: 'خمیرهای لایه‌ای و نان‌های استارتر در آشپزخانه‌ای اختصاصی تخمیر می‌شوند و کنترل کیفیت مشترکی با بار دارند.',
+        en: 'Laminate doughs and sourdoughs ferment in a dedicated kitchen that shares quality checks with the bar.',
       },
     },
   ],
-  modal: {
-    overline: { fa: 'مدال', en: 'Modal' },
-    title: { fa: 'حالت تمام‌صفحه', en: 'Fullscreen state' },
+  branches: {
+    overline: { fa: 'کافه‌های میان', en: 'Miyan cafés' },
+    title: { fa: 'دو شعبه برای ریتم‌های متفاوت شهر', en: 'Two branches for the city’s different rhythms' },
     body: {
-      fa: 'با کادر بی‌پایان و پرتو رنگی، طراحی ما به استقبال سکوت می‌آید.',
-      en: 'An endless frame and warm halos invite stillness across the space.',
+      fa: 'هر شعبه شخصیت مستقل دارد اما بر پایه همان قهوه و بیکری مشترک سرو می‌کند.',
+      en: 'Each address has its own mood yet pours from the same coffee and bakery program.',
     },
-    accent: { fa: 'نور برای نفس کشیدن', en: 'Light for breathing' },
+    cards: [
+      {
+        name: { fa: 'میان برشت', en: 'Miyan Beresht' },
+        area: { fa: 'ولنجک · سالن و آشپزخانه باز', en: 'Velenjak · Salon & open kitchen' },
+        copy: {
+          fa: 'سالن نورگیر با سرویس کامل، مناسب ناهارهای طولانی و میزبانی خصوصی.',
+          en: 'A sunlit salon with full service, ideal for lingering lunches and private hosting.',
+        },
+        cta: { fa: 'ورود به برشت', en: 'Visit Beresht' },
+        path: 'beresht',
+      },
+      {
+        name: { fa: 'میان مادی', en: 'Miyan Madi' },
+        area: { fa: 'مرکز شهر · کافه روزمره', en: 'Downtown · Everyday café' },
+        copy: {
+          fa: 'ریتم سریع‌تر برای اسپرسوی صبحگاهی، نان گرم و توقف‌های شهری.',
+          en: 'Faster cadence for morning espresso, warm bread, and city breaks.',
+        },
+        cta: { fa: 'ورود به مادی', en: 'Visit Madi' },
+        path: 'madi',
+      },
+    ],
+  },
+  modal: {
+    overline: { fa: 'رستری میان', en: 'Miyan roastery' },
+    title: { fa: 'مسیر حرفه‌ای از دانه تا فنجان', en: 'Professional roast-to-cup workflow' },
+    body: {
+      fa: 'رستری ما خرید دانه، توسعه پروفایل و بسته‌بندی را برای هر دو کافه و همکاران انتخابی مدیریت می‌کند تا تازگی قابل‌وعده باشد.',
+      en: 'Our roastery handles sourcing, profile development, and packaging for both cafés and select partners, letting us promise freshness across the group.',
+    },
+    accent: { fa: 'رست روزانه · کنترل پروفایل', en: 'Daily roasts · profile control' },
   },
   modalFocus: [
     {
-      title: { fa: 'نور بندی', en: 'Light bands' },
+      title: { fa: 'تأمین تخصصی', en: 'Selective sourcing' },
       copy: {
-        fa: 'خط‌های صعودی نور را روی سطوح بتنی می‌نشاند.',
-        en: 'Ascending bands of light settle on the concrete planes.',
+        fa: 'با واردکنندگان و مزارع به‌صورت مستقیم کار می‌کنیم تا لات‌های قابل رهگیری و هماهنگ با منوها انتخاب شوند.',
+        en: 'We work directly with importers and farms to secure traceable lots that match our menus.',
       },
     },
     {
-      title: { fa: 'حالت فیلمی', en: 'Filmic calm' },
+      title: { fa: 'پروفایل دقیق', en: 'Profile precision' },
       copy: {
-        fa: 'حرکت دوربین را با ریتم آهسته نیم‌پرده تقلید می‌کنیم.',
-        en: 'A slow, semi-tone rhythm mirrors a drifting camera move.',
+        fa: 'ثبت دیجیتال هر بچ دما، جریان هوا و نسبت توسعه را مستند می‌کند.',
+        en: 'Digital logging on every batch documents charge temps, airflow, and development ratios.',
       },
     },
     {
-      title: { fa: 'بافت آب', en: 'Water texture' },
+      title: { fa: 'هم‌آوایی سرویس', en: 'Service integration' },
       copy: {
-        fa: 'رویه‌ی شیشه‌ی مات، با قطراتِ کوچک تنفس می‌کند.',
-        en: 'Matte glass breathes with tiny beads of vapor.',
+        fa: 'تیم بار و بیکری هر رست را کاپ می‌کنند تا دستورها در همان روز به‌روز شود.',
+        en: 'Bar and bakery teams cup each roast so floor recipes adjust the same day.',
       },
     },
   ],
   photoStories: [
     {
       imageKey: 'miyanImg2',
-      overline: { fa: 'بافت', en: 'Texture' },
-      title: { fa: 'ضربه‌های نقره‌ای', en: 'Silver pulses' },
+      overline: { fa: 'صبح', en: 'Morning' },
+      title: { fa: 'خمیر و تخمیر', en: 'Mix & ferment' },
       copy: {
-        fa: 'برگ‌های نقره‌ای روی بتن به آرامی نوسان می‌کنند.',
-        en: 'Silver surfaces dance softly across the concrete stage.',
+        fa: 'استارتر شب قبل تغذیه می‌شود و سحرگاه در خمیر مخلوط می‌گردد تا قفسه‌ها با نان‌های طبیعی پر شوند.',
+        en: 'Levain is fed the night before and folded in at dawn so the shelves fill with naturally leavened loaves.',
       },
     },
     {
       imageKey: 'miyanImg3',
-      overline: { fa: 'شب', en: 'Night' },
-      title: { fa: 'مه‌تاب', en: 'Moon mist' },
+      overline: { fa: 'لایه‌ها', en: 'Layers' },
+      title: { fa: 'ویینوازری لوکس', en: 'Viennoiserie atelier' },
       copy: {
-        fa: 'مهرِ رنگی روی قاب‌ها نور را به نرمی نشان می‌دهد.',
-        en: 'Colorful halos rest on frames to show light gently.',
+        fa: 'کره اروپایی و تکنیک‌های دقیق لامینیت، کروسان و پاستری‌هایی می‌سازد که با منوی قهوه جفت می‌شوند.',
+        en: 'European butter and slow laminations deliver croissants and signature pastries tuned to the coffee menu.',
       },
     },
     {
       imageKey: 'miyanImg1',
-      overline: { fa: 'نفس', en: 'Breath' },
-      title: { fa: 'پرواز آهسته', en: 'Slow lift' },
+      overline: { fa: 'فینیشینگ', en: 'Finishing' },
+      title: { fa: 'ویترین آماده سرویس', en: 'Display built for service' },
       copy: {
-        fa: 'نقطه‌هایی از روشنایی روی صحنه شناور می‌شوند.',
-        en: 'Specks of brightness glide across the stage.',
+        fa: 'هر محصول پیش از رسیدن به سالن چشیده و توضیح سرویس برای آن نوشته می‌شود تا مهمان انتخابی ساده داشته باشد.',
+        en: 'Every product is tasted before service and paired with a serving note so guests decide easily.',
       },
     },
   ],
@@ -137,100 +162,223 @@ export const miyanLandingCopy = {
 
 export const miyanBereshtLandingCopy = {
   hero: {
-    overline: { fa: 'سالن میان برشت', en: 'Miyan Beresht Salon' },
-    title: { fa: 'روایت‌های گرم در قاب سنگی', en: 'Warm narratives framed in stone' },
+    overline: { fa: 'میان برشت', en: 'Miyan Beresht' },
+    title: { fa: 'سالن رستری و کافه لوکس', en: 'Roastery salon & luxury café' },
     body: {
-      fa: 'هر فنجان با دست‌خطی تازه و سرویس دقیقی که از آشپزخانه باز می‌رسد معرفی می‌شود.',
-      en: 'Each cup arrives with a fresh handwriting and the precise service flowing from the open kitchen.',
+      fa: 'برشت رستری میان است سرویس کامل و بیکری لوکس برای هر مهمان',
+      en: 'Beresht is the Miyan roastery a full service cafe with luxe bakery cues',
     },
   },
   marqueeWords: [
-    { fa: 'تعادل', en: 'Balance' },
-    { fa: 'بو', en: 'Aroma' },
-    { fa: 'ریتم', en: 'Rhythm' },
-    { fa: 'جزئیات', en: 'Details' },
-    { fa: 'مهمان‌نوازی', en: 'Hospitality' },
+    { fa: 'رستری', en: 'Roastery' },
+    { fa: 'سالن', en: 'Salon' },
+    { fa: 'کیفیت', en: 'Quality' },
+    { fa: 'سرویس', en: 'Service' },
+    { fa: 'لوکس', en: 'Luxury' },
   ],
+  roastery: {
+    overline: { fa: 'آزمایشگاه رست', en: 'Roastery lab' },
+    title: { fa: 'کنترل کامل از دانه تا میز', en: 'Complete control from bean to table' },
+    body: {
+      fa: 'تیم رست کنار سالن کار میکند تا عطر تازه همیشه حاضر باشد',
+      en: 'The roast team works beside the salon so fresh aroma always stays close',
+    },
+    stats: [
+      {
+        label: { fa: 'پروفایل‌های امضا', en: 'Signature profiles' },
+        value: { fa: 'شش منحنی لورینگ', en: 'Six Loring curves' },
+      },
+      {
+        label: { fa: 'رست روزانه', en: 'Daily roasting' },
+        value: { fa: 'بیست و چهار کیلو در شیفت', en: 'Twenty four kilos per shift' },
+      },
+      {
+        label: { fa: 'کاپینگ QC', en: 'QC cupping' },
+        value: { fa: 'دو نوبت کاپینگ روزانه', en: 'Two QC cuppings daily' },
+      },
+    ],
+    pillars: [
+      {
+        title: { fa: 'رزرو رویداد رست', en: 'Roast event reservations' },
+        copy: {
+          fa: 'کاپینگ خصوصی و نمایش پروفایل زنده',
+          en: 'Private cuppings with live profile notes',
+        },
+      },
+      {
+        title: { fa: 'همسانی سرویس', en: 'Service parity' },
+        copy: {
+          fa: 'بار و سالن برگه مشترک میخوانند',
+          en: 'Bar and floor share one sheet',
+        },
+      },
+      {
+        title: { fa: 'بیکری جفت‌شده', en: 'Paired bakery' },
+        copy: {
+          fa: 'دسر بیکری با نت قهوه هماهنگ میشود',
+          en: 'Bakery dessert follows the coffee note',
+        },
+      },
+    ],
+  },
+  tasting: {
+    overline: { fa: 'سرویس میز کامل', en: 'Table service' },
+    title: { fa: 'تجربه چشایی در قاب سنگی', en: 'Tasting ritual framed in stone' },
+    body: {
+      fa: 'میز با میزبان خصوصی و ابزار اختصاصی آغاز میشود',
+      en: 'Table opens with a private host and dedicated tools',
+    },
+    highlights: [
+      { fa: 'سه مرحله قهوه دسر', en: 'Three stage coffee and dessert' },
+      { fa: 'آب سرویس تنظیم شده', en: 'Balanced service water' },
+      { fa: 'اتاق خصوصی تست', en: 'Private tasting room' },
+    ],
+  },
   photoStories: [
     {
       imageKey: 'bereshtImg1',
-      overline: { fa: 'ریشه', en: 'Roots' },
-      title: { fa: 'تمرین آتش', en: 'Fire practice' },
+      overline: { fa: 'رست', en: 'Roast' },
+      title: { fa: 'درام داغ', en: 'Glowing drum' },
       copy: {
-        fa: 'برشته‌کاران ما پیش از طلوع، زمان را با شعله می‌سنجند تا هر دانه دقیقاً همان‌گونه که باید بیدار شود.',
-        en: 'Our roasters measure time against the flame before dawn so every bean wakes exactly as intended.',
+        fa: 'نور برنجی روی درام لورینگ میتابد',
+        en: 'Brass light drapes the Loring drum',
       },
     },
     {
       imageKey: 'bereshtImg2',
-      overline: { fa: 'فضا', en: 'Space' },
-      title: { fa: 'نور خطی', en: 'Linear light' },
+      overline: { fa: 'سرویس', en: 'Service' },
+      title: { fa: 'میزهای سنگی', en: 'Stone tables' },
       copy: {
-        fa: 'پنجره‌های خطی، سایه‌ها را روی میزهای چوبی می‌کشند و گفتگو را آرام‌تر می‌کنند.',
-        en: 'Strip windows pull shadows across the wooden tables and slow every conversation.',
+        fa: 'مرمر و چوب تیره لمس نرم میسازند',
+        en: 'Marble with dark wood delivers a soft touch',
       },
     },
     {
       imageKey: 'bereshtImg3',
-      overline: { fa: 'سرویس', en: 'Service' },
-      title: { fa: 'میزبان خاموش', en: 'Silent host' },
+      overline: { fa: 'عطر', en: 'Aroma' },
+      title: { fa: 'هاله طلایی', en: 'Golden halo' },
       copy: {
-        fa: 'حرکت تیم سرویس عمدی و بی‌صداست تا مهمان لحظه‌ی خود را بدون مزاحمت بنویسد.',
-        en: 'Service moves deliberately and quietly so each guest can write their moment without interruption.',
+        fa: 'چراغ خطی بخار اسپرسو را روشن میکند',
+        en: 'Linear light lifts the espresso vapor',
       },
     },
     {
       imageKey: 'bereshtImg4',
-      overline: { fa: 'طعم', en: 'Flavor' },
-      title: { fa: 'انعکاس کهربایی', en: 'Amber reflection' },
+      overline: { fa: 'جفت‌سازی', en: 'Pairing' },
+      title: { fa: 'آمدن دسر', en: 'Dessert landing' },
       copy: {
-        fa: 'نور کهربایی روی فنجان می‌افتد و لایه‌های کارامل، شکلات و میوه خشک را نمایان می‌کند.',
-        en: 'Amber light settles on the cup, revealing layers of caramel, chocolate, and dried fruit.',
+        fa: 'دسر بیکری با جزئیات طلایی فرود میآید',
+        en: 'Bakery dessert lands with gold detail',
       },
     },
   ],
+  location: {
+    overline: { fa: 'آدرس و مسیر', en: 'Address & route' },
+    title: { fa: 'برشت ولنجک', en: 'Beresht Velenjak' },
+    body: {
+      fa: 'محله ولنجک آرام است و ورودی و پارکبان آماده است',
+      en: 'Velenjak stays calm with valet and drop off at the door',
+    },
+    addressLines: {
+      fa: ['تهران ولنجک خیابان سوم پلاک ۲۷', 'طبقه همکف میان برشت'],
+      en: ['Tehran Velenjak 3rd Street No27', 'Ground floor Miyan Beresht'],
+    },
+    hours: { fa: 'هر روز ۰۷۰۰ تا ۲۳۳۰', en: 'Daily 0700 to 2330' },
+    phone: { fa: '۰۲۱ ۲۲۴۴ ۷۷۰۰', en: '+98 21 2244 7700' },
+    coordinates: { fa: '۳۵ ۸۰۷۹ شمالی ۵۱ ۴۰۹۱ شرقی', en: '35 8079 N 51 4091 E' },
+    mapLabel: { fa: 'ولنجک', en: 'Velenjak' },
+    cta: { fa: 'مشاهده مسیر', en: 'View route' },
+  },
 }
 
 export const miyanMadiLandingCopy = {
   hero: {
-    overline: { fa: 'مادی نو', en: 'Madi Nouveau' },
-    title: { fa: 'گفت‌وگوی شهر و حرکت', en: 'Dialogue between city and motion' },
+    overline: { fa: 'میان مادی', en: 'Miyan Madi' },
+    title: { fa: 'کیفیت روزانه با آرامش شهر', en: 'Daily quality with urban calm' },
     body: {
-      fa: 'هر توقف، مکثی کوتاه میان شتاب خیابان و آرامش فنجان است.',
-      en: 'Every pause is a brief negotiation between the rush outside and the calm inside the cup.',
+      fa: 'مادی کافه مرکزی میان است کیفیت روزانه در فضایی نرم',
+      en: 'Madi is the central cafe of Miyan delivering daily quality in a soft room',
     },
   },
   atmosphere: {
-    title: { fa: 'میان کوچه‌ها و میدان‌ها', en: 'Between alleys and squares' },
+    title: { fa: 'هوای آرام مرکز شهر', en: 'Calm air in the city center' },
     paragraphs: [
       {
-        fa: 'صدای شهر را نرم می‌کنیم تا مکالمه‌ها طولانی‌تر شوند.',
-        en: 'We soften the city’s voice so conversations can stretch longer.',
+        fa: 'شیشه صدا را غربال میکند',
+        en: 'Glass sifts the noise',
       },
       {
-        fa: 'هر صندلی با هاله‌ای از نور خنک تعریف می‌شود.',
-        en: 'Each seat is framed by its own pool of cool light.',
+        fa: 'نور سرد و مبلمان نرم کار و استراحت را کنار هم میگذارد',
+        en: 'Cool light with soft seats keeps work and rest together',
+      },
+    ],
+  },
+  rituals: {
+    overline: { fa: 'آیین‌های مادی', en: 'Madi rituals' },
+    title: { fa: 'تعادل سرعت و سکوت', en: 'Balancing pace and hush' },
+    body: {
+      fa: 'تیم بار سرعت و سکوت را همزمان نگه میدارد',
+      en: 'The bar team keeps pace and hush together',
+    },
+    cards: [
+      {
+        title: { fa: 'کالیبراسیون صبحگاهی', en: 'Morning dial-in' },
+        copy: {
+          fa: 'روز با تنظیم آب و آسیاب شروع میشود',
+          en: 'Day starts with water and grinder dial',
+        },
+      },
+      {
+        title: { fa: 'گوشه‌های سکوت', en: 'Quiet corners' },
+        copy: {
+          fa: 'نیم طبقه و صندلی پشت پنجره برای سکوت است',
+          en: 'Mezzanine and back seats hold quiet time',
+        },
+      },
+      {
+        title: { fa: 'کانتر بیکری', en: 'Bakery counter' },
+        copy: {
+          fa: 'نان و شیرینی تمام روز شارژ میشود',
+          en: 'Bread and pastry refresh through the day',
+        },
       },
     ],
   },
   photoStories: [
     {
       imageKey: 'madiImg1',
-      overline: { fa: 'نغمه', en: 'Melody' },
-      title: { fa: 'تنفس میدان', en: 'Square breathing' },
+      overline: { fa: 'صبح', en: 'Morning' },
+      title: { fa: 'مه سرد', en: 'Cool haze' },
       copy: {
-        fa: 'در کنار میدان، صدای گام‌ها و ترمز اتوبوس‌ها را به موجی نرم از موسیقی آرام تبدیل می‌کنیم.',
-        en: 'Beside the square we translate footsteps and bus brakes into a soft wave of ambience.',
+        fa: 'مه سرد نور آبی را نرم میکند',
+        en: 'Cool haze softens the blue light',
       },
     },
     {
       imageKey: 'madiImg2',
-      overline: { fa: 'نور', en: 'Light' },
-      title: { fa: 'موج آبی', en: 'Azure wave' },
+      overline: { fa: 'شب', en: 'Night' },
+      title: { fa: 'نفس شهر', en: 'City breath' },
       copy: {
-        fa: 'مه‌ی سرد به نور مصنوعی ماه می‌خورد و سطح فنجان را مانند آبراهی آرام می‌درخشد.',
-        en: 'Cool haze meets the artificial moonlight and lets the cup shimmer like a calm canal.',
+        fa: 'انعکاس چراغ روی فنجان نفس شهر را نشان میدهد',
+        en: 'Light on the cup shows the city breath',
       },
     },
   ],
+  location: {
+    overline: { fa: 'آدرس و مسیر', en: 'Address & route' },
+    title: { fa: 'مادی کریمخان', en: 'Madi Karim Khan' },
+    body: {
+      fa: 'در بافت کریمخان هستیم و دسترسی شهری چند دقیقه دورتر است',
+      en: 'We sit in the Karim Khan grid with transit minutes away',
+    },
+    addressLines: {
+      fa: ['تهران خیابان کریمخان زند خیابان عضدی پلاک ۸۴', 'طبقه دوم میان مادی'],
+      en: ['Tehran Karim Khan Zand Street Azodi Street No84', 'Second floor Miyan Madi'],
+    },
+    hours: { fa: 'شنبه تا چهارشنبه ۰۷۰۰ تا ۲۲۰۰  پنجشنبه و جمعه ۰۸۰۰ تا ۲۳۰۰', en: 'Sat Wed 0700 to 2200  Thu Fri 0800 to 2300' },
+    phone: { fa: '۰۲۱ ۸۸۸۹ ۴۴۰۰', en: '+98 21 8889 4400' },
+    coordinates: { fa: '۳۵ ۷۰۵۲ شمالی ۵۱ ۴۱۵۳ شرقی', en: '35 7052 N 51 4153 E' },
+    mapLabel: { fa: 'کریمخان', en: 'Karim Khan' },
+    cta: { fa: 'نمایش روی نقشه', en: 'Show on map' },
+  },
 }

@@ -15,18 +15,6 @@
       </p>
     </div>
 
-    <article
-      v-if="photoStories[0]"
-      class="madi-story-feature"
-      :style="storySurface(photoStories[0].image)"
-    >
-      <div class="madi-story-copy">
-        <p class="story-overline" :class="textClass">{{ isRTL ? photoStories[0].overline.fa : photoStories[0].overline.en }}</p>
-        <h3 :class="titleClass">{{ isRTL ? photoStories[0].title.fa : photoStories[0].title.en }}</h3>
-        <p :class="textClass">{{ isRTL ? photoStories[0].copy.fa : photoStories[0].copy.en }}</p>
-      </div>
-    </article>
-
     <div class="madi-atmosphere">
       <div class="mist-line" v-for="n in 3" :key="`primary-${n}`" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
@@ -41,17 +29,62 @@
       </div>
     </div>
 
-    <article
-      v-if="photoStories[1]"
-      class="madi-story-feature"
-      :style="storySurface(photoStories[1].image)"
-    >
-      <div class="madi-story-copy">
-        <p class="story-overline" :class="textClass">{{ isRTL ? photoStories[1].overline.fa : photoStories[1].overline.en }}</p>
-        <h3 :class="titleClass">{{ isRTL ? photoStories[1].title.fa : photoStories[1].title.en }}</h3>
-        <p :class="textClass">{{ isRTL ? photoStories[1].copy.fa : photoStories[1].copy.en }}</p>
+    <div class="madi-rituals" data-reveal>
+      <div class="ritual-copy" :class="textClass">
+        <p class="overline">{{ isRTL ? ritualsCopy.overline.fa : ritualsCopy.overline.en }}</p>
+        <h2 :class="titleClass">{{ isRTL ? ritualsCopy.title.fa : ritualsCopy.title.en }}</h2>
+        <p>{{ isRTL ? ritualsCopy.body.fa : ritualsCopy.body.en }}</p>
       </div>
-    </article>
+      <div class="ritual-grid">
+        <article v-for="card in ritualsCopy.cards" :key="card.title.en" :class="textClass">
+          <h3 :class="titleClass">{{ isRTL ? card.title.fa : card.title.en }}</h3>
+          <p>{{ isRTL ? card.copy.fa : card.copy.en }}</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="immersive-stack">
+      <article
+        v-for="(story, idx) in photoStories"
+        :key="story.title.en"
+        class="story-scene"
+        :ref="el => setStoryScene(el, idx)"
+        :style="[sceneStyle(idx), storySurface(story.image)]"
+      >
+        <div class="story-copy" :class="textClass">
+          <p class="story-overline">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
+          <h3 :class="titleClass">{{ isRTL ? story.title.fa : story.title.en }}</h3>
+          <p>{{ isRTL ? story.copy.fa : story.copy.en }}</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="madi-location" data-reveal>
+      <div class="location-copy" :class="textClass">
+        <p class="overline">{{ isRTL ? locationInfo.overline.fa : locationInfo.overline.en }}</p>
+        <h2 :class="titleClass">{{ isRTL ? locationInfo.title.fa : locationInfo.title.en }}</h2>
+        <p>{{ isRTL ? locationInfo.body.fa : locationInfo.body.en }}</p>
+        <ul class="location-list">
+          <li v-for="(line, idx) in locationLines" :key="`madi-address-${idx}`">{{ line }}</li>
+        </ul>
+        <p class="location-hours">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
+        <p class="location-phone">{{ isRTL ? locationInfo.phone.fa : locationInfo.phone.en }}</p>
+      </div>
+      <div class="location-map" role="img" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
+        <div class="map-canvas">
+          <div class="map-grid"></div>
+          <div class="map-ring"></div>
+          <div class="map-marker">
+            <span>{{ isRTL ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en }}</span>
+            <small>{{ locationCoordinates }}</small>
+          </div>
+        </div>
+        <div class="map-meta">
+          <span>{{ locationCoordinates }}</span>
+          <span>{{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}</span>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -60,6 +93,7 @@ import { ref, computed } from 'vue'
 import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
+import { useSceneProgress } from '@/composables/useSceneProgress'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { miyanMadiLandingCopy } from '@/state/siteCopy'
 
@@ -83,6 +117,8 @@ const landingStyle = computed(() => ({
 const heroCopy = miyanMadiLandingCopy.hero
 const atmosphereCopy = miyanMadiLandingCopy.atmosphere
 
+const ritualsCopy = miyanMadiLandingCopy.rituals
+
 const heroOrbitStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 500, 1), 0.75)
   const offsetY = curve * -36 * speedFactor.value
@@ -104,6 +140,32 @@ const photoStories = miyanMadiLandingCopy.photoStories.map((story) => ({
   ...story,
   image: siteMedia[story.imageKey],
 }))
+
+const locationInfo = miyanMadiLandingCopy.location
+
+const locationLines = computed(() => (isRTL.value ? locationInfo.addressLines.fa : locationInfo.addressLines.en))
+
+const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinates.fa : locationInfo.coordinates.en))
+
+const storySections = ref([])
+const setStoryScene = (el, idx) => {
+  storySections.value[idx] = el || null
+}
+const { sceneProgress } = useSceneProgress(storySections, {
+  easePower: 1.2,
+  springPoint: 0.6,
+  holdFactor: 0.45,
+})
+
+function sceneStyle(idx) {
+  const progress = sceneProgress.value[idx] ?? 0
+  const translate = (1 - progress) * 34
+  const scale = 0.9 + progress * 0.08
+  return {
+    transform: `translate3d(0, ${pxToRem(translate)}, 0) scale(${scale})`,
+    opacity: 0.45 + progress * 0.55,
+  }
+}
 
 function storySurface(image) {
   return { '--story-image': `url("${image}")` }
@@ -209,32 +271,58 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   opacity: 1;
 }
 
-.madi-story-feature {
-  position: relative;
-  width: 100%;
-  min-height: min(100vh, 60rem);
+.immersive-stack {
   margin: clamp(2rem, 5vw, 3.5rem) 0;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 2rem);
+  position: relative;
+  padding-bottom: clamp(3rem, 4vw, 4rem);
+}
+
+.story-scene {
+  position: sticky;
+  top: clamp(2.5rem, 20vh, 6rem);
+  min-height: min(100vh, 52rem);
+  border-radius: 0;
+  overflow: hidden;
+  background: rgba(10, 36, 58, 0.6);
+  box-shadow: none;
+  isolation: isolate;
+}
+
+.story-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image: var(--story-image);
   background-size: cover;
   background-position: center;
-  display: flex;
-  align-items: flex-end;
+  filter: grayscale(0.1);
+  opacity: 0.8;
 }
 
-.madi-story-copy {
-  margin: var(--story-copy-gutter);
-  max-width: min(38rem, calc(100% - (var(--story-copy-gutter) * 2)));
-  color: #fff;
-  text-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.55);
+.story-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(1, 18, 35, 0.95), rgba(1, 18, 35, 0.2));
 }
 
-.madi-story-copy h3 {
-  margin: 0.25rem 0 0.75rem;
+.story-copy {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  color: #e8f5ff;
+  max-width: 32rem;
 }
 
-.madi-story-copy p {
+.story-copy h3 {
+  margin: 0.15rem 0 0.6rem;
+}
+
+.story-copy p {
   margin: 0;
-  line-height: 1.7;
+  line-height: 1.6;
 }
 
 .story-overline {
@@ -242,6 +330,153 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   letter-spacing: 0.35em;
   font-size: 0.7rem;
   color: rgba(183, 214, 255, 0.85);
+}
+
+.madi-rituals {
+  margin: clamp(2rem, 5vw, 3rem) 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.7);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  box-shadow: none;
+  border: none;
+}
+
+.ritual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.ritual-grid article {
+  padding: 1.2rem;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.madi-location {
+  margin: clamp(3rem, 6vw, 4.5rem) 0 0;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border-radius: 0;
+  border: none;
+  background: rgba(6, 52, 92, 0.9);
+  color: #e8f5ff;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.madi-location p,
+.madi-location li {
+  color: rgba(232, 245, 255, 0.85);
+}
+
+.location-list {
+  margin: 0.75rem 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-weight: 500;
+}
+
+.location-map {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.map-canvas {
+  position: relative;
+  border-radius: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent),
+    linear-gradient(150deg, rgba(19, 87, 133, 0.9), rgba(7, 36, 62, 0.95));
+  min-height: 14rem;
+  border: none;
+}
+
+.map-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 2.75rem 2.75rem;
+  opacity: 0.25;
+}
+
+.map-ring {
+  display: none;
+}
+
+.map-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  background: transparent;
+  color: #e8f5ff;
+  padding: 0;
+  border-radius: 0;
+  min-width: 9rem;
+  text-align: center;
+  box-shadow: none;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.map-marker small {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.75rem;
+  opacity: 0.55;
+}
+
+.map-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  border: none;
+  border-radius: 0;
+}
+
+.location-hours {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 0.6rem;
+}
+
+.location-phone {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+  letter-spacing: 0.12em;
+}
+
+.ritual-copy h2,
+.location-copy h2 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.ritual-copy p,
+.ritual-grid article p,
+.location-copy p,
+.location-list li {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 @keyframes mistDrift {
