@@ -3,31 +3,40 @@
       <div class="space-y-6" v-if="sections && sections.length">
           <section v-for="(section, sIdx) in sections" :key="sIdx" class="pb-8 last:pb-0">
             <h2 class="text-2xl mb-6 text-center">
-              <span v-if="currentLang === 'fa'" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(section.title) }}</span>
+              <span v-if="isRTL" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(section.title) }}</span>
               <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
             </h2>
         <div class="grid gap-6 md:gap-8">
           <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group">
-            <div v-if="item && item.name" class="grid md:grid-cols-2 gap-4 items-start">
-              <div :class="currentLang === 'fa' ? 'order-2 md:order-2' : 'order-2 md:order-1'">
-                <div class="mb-4">
-                  <div :class="['flex items-baseline justify-between gap-4', currentLang === 'fa' ? 'flex-row-reverse text-right' : 'text-left']">
-                    <h3 class="mb-2">
-                      <span v-if="currentLang === 'fa'" class="block font-b-titr text-xl mb-1" dir="rtl">{{ translateCopy(item.name) }}</span>
-                      <span v-else class="block font-cinzel text-lg font-medium">{{ translateCopy(item.name) }}</span>
-                    </h3>
+            <div
+              v-if="item && item.name"
+              :class="[
+                'grid md:grid-cols-2 gap-4 items-start',
+              ]"
+              dir="ltr"
+            >
+              <div :class="isRTL ? 'order-2 md:order-2' : 'order-2 md:order-1'">
+                <div class="mb-4" :dir="isRTL ? 'rtl' : 'ltr'">
+                  <div class="flex items-start justify-between gap-4">
+                    <div :class="[isRTL ? 'order-1 text-right flex-1' : 'order-2 text-left flex-1']">
+                      <h3 class="mb-2">
+                        <span v-if="isRTL" class="block font-b-titr text-xl mb-1">{{ translateCopy(item.name) }}</span>
+                        <span v-else class="block font-cinzel text-lg font-medium">{{ translateCopy(item.name) }}</span>
+                      </h3>
+                    </div>
 
                     <div
                       v-if="item.price"
-                      class="text-gray-700"
-                      :class="currentLang === 'fa' ? 'font-b-titr text-lg order-first' : 'font-cinzel font-light text-base'"
+                      class="text-gray-700 min-w-[3rem]"
+                      :class="isRTL ? 'order-1 text-left font-b-titr text-lg' : 'order-2 text-right font-cinzel font-light text-base'"
+                      dir="ltr"
                     >
                       {{ translateCopy(item.price) }}
                     </div>
                   </div>
 
-                  <p v-if="item.description" class="text-gray-500" :class="currentLang === 'fa' ? 'text-right' : ''">
-                    <span v-if="currentLang === 'fa'" class="block font-b-titr text-sm mb-1" dir="rtl">{{ translateCopy(item.description) }}</span>
+                  <p v-if="item.description" class="text-gray-500" :class="isRTL ? 'text-right' : 'text-left'">
+                    <span v-if="isRTL" class="block font-b-titr text-sm mb-1">{{ translateCopy(item.description) }}</span>
                     <span v-else class="block font-cinzel text-sm font-light">{{ translateCopy(item.description) }}</span>
                   </p>
                 </div>
@@ -35,7 +44,7 @@
 
               <div
                 v-if="item.image"
-                :class="currentLang === 'fa' ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
+                :class="isRTL ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
                 @click="openImage(item.image)"
               >
                 <img
@@ -72,6 +81,7 @@ const props = defineProps({
 
 const selectedImage = ref(null)
 const currentLang = computed(() => lang.value)
+const isRTL = computed(() => currentLang.value === 'fa')
 
 // Get sections directly from menu.sections
 // The API/mock data structure has sections at the top level
@@ -103,4 +113,5 @@ function translateCopy(obj) {
 }
 
 .shadow-sm { box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,0.06); }
+
 </style>

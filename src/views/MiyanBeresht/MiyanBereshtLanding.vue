@@ -21,39 +21,6 @@
       </span>
     </div>
 
-    <div class="beresht-roastery" data-reveal>
-      <div class="roastery-copy" :class="textClass">
-        <p class="overline">{{ isRTL ? roasterySection.overline.fa : roasterySection.overline.en }}</p>
-        <h2 :class="titleClass">{{ isRTL ? roasterySection.title.fa : roasterySection.title.en }}</h2>
-        <p>{{ isRTL ? roasterySection.body.fa : roasterySection.body.en }}</p>
-        <div class="roastery-stats">
-          <div class="stat-card" v-for="stat in roasterySection.stats" :key="stat.label.en">
-            <span class="stat-label">{{ isRTL ? stat.label.fa : stat.label.en }}</span>
-            <span class="stat-value">{{ isRTL ? stat.value.fa : stat.value.en }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="roastery-pillars">
-        <article v-for="pillar in roasterySection.pillars" :key="pillar.title.en" :class="textClass">
-          <h3 :class="titleClass">{{ isRTL ? pillar.title.fa : pillar.title.en }}</h3>
-          <p>{{ isRTL ? pillar.copy.fa : pillar.copy.en }}</p>
-        </article>
-      </div>
-    </div>
-
-    <div class="beresht-tasting" data-reveal>
-      <div class="tasting-copy" :class="textClass">
-        <p class="overline">{{ isRTL ? tastingSection.overline.fa : tastingSection.overline.en }}</p>
-        <h2 :class="titleClass">{{ isRTL ? tastingSection.title.fa : tastingSection.title.en }}</h2>
-        <p>{{ isRTL ? tastingSection.body.fa : tastingSection.body.en }}</p>
-      </div>
-      <ul class="tasting-highlights">
-        <li v-for="entry in tastingSection.highlights" :key="entry.en">
-          {{ isRTL ? entry.fa : entry.en }}
-        </li>
-      </ul>
-    </div>
-
     <div class="immersive-stack">
       <article
         v-for="(story, idx) in photoStories"
@@ -100,13 +67,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
 import { miyanBereshtLandingCopy } from '@/state/siteCopy'
+import { prefetchMenusForBranch } from '@/utils/menuPrefetcher'
 
 
 const landingRoot = ref(null)
@@ -129,10 +97,6 @@ const landingStyle = computed(() => ({
 const marqueeWords = miyanBereshtLandingCopy.marqueeWords
 
 const heroCopy = miyanBereshtLandingCopy.hero
-
-const roasterySection = miyanBereshtLandingCopy.roastery
-
-const tastingSection = miyanBereshtLandingCopy.tasting
 
 const locationInfo = miyanBereshtLandingCopy.location
 
@@ -177,6 +141,10 @@ const locationLines = computed(() => (isRTL.value ? locationInfo.addressLines.fa
 const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinates.fa : locationInfo.coordinates.en))
 
 useRevealObserver(landingRoot, { threshold: 0.15 })
+
+onMounted(() => {
+  prefetchMenusForBranch('beresht')
+})
 </script>
 
 <style scoped>
@@ -277,99 +245,6 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   color: rgba(178, 117, 82, 0.75);
   margin-bottom: 3rem;
   transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
-}
-
-.beresht-roastery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-  gap: clamp(1.5rem, 4vw, 2.75rem);
-  padding: clamp(1.75rem, 4vw, 3rem);
-  background: rgba(255, 255, 255, 0.78);
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-}
-
-.roastery-copy p {
-  color: rgba(38, 28, 18, 0.8);
-  line-height: 1.7;
-}
-
-.roastery-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.stat-card {
-  padding: 0.6rem 0;
-  border-radius: 0;
-  border: none;
-  background: transparent;
-  box-shadow: none;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.75rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  opacity: 0.6;
-}
-
-.stat-value {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.roastery-pillars {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 1rem;
-}
-
-.roastery-pillars article {
-  background: transparent;
-  border-radius: 0;
-  padding: 1rem 0;
-  box-shadow: none;
-  border: none;
-}
-
-.beresht-tasting {
-  margin-top: clamp(2rem, 5vw, 3rem);
-  padding: clamp(1.5rem, 4vw, 2.5rem);
-  border-radius: 0;
-  border: none;
-  background: rgba(255, 255, 255, 0.7);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1.5rem;
-  align-items: center;
-  box-shadow: none;
-}
-
-.tasting-highlights {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.tasting-highlights li {
-  padding: 0.65rem 0.85rem;
-  border-radius: 0;
-  font-size: 0.85rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  background: transparent;
-  color: rgba(36, 19, 8, 0.8);
-  border: none;
 }
 
 .beresht-location {
@@ -477,19 +352,14 @@ useRevealObserver(landingRoot, { threshold: 0.15 })
   letter-spacing: 0.12em;
 }
 
-.roastery-copy h2,
-.tasting-copy h2,
 .location-copy h2 {
   font-family: 'Cinzel', serif;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
-.roastery-copy p,
-.tasting-copy p,
 .location-copy p,
-.roastery-pillars article p,
-.tasting-highlights li {
+.location-list li {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   font-size: 0.95rem;
   line-height: 1.6;

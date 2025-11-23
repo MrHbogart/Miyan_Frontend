@@ -29,20 +29,6 @@
       </div>
     </div>
 
-    <div class="madi-rituals" data-reveal>
-      <div class="ritual-copy" :class="textClass">
-        <p class="overline">{{ isRTL ? ritualsCopy.overline.fa : ritualsCopy.overline.en }}</p>
-        <h2 :class="titleClass">{{ isRTL ? ritualsCopy.title.fa : ritualsCopy.title.en }}</h2>
-        <p>{{ isRTL ? ritualsCopy.body.fa : ritualsCopy.body.en }}</p>
-      </div>
-      <div class="ritual-grid">
-        <article v-for="card in ritualsCopy.cards" :key="card.title.en" :class="textClass">
-          <h3 :class="titleClass">{{ isRTL ? card.title.fa : card.title.en }}</h3>
-          <p>{{ isRTL ? card.copy.fa : card.copy.en }}</p>
-        </article>
-      </div>
-    </div>
-
     <div class="immersive-stack">
       <article
         v-for="(story, idx) in photoStories"
@@ -89,13 +75,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { lang } from '@/state/lang'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { miyanMadiLandingCopy } from '@/state/siteCopy'
+import { prefetchMenusForBranch } from '@/utils/menuPrefetcher'
 
 const siteMedia = siteMediaDefaults
 const landingRoot = ref(null)
@@ -116,8 +103,6 @@ const landingStyle = computed(() => ({
 
 const heroCopy = miyanMadiLandingCopy.hero
 const atmosphereCopy = miyanMadiLandingCopy.atmosphere
-
-const ritualsCopy = miyanMadiLandingCopy.rituals
 
 const heroOrbitStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 500, 1), 0.75)
@@ -172,6 +157,10 @@ function storySurface(image) {
 }
 
 useRevealObserver(landingRoot, { threshold: 0.18 })
+
+onMounted(() => {
+  prefetchMenusForBranch('madi')
+})
 </script>
 
 <style scoped>
@@ -332,32 +321,6 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   color: rgba(183, 214, 255, 0.85);
 }
 
-.madi-rituals {
-  margin: clamp(2rem, 5vw, 3rem) 0;
-  padding: clamp(1.25rem, 3vw, 2rem);
-  border-radius: 0;
-  background: rgba(255, 255, 255, 0.7);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: clamp(1rem, 3vw, 2rem);
-  box-shadow: none;
-  border: none;
-}
-
-.ritual-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 1rem;
-}
-
-.ritual-grid article {
-  padding: 1.2rem;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  border: none;
-}
-
 .madi-location {
   margin: clamp(3rem, 6vw, 4.5rem) 0 0;
   padding: clamp(1.5rem, 4vw, 2.5rem);
@@ -463,15 +426,12 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   letter-spacing: 0.12em;
 }
 
-.ritual-copy h2,
 .location-copy h2 {
   font-family: 'Cinzel', serif;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
-.ritual-copy p,
-.ritual-grid article p,
 .location-copy p,
 .location-list li {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;

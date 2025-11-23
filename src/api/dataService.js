@@ -1,12 +1,43 @@
 // src/api/dataService.js
 import axios from 'axios'
 
-const BASE_URL = 'https://miyan.smartcareer.ir/api'
-const isDev = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV
+const DEFAULT_API_BASE_URL = 'https://miyan.smartcareer.ir/api'
+const resolveEnv = () => (typeof import.meta !== 'undefined' && import.meta.env) || {}
+const normalizeBaseUrl = (url) => url.replace(/\/+$/, '')
+const isDev = resolveEnv().DEV
+const rawEnvBaseUrl = resolveEnv().VITE_API_BASE_URL
+
+const getRuntimeBaseUrl = () => {
+  if (rawEnvBaseUrl) {
+    return normalizeBaseUrl(rawEnvBaseUrl)
+  }
+
+  if (typeof window !== 'undefined') {
+    const runtimeConfig = window.__MIYAN_CONFIG__ || {}
+    if (runtimeConfig.apiBaseUrl) {
+      return normalizeBaseUrl(runtimeConfig.apiBaseUrl)
+    }
+    if (window.location?.origin) {
+      return normalizeBaseUrl(`${window.location.origin}/api`)
+    }
+  }
+
+  return normalizeBaseUrl(DEFAULT_API_BASE_URL)
+}
+
+const API_BASE_URL = getRuntimeBaseUrl()
 const storage = typeof window !== 'undefined' ? window.localStorage : null
 
+const normalizeEndpoint = (endpoint) => {
+  if (!endpoint) return ''
+  if (/^https?:\/\//i.test(endpoint)) {
+    return endpoint
+  }
+  return endpoint.replace(/^\/+/, '')
+}
+
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: `${API_BASE_URL}/`,
   withCredentials: true,
   xsrfCookieName: 'csrftoken',
   xsrfHeaderName: 'X-CSRFToken',
@@ -119,9 +150,10 @@ function setCachedData(storageKey, data) {
 async function fetchWithRetry(endpoint, retryAttempts) {
   let lastError
 
+  const requestTarget = normalizeEndpoint(endpoint)
   for (let attempt = 0; attempt <= retryAttempts; attempt++) {
     try {
-      const response = await axiosInstance.get(endpoint)
+      const response = await axiosInstance.get(requestTarget)
       return response.data
     } catch (error) {
       lastError = error
