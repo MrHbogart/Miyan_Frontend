@@ -1,4 +1,4 @@
-// src/composables/useDataFetcher.js
+// shared composable for fetching API resources with cache + retry logic
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 /**

@@ -2,9 +2,9 @@ module.exports = {
   darkMode: 'class',
   content: [
     './app.vue',
-    './components/**/*.{vue,js,jsx,tsx}',
-    './layouts/**/*.{vue,js,jsx,tsx}',
-    './pages/**/*.{vue,js,jsx,tsx}',
+    './components/**/*.{vue,js,ts}',
+    './views/**/*.{vue,js,ts}',
+    './pages/**/*.{vue,js,ts}',
     './composables/**/*.{js,ts}',
     './state/**/*.{js,ts}',
     './utils/**/*.{js,ts}'

@@ -1,8 +1,12 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { resolve } from 'node:path'
 
 export default defineNuxtConfig({
   ssr: true,
   devtools: { enabled: false },
+  alias: {
+    '@': resolve(__dirname, '.'),
+  },
   css: [
     '~/assets/css/tailwind.css',
     '~/assets/css/app.css',
@@ -15,6 +19,7 @@ export default defineNuxtConfig({
       siteDomain: process.env.NUXT_PUBLIC_SITE_DOMAIN || 'https://miyangroup.com',
     },
   },
+  components: [{ path: '~/components', pathPrefix: false }],
   app: {
     head: {
       title: 'Miyan Group',

@@ -3,16 +3,17 @@ const path = require('path');
 
 // Config - adjust as needed
 const projectRoot = process.cwd();
-const srcDir = path.join(projectRoot, 'src');
 const publicDir = path.join(projectRoot, 'public');
-const assetsDir = path.join(srcDir, 'assets');
-const sourceExtensions = ['.js', '.jsx', '.ts', '.tsx', '.vue'];
+const assetsDir = path.join(projectRoot, 'assets');
+const sourceDirs = ['components', 'views', 'pages'];
+const sourceExtensions = ['.js', '.ts', '.vue'];
 
 // Regex to find public asset references - inside strings
 const assetRegex = /(["'`])\/([^\s"'`]+?\.(png|jpg|jpeg|gif|svg|webp|ico|bmp|avif|mp4|mp3|woff|woff2|ttf|eot))\1/gi;
 
 // Helper: get all source files recursively in srcDir with allowed extensions
 function getSourceFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
   let files = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const fullPath = path.join(dir, entry.name);
@@ -65,7 +66,7 @@ function updateFile(filePath, assetsMoved) {
   if (assetsMoved.length === 0) return false;
 
   // Collect existing imports to avoid duplicates
-  const importRegex = /^import\s+(\w+)\s+from\s+['"]@\/assets\/.+['"];?$/gm;
+  const importRegex = /^import\s+(\w+)\s+from\s+['"](?:~|@)\/assets\/[^'"\n]+['"];?$/gm;
   const existingImports = new Set();
   let m;
   while ((m = importRegex.exec(content)) !== null) {
@@ -78,7 +79,7 @@ function updateFile(filePath, assetsMoved) {
   // For each asset, replace string refs with imported variable usage and add import line if not exists
   for (const assetRelPath of assetsMoved) {
     const varName = toVariableName(assetRelPath);
-    const assetImportPath = `@/assets/${assetRelPath.replace(/\\/g, '/')}`; // cross-platform fix
+    const assetImportPath = `~/assets/${assetRelPath.replace(/\\/g, '/')}`; // cross-platform fix
 
     if (!existingImports.has(varName)) {
       newImports += `import ${varName} from '${assetImportPath}';\n`;
@@ -110,7 +111,9 @@ function updateFile(filePath, assetsMoved) {
 
 function main() {
   console.log('Scanning source files for public asset references...');
-  const sourceFiles = getSourceFiles(srcDir);
+  const sourceFiles = sourceDirs
+    .map((dir) => path.join(projectRoot, dir))
+    .flatMap(getSourceFiles);
   let totalMoved = 0, totalFixed = 0;
 
   for (const filePath of sourceFiles) {

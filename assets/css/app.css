@@ -1,5 +1,5 @@
-/* Global custom styles. Tailwind directives are in src/tailwind.css */
-html, body, #app {
+/* Global custom styles. Tailwind directives live in assets/css/tailwind.css */
+html, body, #app, #__nuxt {
   height: 100%;
 }
 

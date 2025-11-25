@@ -22,7 +22,7 @@ function extractExportData(filePath) {
     .replace(/import\s+[^;]+;/g, '') // remove import lines
     .replace(/export\s+default\s+/, '') // remove "export default"
     .replace(/([A-Za-z0-9_]+)\s*:\s*[A-Za-z0-9_]+Img/g, (m, key) => `${key}: "IMAGE_PLACEHOLDER"`) // replace image vars
-    .replace(/@\//g, './src/') // replace @ alias with ./src/
+    .replace(/[@~]\/+/g, './') // replace aliases with relative paths
 
   try {
     // Try to evaluate the JSON-like structure safely
