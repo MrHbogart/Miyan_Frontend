@@ -1,7 +1,7 @@
 // src/api/dataService.js
 import axios from 'axios'
 
-const DEFAULT_API_BASE_URL = 'https://miyan.smartcareer.ir/api'
+const DEFAULT_API_BASE_URL = 'https://miyangroup.com/api'
 const resolveEnv = () => (typeof import.meta !== 'undefined' && import.meta.env) || {}
 const normalizeBaseUrl = (url) => url.replace(/\/+$/, '')
 const isDev = resolveEnv().DEV

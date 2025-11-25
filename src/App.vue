@@ -84,10 +84,14 @@ onMounted(() => {
     handleScroll()
   }
 
-  removeRouteHook = router.afterEach(() => {
+  removeRouteHook = router.afterEach((to, from) => {
     requestAnimationFrame(() => {
       handleScroll()
-      navAttached.value = false
+      const parentTo = to?.matched?.[0]?.name
+      const parentFrom = from?.matched?.[0]?.name
+      if (!parentFrom || parentFrom !== parentTo) {
+        navAttached.value = false
+      }
     })
   })
 })

@@ -9,7 +9,9 @@
     "prep-images": "node scripts/prep-images.js"
   },
   "dependencies": {
+    "@vue-leaflet/vue-leaflet": "^0.10.1",
     "axios": "^1.13.2",
+    "leaflet": "^1.9.4",
     "pdfjs-lib": "^0.0.149",
     "vue": "^3.3.4",
     "vue-i18n": "^9.2.2",

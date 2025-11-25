@@ -15,6 +15,20 @@
       </p>
     </div>
 
+    <div class="immersive-stack" v-if="primaryStory">
+      <article
+        class="story-scene"
+        :ref="el => setStoryScene(el, 0)"
+        :style="[sceneStyle(0), storySurface(primaryStory.image)]"
+      >
+        <div class="story-copy" :class="textClass">
+          <p class="story-overline">{{ isRTL ? primaryStory.overline.fa : primaryStory.overline.en }}</p>
+          <h3 :class="titleClass">{{ isRTL ? primaryStory.title.fa : primaryStory.title.en }}</h3>
+          <p>{{ isRTL ? primaryStory.copy.fa : primaryStory.copy.en }}</p>
+        </div>
+      </article>
+    </div>
+
     <div class="madi-atmosphere">
       <div class="mist-line" v-for="n in 3" :key="`primary-${n}`" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
@@ -29,13 +43,13 @@
       </div>
     </div>
 
-    <div class="immersive-stack">
+    <div class="immersive-stack" v-if="secondaryStories.length">
       <article
-        v-for="(story, idx) in photoStories"
+        v-for="(story, idx) in secondaryStories"
         :key="story.title.en"
         class="story-scene"
-        :ref="el => setStoryScene(el, idx)"
-        :style="[sceneStyle(idx), storySurface(story.image)]"
+        :ref="el => setStoryScene(el, idx + 1)"
+        :style="[sceneStyle(idx + 1), storySurface(story.image)]"
       >
         <div class="story-copy" :class="textClass">
           <p class="story-overline">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
@@ -56,18 +70,24 @@
         <p class="location-hours">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
         <p class="location-phone">{{ isRTL ? locationInfo.phone.fa : locationInfo.phone.en }}</p>
       </div>
-      <div class="location-map" role="img" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
+      <div class="location-map" role="region" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
         <div class="map-canvas">
-          <div class="map-grid"></div>
-          <div class="map-ring"></div>
-          <div class="map-marker">
-            <span>{{ isRTL ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en }}</span>
-            <small>{{ locationCoordinates }}</small>
-          </div>
+          <LocationMap :center="mapCenter" :zoom="mapZoom" :marker-label="mapMarkerLabel" />
+          <a
+            class="map-launch"
+            :href="mapLink"
+            target="_blank"
+            rel="noopener"
+            :aria-label="isRTL ? locationInfo.cta.fa : locationInfo.cta.en"
+          >
+            ↗
+          </a>
         </div>
         <div class="map-meta">
-          <span>{{ locationCoordinates }}</span>
-          <span>{{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}</span>
+          <a class="map-coords" :href="mapLink" target="_blank" rel="noopener">{{ locationCoordinates }}</a>
+          <a class="map-cta" :href="mapLink" target="_blank" rel="noopener">
+            {{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}
+          </a>
         </div>
       </div>
     </div>
@@ -83,6 +103,7 @@ import { useSceneProgress } from '@/composables/useSceneProgress'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { miyanMadiLandingCopy } from '@/state/siteCopy'
 import { prefetchMenusForBranch } from '@/utils/menuPrefetcher'
+import LocationMap from '@/components/LocationMap.vue'
 
 const siteMedia = siteMediaDefaults
 const landingRoot = ref(null)
@@ -125,12 +146,17 @@ const photoStories = miyanMadiLandingCopy.photoStories.map((story) => ({
   ...story,
   image: siteMedia[story.imageKey],
 }))
+const [primaryStory, ...secondaryStories] = photoStories
 
 const locationInfo = miyanMadiLandingCopy.location
 
 const locationLines = computed(() => (isRTL.value ? locationInfo.addressLines.fa : locationInfo.addressLines.en))
 
 const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinates.fa : locationInfo.coordinates.en))
+const mapCenter = computed(() => [locationInfo.mapCenter.lat, locationInfo.mapCenter.lng])
+const mapZoom = locationInfo.mapZoom ?? 16
+const mapMarkerLabel = computed(() => (isRTL.value ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en))
+const mapLink = computed(() => `https://www.google.com/maps/search/?api=1&query=${locationInfo.mapCenter.lat},${locationInfo.mapCenter.lng}`)
 
 const storySections = ref([])
 const setStoryScene = (el, idx) => {
@@ -358,47 +384,39 @@ onMounted(() => {
   position: relative;
   border-radius: 0;
   overflow: hidden;
-  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent),
-    linear-gradient(150deg, rgba(19, 87, 133, 0.9), rgba(7, 36, 62, 0.95));
   min-height: 14rem;
-  border: none;
+  border: 1px solid rgba(232, 245, 255, 0.12);
+  background: rgba(6, 35, 57, 0.3);
 }
 
-.map-grid {
+.map-canvas :deep(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  font: inherit;
+  background: rgba(5, 23, 38, 0.95);
+}
+
+.map-launch {
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 2.75rem 2.75rem;
-  opacity: 0.25;
-}
-
-.map-ring {
-  display: none;
-}
-
-.map-marker {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  background: transparent;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 245, 255, 0.4);
+  background: rgba(15, 37, 53, 0.75);
   color: #e8f5ff;
-  padding: 0;
-  border-radius: 0;
-  min-width: 9rem;
-  text-align: center;
-  box-shadow: none;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.map-marker small {
-  display: block;
-  margin-top: 0.2rem;
-  font-size: 0.75rem;
-  opacity: 0.55;
+.map-launch:hover {
+  background: rgba(23, 72, 112, 0.9);
+  border-color: rgba(232, 245, 255, 0.7);
 }
 
 .map-meta {
@@ -410,6 +428,17 @@ onMounted(() => {
   opacity: 0.7;
   border: none;
   border-radius: 0;
+}
+
+.map-meta a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.map-meta a:hover {
+  text-decoration: underline;
 }
 
 .location-hours {

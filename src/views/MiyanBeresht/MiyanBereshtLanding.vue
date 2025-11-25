@@ -21,13 +21,43 @@
       </span>
     </div>
 
-    <div class="immersive-stack">
+    <div class="immersive-stack" v-if="firstStoryGroup.length">
       <article
-        v-for="(story, idx) in photoStories"
+        v-for="(story, idx) in firstStoryGroup"
         :key="story.title.en"
         class="story-scene"
         :ref="el => setStoryScene(el, idx)"
         :style="[sceneStyle(idx), storySurface(story.image)]"
+      >
+        <div class="story-copy">
+          <p class="story-overline" :class="textClass">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
+          <h3 :class="titleClass">{{ isRTL ? story.title.fa : story.title.en }}</h3>
+          <p :class="textClass">{{ isRTL ? story.copy.fa : story.copy.en }}</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="beresht-atmosphere">
+      <div class="mist-line" v-for="n in 3" :key="`beresht-mist-${n}`" :style="mistStyle(n)"></div>
+      <div class="atmo-copy" data-reveal>
+        <h2 :class="titleClass">{{ isRTL ? experienceCopy.title.fa : experienceCopy.title.en }}</h2>
+        <p
+          v-for="(paragraph, idx) in experienceCopy.paragraphs"
+          :key="`beresht-atmo-${idx}`"
+          :class="textClass"
+        >
+          {{ isRTL ? paragraph.fa : paragraph.en }}
+        </p>
+      </div>
+    </div>
+
+    <div class="immersive-stack" v-if="secondStoryGroup.length">
+      <article
+        v-for="(story, idx) in secondStoryGroup"
+        :key="story.title.en"
+        class="story-scene"
+        :ref="el => setStoryScene(el, idx + firstStoryGroup.length)"
+        :style="[sceneStyle(idx + firstStoryGroup.length), storySurface(story.image)]"
       >
         <div class="story-copy">
           <p class="story-overline" :class="textClass">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
@@ -48,18 +78,24 @@
         <p class="location-hours">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
         <p class="location-phone">{{ isRTL ? locationInfo.phone.fa : locationInfo.phone.en }}</p>
       </div>
-      <div class="location-map" role="img" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
+      <div class="location-map" role="region" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
         <div class="map-canvas">
-          <div class="map-grid"></div>
-          <div class="map-ring"></div>
-          <div class="map-marker">
-            <span>{{ isRTL ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en }}</span>
-            <small>{{ locationCoordinates }}</small>
-          </div>
+          <LocationMap :center="mapCenter" :zoom="mapZoom" :marker-label="mapMarkerLabel" />
+          <a
+            class="map-launch"
+            :href="mapLink"
+            target="_blank"
+            rel="noopener"
+            :aria-label="isRTL ? locationInfo.cta.fa : locationInfo.cta.en"
+          >
+            ↗
+          </a>
         </div>
         <div class="map-meta">
-          <span>{{ locationCoordinates }}</span>
-          <span>{{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}</span>
+          <a class="map-coords" :href="mapLink" target="_blank" rel="noopener">{{ locationCoordinates }}</a>
+          <a class="map-cta" :href="mapLink" target="_blank" rel="noopener">
+            {{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}
+          </a>
         </div>
       </div>
     </div>
@@ -75,6 +111,7 @@ import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
 import { miyanBereshtLandingCopy } from '@/state/siteCopy'
 import { prefetchMenusForBranch } from '@/utils/menuPrefetcher'
+import LocationMap from '@/components/LocationMap.vue'
 
 
 const landingRoot = ref(null)
@@ -97,8 +134,13 @@ const landingStyle = computed(() => ({
 const marqueeWords = miyanBereshtLandingCopy.marqueeWords
 
 const heroCopy = miyanBereshtLandingCopy.hero
+const experienceCopy = miyanBereshtLandingCopy.experience
 
 const locationInfo = miyanBereshtLandingCopy.location
+const mapCenter = computed(() => [locationInfo.mapCenter.lat, locationInfo.mapCenter.lng])
+const mapZoom = locationInfo.mapZoom ?? 16
+const mapMarkerLabel = computed(() => (isRTL.value ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en))
+const mapLink = computed(() => `https://www.google.com/maps/search/?api=1&query=${locationInfo.mapCenter.lat},${locationInfo.mapCenter.lng}`)
 
 const marqueeStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
@@ -108,10 +150,21 @@ const marqueeStyle = computed(() => {
   }
 })
 
+function mistStyle(index) {
+  const offset = index * 40
+  return {
+    animationDelay: `${(index * 0.6) / speedFactor.value}s`,
+    animationDuration: `${6 / speedFactor.value}s`,
+    top: pxToRem(10 + offset)
+  }
+}
+
 const photoStories = miyanBereshtLandingCopy.photoStories.map((story) => ({
   ...story,
   image: siteMedia[story.imageKey],
 }))
+const firstStoryGroup = photoStories.slice(0, 2)
+const secondStoryGroup = photoStories.slice(2)
 
 const storySections = ref([])
 const setStoryScene = (el, idx) => {
@@ -247,6 +300,51 @@ onMounted(() => {
   transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
 }
 
+.beresht-atmosphere {
+  position: relative;
+  border: none;
+  padding: clamp(1rem, 3vw, 1.75rem) 0;
+  overflow: hidden;
+  min-height: 16rem;
+  background: transparent;
+}
+
+.mist-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3.5rem;
+  background: linear-gradient(90deg, transparent, rgba(232, 191, 153, 0.35), transparent);
+  opacity: 0;
+  animation: mistDrift 6s ease-in-out infinite;
+}
+
+.atmo-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+  transform: translateY(2rem);
+  opacity: 0;
+  transition: transform calc(800ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1),
+    opacity calc(800ms / var(--viz-velocity, 1)) ease;
+}
+
+.atmo-copy h2 {
+  margin-bottom: 0.9rem;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  font-weight: 500;
+}
+
+.atmo-copy p {
+  color: rgba(47, 29, 17, 0.8);
+  line-height: 1.75;
+}
+
+.atmo-copy.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 .beresht-location {
   margin-top: clamp(3rem, 6vw, 4.5rem);
   display: grid;
@@ -284,47 +382,56 @@ onMounted(() => {
   position: relative;
   border-radius: 0;
   overflow: hidden;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.35));
   min-height: 14rem;
-  border: none;
+  border: 1px solid rgba(249, 246, 240, 0.25);
+  background: rgba(36, 19, 8, 0.15);
 }
 
-.map-grid {
+.map-canvas :deep(.leaflet-container) {
+  width: 100%;
+  height: 100%;
+  font: inherit;
+  background: rgba(33, 14, 4, 0.92);
+}
+
+.map-launch {
   position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-  background-size: 2.5rem 2.5rem;
-  opacity: 0.25;
-}
-
-.map-ring {
-  display: none;
-}
-
-.map-marker {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  background: transparent;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(249, 246, 240, 0.5);
+  background: rgba(32, 18, 8, 0.75);
   color: #f9f6f0;
-  padding: 0;
-  border-radius: 0;
-  text-align: center;
-  box-shadow: none;
-  min-width: 10rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.map-marker small {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  opacity: 0.5;
+.map-launch:hover {
+  background: rgba(74, 43, 20, 0.9);
+  border-color: rgba(249, 246, 240, 0.85);
+}
+
+@keyframes mistDrift {
+  0% {
+    transform: translateX(-40%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(40%);
+    opacity: 0;
+  }
 }
 
 .map-meta {
@@ -336,6 +443,15 @@ onMounted(() => {
   opacity: 0.8;
   border-radius: 0;
   border: none;
+}
+
+.map-meta a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.map-meta a:hover {
+  text-decoration: underline;
 }
 
 .location-hours {

@@ -149,6 +149,19 @@ export const miyanBereshtLandingCopy = {
     { fa: 'سرویس', en: 'Service' },
     { fa: 'لوکس', en: 'Luxury' },
   ],
+  experience: {
+    title: { fa: 'هوای سالن لوکس', en: 'Calm luxury salon' },
+    paragraphs: [
+      {
+        fa: 'نور برنجی روی کف رستری می‌نشیند و سرویس را آرام نگه میدارد',
+        en: 'Brass light settles over the roastery floor so service stays calm',
+      },
+      {
+        fa: 'میز سنگی و صندلی چرمی حضور را آرام و طولانی میکند',
+        en: 'Stone tables with leather seating slow the visit with warm cues',
+      },
+    ],
+  },
   photoStories: [
     {
       imageKey: 'bereshtImg1',
@@ -201,6 +214,8 @@ export const miyanBereshtLandingCopy = {
     hours: { fa: 'هر روز ۰۷۰۰ تا ۲۳۳۰', en: 'Daily 0700 to 2330' },
     phone: { fa: '۰۲۱ ۲۲۴۴ ۷۷۰۰', en: '+98 21 2244 7700' },
     coordinates: { fa: '۳۵ ۸۰۷۹ شمالی ۵۱ ۴۰۹۱ شرقی', en: '35 8079 N 51 4091 E' },
+    mapCenter: { lat: 32.22134, lng: 51.24048 },
+    mapZoom: 16,
     mapLabel: { fa: 'ولنجک', en: 'Velenjak' },
     cta: { fa: 'مشاهده مسیر', en: 'View route' },
   },
@@ -262,6 +277,8 @@ export const miyanMadiLandingCopy = {
     hours: { fa: 'شنبه تا چهارشنبه ۰۷۰۰ تا ۲۲۰۰  پنجشنبه و جمعه ۰۸۰۰ تا ۲۳۰۰', en: 'Sat Wed 0700 to 2200  Thu Fri 0800 to 2300' },
     phone: { fa: '۰۲۱ ۸۸۸۹ ۴۴۰۰', en: '+98 21 8889 4400' },
     coordinates: { fa: '۳۵ ۷۰۵۲ شمالی ۵۱ ۴۱۵۳ شرقی', en: '35 7052 N 51 4153 E' },
+    mapCenter: { lat: 32.64762442805897, lng: 51.668372361039545 },
+    mapZoom: 16,
     mapLabel: { fa: 'کریمخان', en: 'Karim Khan' },
     cta: { fa: 'نمایش روی نقشه', en: 'Show on map' },
   },
