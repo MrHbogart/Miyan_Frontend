@@ -9,7 +9,6 @@ cd Miyan_Frontend
 cp .env.example .env             # adjust API URL if needed
 npm install                      # installs Nuxt, Vue, Tailwind
 npm run dev                      # local dev server (http://localhost:3000)
-# or run the helper script: ./scripts/dev.sh
 ```
 
 ## Containerized deployment
@@ -23,6 +22,8 @@ docker compose up -d                    # starts the Nuxt SSR server on :3000
 ```
 
 `docker compose up` will rebuild (`npm run build`) whenever the sources change and then launch `.output/server/index.mjs`. Override the published port with `PORT=8080 docker compose up -d`. Use `docker compose logs -f` to view runtime output.
+
+> The compose file binds container port 3000 to `${PORT:-3000}` on the host, so all site traffic can route straight to the Nuxt SSR server without extra services.
 
 ## Production build & runtime
 
@@ -40,7 +41,8 @@ Keep the `start` command under a supervisor such as PM2/systemd so Nuxt restarts
 - `pages/[lang]/**` – Route definitions mirroring the original Vue Router structure, including nested Beresht/Madi children.
 - `views/**` – Original view components; untouched aside from import paths.
 - `components/**`, `composables/**`, `state/**`, `assets/css/**` – Shared structure migrated from the previous SPA.
-- `middleware/lang.global.ts` – Forces `/fa/` or `/en/` prefixes and syncs the SSR-safe `useLang()` store.
+- `scripts/prep-images.js` – Utility to batch-generate responsive assets (still available via `npm run prep-images`).
+- `middleware/lang.global.js` – Forces `/fa/` or `/en/` prefixes and syncs the SSR-safe `useLang()` store.
 
 ## Environment variables
 
