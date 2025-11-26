@@ -34,7 +34,7 @@ function createCachedClient({ apiBaseUrl, enableCache }) {
   const axiosInstance = axios.create({
     baseURL: `${normalizeBaseUrl(apiBaseUrl || DEFAULT_API_BASE_URL)}/`,
     withCredentials: true,
-    xsrfCookieName: 'csrftoken',
+    xsrfCookieName: 'miyan_csrftoken',
     xsrfHeaderName: 'X-CSRFToken',
     timeout: 10000,
   })
