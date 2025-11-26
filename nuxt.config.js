@@ -1,11 +1,11 @@
 import { defineNuxtConfig } from 'nuxt/config'
-import { resolve } from 'node:path'
 
 export default defineNuxtConfig({
+  compatibilityDate: '2025-11-26',
   ssr: true,
   devtools: { enabled: false },
-  alias: {
-    '@': resolve(__dirname, '.'),
+  experimental: {
+    appManifest: true,
   },
   css: [
     '~/assets/css/tailwind.css',
