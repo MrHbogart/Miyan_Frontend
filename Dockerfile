@@ -1,8 +1,7 @@
 # syntax=docker/dockerfile:1.6
 
 FROM node:20-bullseye AS base
-ENV NODE_ENV=production \
-    NITRO_PRESET=node-server
+ENV NITRO_PRESET=node-server
 WORKDIR /app
 
 FROM base AS deps
