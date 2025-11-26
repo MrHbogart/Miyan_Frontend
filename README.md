@@ -9,6 +9,7 @@ cd Miyan_Frontend
 cp .env.example .env             # adjust API URL if needed
 npm install                      # installs Nuxt, Vue, Tailwind
 npm run dev                      # local dev server (http://localhost:3000)
+# or run the helper script: ./scripts/dev.sh
 ```
 
 ## Containerized deployment
