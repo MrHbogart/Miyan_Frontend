@@ -104,17 +104,17 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import siteMediaDefaults from '~/state/siteMediaDefaults'
-import { useRevealObserver } from '~/composables/useRevealObserver'
-import { useScrollVelocity } from '~/composables/useScrollVelocity'
-import { useSceneProgress } from '~/composables/useSceneProgress'
-import { miyanBereshtLandingCopy } from '~/state/siteCopy'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
+import { useRevealObserver } from '@/composables/useRevealObserver'
+import { useScrollVelocity } from '@/composables/useScrollVelocity'
+import { useSceneProgress } from '@/composables/useSceneProgress'
+import { miyanBereshtLandingCopy } from '@/state/siteCopy'
+import LocationMap from '@/components/LocationMap.vue'
+import { useLang } from '~/composables/useLang'
 import { useMenuPrefetcher } from '~/utils/menuPrefetcher'
-import LocationMap from '~/components/LocationMap.vue'
 
 
 const landingRoot = ref(null)
-const langState = useLang()
 const { scrollY, speedFactor } = useScrollVelocity({
   smoothing: 0.24,
   multiplier: 9,
@@ -122,7 +122,9 @@ const { scrollY, speedFactor } = useScrollVelocity({
   min: 0.85,
 })
 const siteMedia = siteMediaDefaults
-const isRTL = computed(() => langState.value === 'fa')
+const langState = useLang()
+const lang = computed(() => langState.value)
+const isRTL = computed(() => lang.value === 'fa')
 const dirAttr = computed(() => (isRTL.value ? 'rtl' : 'ltr'))
 const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
 const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
@@ -196,7 +198,6 @@ const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinat
 useRevealObserver(landingRoot, { threshold: 0.15 })
 
 const { prefetchMenusForBranch } = useMenuPrefetcher()
-
 onMounted(() => {
   prefetchMenusForBranch('beresht')
 })

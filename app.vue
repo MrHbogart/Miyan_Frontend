@@ -1,7 +1,10 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+
 const lang = useLang()
 const route = useRoute()
+const router = useRouter()
 const navAttached = useNavAttached()
 const scrolled = ref(false)
 
@@ -16,7 +19,7 @@ const gradientThemes = {
       MiyanGallery: '136deg',
       MiyanProjects: '160deg',
     },
-    duration: 22,
+    duration: '32s',
   },
   MiyanBeresht: {
     colors: ['#fffdfb', '#fffaf8', '#fff7f0'],
@@ -26,7 +29,7 @@ const gradientThemes = {
       MiyanBereshtBaseMenu: '118deg',
       MiyanBereshtDailyMenu: '148deg',
     },
-    duration: 20,
+    duration: '30s',
   },
   MiyanMadi: {
     colors: ['#fbf8ff', '#e8f1ff', '#dbe4ff'],
@@ -36,15 +39,14 @@ const gradientThemes = {
       MiyanMadiBaseMenu: '124deg',
       MiyanMadiDailyMenu: '142deg',
     },
-    duration: 18,
+    duration: '28s',
   },
 }
 
 const defaultTheme = gradientThemes.Miyan
 const pageThemeMeta = computed(() => route.meta?.pageTheme || {})
-const currentTheme = computed(() => {
-  return gradientThemes[pageThemeMeta.value.group] ?? defaultTheme
-})
+const currentTheme = computed(() => gradientThemes[pageThemeMeta.value.group] ?? defaultTheme)
+const currentThemeGroup = computed(() => pageThemeMeta.value.group || 'Miyan')
 
 const pageGradientStyle = computed(() => {
   const theme = currentTheme.value
@@ -55,15 +57,17 @@ const pageGradientStyle = computed(() => {
 
   return {
     backgroundImage: `linear-gradient(${angle}, ${stops})`,
-    backgroundSize: '160% 160%',
+    backgroundSize: '220% 220%',
     backgroundPosition: 'center',
-    animationDuration: `${theme.duration}s`,
+    animation: `gradientDrift ${theme.duration} ease-in-out infinite`,
+    transition: 'background-image 1.2s ease, background-position 1.2s ease',
   }
 })
 
 function handleScroll() {
   if (typeof window === 'undefined') return
-  scrolled.value = (window.scrollY || window.pageYOffset || 0) > 40
+  const y = window.scrollY || window.pageYOffset || 0
+  scrolled.value = y > 40
 }
 
 watch(currentDir, (dir) => {
@@ -72,20 +76,35 @@ watch(currentDir, (dir) => {
   document.documentElement.setAttribute('lang', lang.value)
 }, { immediate: true })
 
-watch(() => route.fullPath, () => {
-  navAttached.value = false
-  handleScroll()
-})
+let removeRouteHook = null
 
 onMounted(() => {
-  if (typeof window === 'undefined') return
-  window.addEventListener('scroll', handleScroll, { passive: true })
-  handleScroll()
+  if (typeof window !== 'undefined') {
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+  }
+
+  removeRouteHook = router.afterEach((to, from) => {
+    if (typeof window === 'undefined') return
+    window.requestAnimationFrame(() => {
+      handleScroll()
+      const parentTo = (to?.meta?.pageTheme?.group) || currentThemeGroup.value
+      const parentFrom = (from?.meta?.pageTheme?.group) || parentTo
+      if (!parentFrom || parentFrom !== parentTo) {
+        navAttached.value = false
+      }
+    })
+  })
 })
 
 onUnmounted(() => {
-  if (typeof window === 'undefined') return
-  window.removeEventListener('scroll', handleScroll)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('scroll', handleScroll)
+  }
+  if (typeof removeRouteHook === 'function') {
+    removeRouteHook()
+    removeRouteHook = null
+  }
 })
 </script>
 

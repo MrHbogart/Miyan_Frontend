@@ -45,7 +45,7 @@
         <h1 :class="titleClass">{{ isRTL ? branchSection.title.fa : branchSection.title.en }}</h1>
         <p>{{ isRTL ? branchSection.body.fa : branchSection.body.en }}</p>
         <div class="branch-grid">
-<NuxtLink
+          <NuxtLink
             v-for="branch in branchSection.cards"
             :key="branch.path"
             :to="localizedBranchPath(branch.path)"
@@ -108,13 +108,14 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRevealObserver } from '~/composables/useRevealObserver'
-import { useScrollVelocity } from '~/composables/useScrollVelocity'
-import { useSceneProgress } from '~/composables/useSceneProgress'
-import siteMediaDefaults from '~/state/siteMediaDefaults'
-import { miyanLandingCopy } from '~/state/siteCopy'
+import { useRevealObserver } from '@/composables/useRevealObserver'
+import { useScrollVelocity } from '@/composables/useScrollVelocity'
+import { useSceneProgress } from '@/composables/useSceneProgress'
 
-const langState = useLang()
+import siteMediaDefaults from '@/state/siteMediaDefaults'
+import { miyanLandingCopy } from '@/state/siteCopy'
+import { useLang } from '~/composables/useLang'
+
 const landingRoot = ref(null)
 const { scrollY, speedFactor } = useScrollVelocity({
   smoothing: 0.22,
@@ -122,7 +123,9 @@ const { scrollY, speedFactor } = useScrollVelocity({
   max: 1.45,
   min: 0.85,
 })
-const isRTL = computed(() => langState.value === 'fa')
+const langState = useLang()
+const lang = computed(() => langState.value)
+const isRTL = computed(() => lang.value === 'fa')
 const dirAttr = computed(() => (isRTL.value ? 'rtl' : 'ltr'))
 const pxToRem = (valuePx) => `${parseFloat((valuePx / 16).toFixed(3))}rem`
 
@@ -191,7 +194,7 @@ const photoStories = miyanLandingCopy.photoStories.map((story) => ({
 
 const localizedBranchPath = (rawPath = '') => {
   const normalized = rawPath.replace(/^\/+|\/+$/g, '')
-  const currentLang = langState.value || 'fa'
+  const currentLang = lang.value || 'fa'
   if (!normalized) return `/${currentLang}/`
   return `/${currentLang}/${normalized}`
 }

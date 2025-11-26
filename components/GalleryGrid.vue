@@ -39,8 +39,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import ImageModal from './ImageModal.vue'
-
-const langState = useLang()
+import { useLang } from '~/composables/useLang'
 
 const props = defineProps({
   galleryTitle: { type: String, default: null },
@@ -48,6 +47,7 @@ const props = defineProps({
 })
 
 const selectedImage = ref(null)
+const langState = useLang()
 const lang = computed(() => langState.value)
 
 function openImage(src) {
@@ -57,8 +57,7 @@ function openImage(src) {
 function translateCopy(obj) {
   if (!obj) return ''
   if (typeof obj === 'string') return obj
-  const key = langState.value || 'fa'
-  return obj[key] ?? obj['fa'] ?? obj['en'] ?? ''
+  return obj[lang.value] ?? obj['fa'] ?? obj['en'] ?? ''
 }
 
 </script>
@@ -67,7 +66,7 @@ function translateCopy(obj) {
 /* Luxury gallery item animations */
 .gallery-item {
   overflow: visible;
-  animation: fadeInUp 320ms cubic-bezier(0.4, 0.0, 0.2, 1) both;
+  animation: fadeInUp 600ms cubic-bezier(0.4, 0.0, 0.2, 1) both;
   will-change: transform;
 }
 
@@ -88,8 +87,8 @@ function translateCopy(obj) {
   border-radius: 0.75rem;
   overflow: hidden;
   background: #f5f5f5;
-  transition: transform 220ms ease,
-              box-shadow 220ms ease;
+  transition: transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
   box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08), 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.1);
   overflow: visible;
 }
@@ -108,8 +107,8 @@ function translateCopy(obj) {
   width: 100%;
   height: 12rem;
   object-fit: cover;
-  transition: transform 220ms ease,
-              filter 220ms ease;
+  transition: transform 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              filter 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
   will-change: transform;
 }
 
@@ -132,8 +131,8 @@ function translateCopy(obj) {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.4), transparent);
   padding: 1.5rem 1rem 1rem;
   color: white;
-  transition: opacity 220ms ease,
-              transform 220ms ease;
+  transition: opacity 400ms cubic-bezier(0.4, 0.0, 0.2, 1),
+              transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   transform: translateY(0.25rem);
   opacity: 0.95;
 }
@@ -145,7 +144,7 @@ function translateCopy(obj) {
 
 .gallery-item-title {
   text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.4);
-  transition: text-shadow 220ms ease;
+  transition: text-shadow 400ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .gallery-item-wrapper:hover .gallery-item-title {

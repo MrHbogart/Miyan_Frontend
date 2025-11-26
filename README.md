@@ -11,6 +11,18 @@ npm install                      # installs Nuxt, Vue, Tailwind
 npm run dev                      # local dev server (http://localhost:3000)
 ```
 
+## Containerized deployment
+
+The repo ships with a production-ready Docker target so servers only need Docker + Compose installed.
+
+```bash
+cp .env.example .env                    # ensure API env vars are set
+docker compose build                    # installs deps, runs `npm run build`
+docker compose up -d                    # starts the Nuxt SSR server on :3000
+```
+
+`docker compose up` will rebuild (`npm run build`) whenever the sources change and then launch `.output/server/index.mjs`. Override the published port with `PORT=8080 docker compose up -d`. Use `docker compose logs -f` to view runtime output.
+
 ## Production build & runtime
 
 ```bash

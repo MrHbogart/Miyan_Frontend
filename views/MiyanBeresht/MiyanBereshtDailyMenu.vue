@@ -7,12 +7,11 @@
 </template>
 
 <script setup>
-import StructuredMenu from '~/components/StructuredMenu.vue'
-import { useDataFetcher } from '~/composables/useDataFetcher'
+import StructuredMenu from '@/components/StructuredMenu.vue'
+import { useDataFetcher } from '@/composables/useDataFetcher'
 import { useMiyanApi } from '~/composables/useMiyanApi'
 
 const api = useMiyanApi()
-
 const { data: menu } = useDataFetcher(() => api.getBereshtTodayMenu(), {
   autoLoad: true,
   initialValue: null,

@@ -96,15 +96,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRevealObserver } from '~/composables/useRevealObserver'
-import { useScrollVelocity } from '~/composables/useScrollVelocity'
-import { useSceneProgress } from '~/composables/useSceneProgress'
-import siteMediaDefaults from '~/state/siteMediaDefaults'
-import { miyanMadiLandingCopy } from '~/state/siteCopy'
+import { useRevealObserver } from '@/composables/useRevealObserver'
+import { useScrollVelocity } from '@/composables/useScrollVelocity'
+import { useSceneProgress } from '@/composables/useSceneProgress'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
+import { miyanMadiLandingCopy } from '@/state/siteCopy'
+import LocationMap from '@/components/LocationMap.vue'
+import { useLang } from '~/composables/useLang'
 import { useMenuPrefetcher } from '~/utils/menuPrefetcher'
-import LocationMap from '~/components/LocationMap.vue'
-
-const langState = useLang()
 
 const siteMedia = siteMediaDefaults
 const landingRoot = ref(null)
@@ -114,7 +113,9 @@ const { scrollY, speedFactor } = useScrollVelocity({
   max: 1.5,
   min: 0.85,
 })
-const isRTL = computed(() => langState.value === 'fa')
+const langState = useLang()
+const lang = computed(() => langState.value)
+const isRTL = computed(() => lang.value === 'fa')
 const dirAttr = computed(() => (isRTL.value ? 'rtl' : 'ltr'))
 const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
 const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
@@ -186,7 +187,6 @@ function storySurface(image) {
 useRevealObserver(landingRoot, { threshold: 0.18 })
 
 const { prefetchMenusForBranch } = useMenuPrefetcher()
-
 onMounted(() => {
   prefetchMenusForBranch('madi')
 })

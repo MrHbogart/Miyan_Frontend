@@ -1,0 +1,6 @@
+/* tailwind entry - compiled by PostCSS/Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* keep this file minimal so linters that don't process PostCSS can ignore it */

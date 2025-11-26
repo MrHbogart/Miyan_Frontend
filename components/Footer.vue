@@ -7,13 +7,13 @@
         <!-- language toggle: will update route to include lang prefix and update global state -->
         <button
           @click.prevent="changeLang('fa')"
-          :class="['px-1 py-1', langState === 'fa' ? 'text-white font-semibold' : 'text-white/70']"
+          :class="['px-1 py-1', lang === 'fa' ? 'text-white font-semibold' : 'text-white/70']"
         >
           FA
         </button>
         <button
           @click.prevent="changeLang('en')"
-          :class="['px-1 py-1', langState === 'en' ? 'text-white font-semibold' : 'text-white/70']"
+          :class="['px-1 py-1', lang === 'en' ? 'text-white font-semibold' : 'text-white/70']"
         >
           EN
         </button>
@@ -23,15 +23,18 @@
 </template>
 
 <script setup>
-import { setLang } from '~/composables/useLang'
+import { computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useLang, setLang } from '~/composables/useLang'
 
 const router = useRouter()
 const route = useRoute()
 const langState = useLang()
+const lang = computed(() => langState.value)
 const currentYear = new Date().getFullYear()
 
 function changeLang(l) {
-  if (langState.value === l) return
+  if (lang.value === l) return
   setLang(l)
 
   const segments = route.fullPath.split('/').filter(Boolean)
@@ -40,7 +43,7 @@ function changeLang(l) {
   }
 
   const suffix = segments.length ? `/${segments.join('/')}` : '/'
-  const newPath = `/${l}${suffix}`.replace(/\/+/g, '/').replace(/\/+$|$/, '/')
+  const newPath = `/${l}${suffix}`.replace(/\/+$/, '/')
   router.replace(newPath)
 }
 </script>

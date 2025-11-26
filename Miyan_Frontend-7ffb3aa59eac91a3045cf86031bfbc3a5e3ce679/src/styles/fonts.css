@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'B Titr';
+  src: url('/fonts/B Titr Bold_0.ttf') format('truetype');
+  font-weight: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  src: url('/fonts/Cinzel-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Slightly increase weight for English text using the Cinzel font.
+   This targets elements that use the `font-cinzel` class and are
+   inside an element with lang="en" so it won't affect Persian. */
+:lang(en) .font-cinzel {
+  font-weight: 500;
+}

@@ -70,8 +70,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ImageModal from './ImageModal.vue'
-
-const langState = useLang()
+import { useLang } from '~/composables/useLang'
 
 const props = defineProps({
   menu: {
@@ -81,6 +80,7 @@ const props = defineProps({
 })
 
 const selectedImage = ref(null)
+const langState = useLang()
 const currentLang = computed(() => langState.value)
 const isRTL = computed(() => currentLang.value === 'fa')
 
@@ -110,7 +110,7 @@ function translateCopy(obj) {
 <style scoped>
 /* Smooth transitions for interactive elements */
 .group {
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .shadow-sm { box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,0.06); }

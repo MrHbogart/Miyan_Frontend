@@ -1,7 +1,7 @@
 <template>
   <section class="w-full h-screen flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0 hero-fill-safe">
-  <video :src="siteMedia.bereshtHeroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
+  <video ref="heroVideo" :src="siteMedia.bereshtHeroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
       <div
         class="absolute inset-0 transition-all"
         :style="{
@@ -43,24 +43,31 @@
     </section>
   </div>
 
+  <!-- Child Router View -->
   <div ref="childSwipe" class="child-swipe-wrapper">
-    <slot />
+    <Transition :name="childTransition" mode="out-in">
+      <div :key="routeKey">
+        <slot />
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useNavbarAttachment } from '~/composables/useNavbarAttachment'
-import siteMediaDefaults from '~/state/siteMediaDefaults'
-import { useHeroIntro } from '~/composables/useHeroIntro'
-import { useSwipeNavigation } from '~/composables/useSwipeNavigation'
-import { useLocalizedChildRoutes } from '~/composables/useLocalizedChildRoutes'
-import { navigationCopy } from '~/state/siteCopy'
+import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
+import { useHeroIntro } from '@/composables/useHeroIntro'
+import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
+import { useLocalizedChildRoutes } from '@/composables/useLocalizedChildRoutes'
+import { navigationCopy } from '@/state/siteCopy'
+import { useLang } from '~/composables/useLang'
 
 const siteMedia = siteMediaDefaults
+const route = useRoute()
 
-const { modalOverlayAlpha, overlayTransition } = useHeroIntro({
+const { heroVideo, modalOverlayAlpha, overlayTransition } = useHeroIntro({
   overlayBase: 0.4,
   scrollRange: 380,
 })
@@ -72,16 +79,15 @@ const childSwipe = ref(null)
 
 const navConfig = navigationCopy.miyanBeresht
 const langState = useLang()
-const route = useRoute()
-
 const lang = computed(() => langState.value)
 const isRTL = computed(() => lang.value === 'fa')
 const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))
-const { getLocalizedPath, shiftChild } = useLocalizedChildRoutes(displayNavItems)
+const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(displayNavItems)
+const routeKey = computed(() => route.fullPath)
 
 const isActive = (rawPath = '') => {
-  const segments = route.path.split('/').filter(Boolean).slice(1)
   const normalized = rawPath.replace(/^\/+/, '')
+  const segments = route.path.split('/').filter(Boolean).slice(1)
   return segments.join('/') === normalized
 }
 
