@@ -36,25 +36,32 @@ const pathWithSearch = (url) => `${url.pathname}${url.search}`
 
 function resolveProtocolSafeBaseUrl(rawBaseUrl, fallbackDomain) {
   const normalized = normalizeBaseUrl(rawBaseUrl || DEFAULT_API_BASE_URL)
-  if (typeof window === 'undefined') {
+  if (typeof window === 'undefined' || window.location.protocol !== 'https:') {
     return normalized
   }
 
   try {
     const parsed = new URL(normalized)
-    const hostWithPort = parsed.port ? `${parsed.hostname}:${parsed.port}` : parsed.hostname
-
-    if (window.location.protocol === 'https:' && parsed.protocol === 'http:') {
-      if (INTERNAL_HTTP_HOSTS.has(hostWithPort)) {
-        return `${window.location.origin}${pathWithSearch(parsed)}`
-      }
-
-      if (fallbackDomain) {
-        return `${normalizeBaseUrl(fallbackDomain)}${pathWithSearch(parsed)}`
-      }
+    if (parsed.protocol !== 'http:') {
+      return normalized
     }
+
+    const hostWithPort = parsed.port ? `${parsed.hostname}:${parsed.port}` : parsed.hostname
+    if (INTERNAL_HTTP_HOSTS.has(hostWithPort)) {
+      return `${window.location.origin}${pathWithSearch(parsed)}`
+    }
+
+    if (fallbackDomain) {
+      return `${normalizeBaseUrl(fallbackDomain)}${pathWithSearch(parsed)}`
+    }
+
+    parsed.protocol = 'https:'
+    return normalizeBaseUrl(parsed.toString())
   } catch (error) {
     console.warn('Failed to normalize API base URL', error)
+    if (fallbackDomain) {
+      return normalizeBaseUrl(fallbackDomain)
+    }
   }
 
   return normalized
@@ -169,7 +176,8 @@ function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
         console.warn(`Using stale cache for ${key} due to API error:`, error.message)
         return cachedData.data
       }
-      throw new Error(`Failed to fetch ${key}: ${error.message}`)
+      console.warn(`Failed to fetch ${key}:`, error.message || error)
+      return null
     }
   }
 
