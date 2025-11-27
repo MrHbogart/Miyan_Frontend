@@ -21,6 +21,32 @@ const CACHE_KEYS = {
 
 const normalizeBaseUrl = (url) => url.replace(/\/+$/, '')
 
+const resolveProtocolSafeBaseUrl = (rawBaseUrl) => {
+  const normalized = normalizeBaseUrl(rawBaseUrl || DEFAULT_API_BASE_URL)
+  if (typeof window === 'undefined') {
+    return normalized
+  }
+
+  if (window.location.protocol !== 'https:') {
+    return normalized
+  }
+
+  try {
+    const targetUrl = new URL(normalized)
+    const currentHost = window.location.host
+    if (targetUrl.protocol === 'http:' && targetUrl.host === currentHost) {
+      targetUrl.protocol = 'https:'
+      return normalizeBaseUrl(targetUrl.toString())
+    }
+  } catch (error) {
+    if (normalized.startsWith('http://') && normalized.includes(window.location.host)) {
+      return normalizeBaseUrl(normalized.replace(/^http:\/\//, 'https://'))
+    }
+  }
+
+  return normalized
+}
+
 function unwrapResults(payload) {
   if (payload && Object.prototype.hasOwnProperty.call(payload, 'results')) {
     return payload.results
@@ -31,8 +57,10 @@ function unwrapResults(payload) {
 function createCachedClient({ apiBaseUrl, enableCache }) {
   const storage = enableCache && typeof window !== 'undefined' ? window.localStorage : null
 
+  const base = resolveProtocolSafeBaseUrl(apiBaseUrl)
+
   const axiosInstance = axios.create({
-    baseURL: `${normalizeBaseUrl(apiBaseUrl || DEFAULT_API_BASE_URL)}/`,
+    baseURL: `${base}/`,
     withCredentials: true,
     xsrfCookieName: 'miyan_csrftoken',
     xsrfHeaderName: 'X-CSRFToken',
