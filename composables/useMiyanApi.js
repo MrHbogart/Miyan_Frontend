@@ -21,27 +21,40 @@ const CACHE_KEYS = {
 
 const normalizeBaseUrl = (url) => url.replace(/\/+$/, '')
 
-const resolveProtocolSafeBaseUrl = (rawBaseUrl) => {
+const INTERNAL_HTTP_HOSTS = new Set([
+  'backend',
+  'backend:8000',
+  'localhost',
+  'localhost:3000',
+  'localhost:8000',
+  '127.0.0.1',
+  '127.0.0.1:3000',
+  '127.0.0.1:8000',
+])
+
+const pathWithSearch = (url) => `${url.pathname}${url.search}`
+
+function resolveProtocolSafeBaseUrl(rawBaseUrl, fallbackDomain) {
   const normalized = normalizeBaseUrl(rawBaseUrl || DEFAULT_API_BASE_URL)
   if (typeof window === 'undefined') {
     return normalized
   }
 
-  if (window.location.protocol !== 'https:') {
-    return normalized
-  }
-
   try {
-    const targetUrl = new URL(normalized)
-    const currentHost = window.location.host
-    if (targetUrl.protocol === 'http:' && targetUrl.host === currentHost) {
-      targetUrl.protocol = 'https:'
-      return normalizeBaseUrl(targetUrl.toString())
+    const parsed = new URL(normalized)
+    const hostWithPort = parsed.port ? `${parsed.hostname}:${parsed.port}` : parsed.hostname
+
+    if (window.location.protocol === 'https:' && parsed.protocol === 'http:') {
+      if (INTERNAL_HTTP_HOSTS.has(hostWithPort)) {
+        return `${window.location.origin}${pathWithSearch(parsed)}`
+      }
+
+      if (fallbackDomain) {
+        return `${normalizeBaseUrl(fallbackDomain)}${pathWithSearch(parsed)}`
+      }
     }
   } catch (error) {
-    if (normalized.startsWith('http://') && normalized.includes(window.location.host)) {
-      return normalizeBaseUrl(normalized.replace(/^http:\/\//, 'https://'))
-    }
+    console.warn('Failed to normalize API base URL', error)
   }
 
   return normalized
@@ -54,10 +67,10 @@ function unwrapResults(payload) {
   return payload
 }
 
-function createCachedClient({ apiBaseUrl, enableCache }) {
+function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
   const storage = enableCache && typeof window !== 'undefined' ? window.localStorage : null
 
-  const base = resolveProtocolSafeBaseUrl(apiBaseUrl)
+  const base = resolveProtocolSafeBaseUrl(apiBaseUrl, fallbackDomain)
 
   const axiosInstance = axios.create({
     baseURL: `${base}/`,
@@ -192,13 +205,14 @@ let browserClient
 export function useMiyanApi() {
   const runtimeConfig = useRuntimeConfig()
   const apiBaseUrl = runtimeConfig.public.apiBaseUrl || DEFAULT_API_BASE_URL
+  const siteDomain = runtimeConfig.public.siteDomain
 
   if (process.client) {
     if (!browserClient) {
-      browserClient = createCachedClient({ apiBaseUrl, enableCache: true })
+      browserClient = createCachedClient({ apiBaseUrl, enableCache: true, fallbackDomain: siteDomain })
     }
     return browserClient
   }
 
-  return createCachedClient({ apiBaseUrl, enableCache: false })
+  return createCachedClient({ apiBaseUrl, enableCache: false, fallbackDomain: siteDomain })
 }
