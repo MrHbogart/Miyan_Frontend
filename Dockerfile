@@ -32,4 +32,10 @@ COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
+# Ensure runtime does not run as root. Use the official `node` user present
+# in the base image and make `/app` writable by that user.
+RUN chown -R node:node /app || true
+
+USER node
+
 CMD ["npm", "run", "start"]
