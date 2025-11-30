@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-6xl mx-auto p-4" :dir="currentLang === 'fa' ? 'rtl' : 'ltr'">
+  <div class="w-full max-w-6xl mx-auto p-4 md:px-8" :dir="currentLang === 'fa' ? 'rtl' : 'ltr'">
       <div class="space-y-6" v-if="sections && sections.length">
           <section v-for="(section, sIdx) in sections" :key="sIdx" class="pb-8 last:pb-0">
             <h2 class="text-2xl mb-6 text-center">
@@ -7,7 +7,7 @@
               <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
             </h2>
         <div class="grid gap-6 md:gap-8">
-          <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group">
+          <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group px-0 md:px-6">
             <div
               v-if="item && item.name"
               :class="[
@@ -43,12 +43,12 @@
               </div>
 
               <div
-                v-if="item.image"
+                v-if="hasImage(item)"
                 :class="isRTL ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
-                @click="openImage(item.image)"
+                @click="openImage(resolveImageSrc(item))"
               >
                 <img
-                  :src="item.image"
+                  :src="resolveImageSrc(item)"
                   :alt="(item.name && typeof item.name === 'object') ? (item.name.en || item.name.fa || '') : (item.name || '')"
                   class="w-full h-40 md:h-56 object-cover transform transition-transform duration-300 group-hover:scale-105 cursor-pointer"
                 />
@@ -95,6 +95,29 @@ const sections = computed(() => {
 
 function openImage(imageSrc) {
   selectedImage.value = imageSrc
+}
+
+// Determine if an item has a usable image
+function hasImage(item) {
+  if (!item) return false
+  const img = item.image
+  if (!img) return false
+  if (typeof img === 'string') return img.trim().length > 0
+  if (typeof img === 'object') {
+    // common shapes: { src: '...', url: '...' }
+    const src = img.src || img.url || img.path || ''
+    return typeof src === 'string' && src.trim().length > 0
+  }
+  return false
+}
+
+function resolveImageSrc(item) {
+  if (!item) return ''
+  const img = item.image
+  if (!img) return ''
+  if (typeof img === 'string') return img
+  if (typeof img === 'object') return img.src || img.url || img.path || ''
+  return ''
 }
 
 // Helper to read localized field (expects object with { fa, en })
