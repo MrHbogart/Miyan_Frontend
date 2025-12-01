@@ -3,6 +3,8 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV NITRO_PORT=3000
+ENV NITRO_HOST=0.0.0.0
 ENV NUXT_TELEMETRY_DISABLED=1
 
 COPY package.json package-lock.json ./
@@ -21,6 +23,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
+ENV NITRO_HOST=0.0.0.0
+ENV NITRO_PORT=3000
 ENV NUXT_TELEMETRY_DISABLED=1
 
 COPY package.json package-lock.json ./
