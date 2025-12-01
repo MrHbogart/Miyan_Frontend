@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { createAbortableRequest } from '~/utils/abortableRequest'
 
 const DEFAULT_API_BASE_URL = 'https://miyangroup.com/api'
 
@@ -8,7 +7,6 @@ const CACHE_CONFIG = {
   backgroundRefreshThreshold: 300000,
   retryAttempts: 2,
   retryDelay: 1000,
-  requestTimeout: 15000,
 }
 
 const CACHE_KEYS = {
@@ -122,31 +120,19 @@ function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
     }
   }
 
-  async function fetchWithRetry(endpoint, retryAttempts, options = {}) {
+  async function fetchWithRetry(endpoint, retryAttempts) {
     let lastError
     const requestTarget = endpoint.startsWith('http') ? endpoint : endpoint.replace(/^\/+/, '')
-    const timeoutMs = options.timeoutMs ?? CACHE_CONFIG.requestTimeout
 
     for (let attempt = 0; attempt <= retryAttempts; attempt += 1) {
-      const abortable = createAbortableRequest(timeoutMs)
       try {
-        const response = await axiosInstance.get(requestTarget, { signal: abortable.signal })
+        const response = await axiosInstance.get(requestTarget)
         return response.data
       } catch (error) {
         lastError = error
-        const aborted =
-          error?.code === 'ERR_CANCELED' ||
-          error?.message === 'route-change' ||
-          error?.message === 'timeout' ||
-          error?.name === 'CanceledError'
-        if (aborted) {
-          break
-        }
         if (attempt < retryAttempts) {
           await new Promise((resolve) => setTimeout(resolve, CACHE_CONFIG.retryDelay * (attempt + 1)))
         }
-      } finally {
-        abortable.finalize()
       }
     }
 
@@ -168,7 +154,6 @@ function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
       maxAge = CACHE_CONFIG.defaultMaxAge,
       backgroundRefresh = true,
       retryAttempts = CACHE_CONFIG.retryAttempts,
-      timeoutMs = CACHE_CONFIG.requestTimeout,
     } = options
 
     const storageKey = `cache:${key}`
@@ -182,19 +167,11 @@ function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
     }
 
     try {
-      const data = await fetchWithRetry(endpoint, retryAttempts, { timeoutMs })
+      const data = await fetchWithRetry(endpoint, retryAttempts)
       const dataToCache = unwrapResults(data)
       setCachedData(storageKey, dataToCache)
       return dataToCache
     } catch (error) {
-      const aborted =
-        error?.code === 'ERR_CANCELED' ||
-        error?.message === 'route-change' ||
-        error?.message === 'timeout' ||
-        error?.name === 'CanceledError'
-      if (aborted) {
-        return cachedData.data || null
-      }
       if (cachedData.data) {
         console.warn(`Using stale cache for ${key} due to API error:`, error.message)
         return cachedData.data

@@ -1,9 +1,50 @@
 <template>
   <Teleport to="body">
     <Transition name="fade">
-      <div v-if="show" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50" @click="emitClose">
-        <div class="max-w-4xl max-h-[90vh] p-4">
-            <img :src="imageSrc" :alt="imageAlt" class="max-w-full max-h-[85vh] object-contain transform transition-all duration-300 scale-100 hover:scale-105" />
+      <div
+        v-if="shouldRender"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+        @click="emitClose"
+      >
+        <div class="modal-frame" @click.stop>
+          <div class="media-shell">
+            <img
+              v-if="hasImage"
+              :src="imageSrc"
+              :alt="imageAlt"
+              class="media-item"
+              :class="{ 'media-item--hidden': showVideo }"
+              loading="lazy"
+              decoding="async"
+            />
+
+            <video
+              v-if="videoSrc"
+              ref="videoRef"
+              :src="videoSrc"
+              class="media-item"
+              :class="{ 'media-item--hidden': !showVideo }"
+              playsinline
+              preload="auto"
+              muted
+              @ended="handleVideoEnded"
+              @loadeddata="handleVideoLoaded"
+            ></video>
+
+            <div v-if="videoLoading" class="media-overlay">
+              <span class="media-spinner" aria-hidden="true"></span>
+              <p class="text-xs tracking-wide uppercase">Loading video…</p>
+            </div>
+
+            <button
+              v-if="canManuallyTriggerVideo"
+              type="button"
+              class="play-overlay"
+              @click="startVideoPlayback(true)"
+            >
+              ▶
+            </button>
+          </div>
         </div>
       </div>
     </Transition>
@@ -11,35 +52,152 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
-defineProps({
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+
+const props = defineProps({
   show: {
     type: Boolean,
-    required: true
+    required: true,
   },
   imageSrc: {
     type: String,
-    default: ''
+    default: '',
   },
   imageAlt: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
+  videoSrc: {
+    type: String,
+    default: '',
+  },
+  autoplayDelay: {
+    type: Number,
+    default: 2000,
+  },
+  videoTimeout: {
+    type: Number,
+    default: 10000,
+  },
 })
 
 const emit = defineEmits(['close'])
+const videoRef = ref(null)
+const showVideo = ref(false)
+const videoLoading = ref(false)
+const canManuallyTriggerVideo = ref(false)
+let autoplayTimer = null
+let timeoutTimer = null
+
+const hasImage = computed(() => !!props.imageSrc)
+const hasVideoAsset = computed(() => !!props.videoSrc)
+const shouldRender = computed(() => props.show && (hasImage.value || hasVideoAsset.value))
 
 function emitClose() {
   emit('close')
+}
+
+function stopTimers() {
+  if (autoplayTimer) {
+    clearTimeout(autoplayTimer)
+    autoplayTimer = null
+  }
+  if (timeoutTimer) {
+    clearTimeout(timeoutTimer)
+    timeoutTimer = null
+  }
+}
+
+function resetVideoState() {
+  showVideo.value = false
+  videoLoading.value = false
+  canManuallyTriggerVideo.value = false
+  const el = videoRef.value
+  if (el) {
+    el.pause()
+    el.currentTime = 0
+  }
 }
 
 function onScrollClose() {
   emit('close')
 }
 
-function onKey(e) {
-  if (e.key === 'Escape') emit('close')
+function onKey(event) {
+  if (event.key === 'Escape') emit('close')
 }
+
+async function startVideoPlayback(manual = false) {
+  if (!props.videoSrc || !videoRef.value) return
+
+  stopTimers()
+  videoLoading.value = true
+  showVideo.value = true
+
+  try {
+    await videoRef.value.play()
+    videoLoading.value = false
+    canManuallyTriggerVideo.value = false
+    timeoutTimer = setTimeout(() => {
+      handleVideoEnded()
+    }, props.videoTimeout)
+  } catch (error) {
+    videoLoading.value = false
+    showVideo.value = false
+    if (!manual) {
+      canManuallyTriggerVideo.value = true
+    } else {
+      console.warn('Video playback failed', error)
+    }
+  }
+}
+
+function handleVideoLoaded() {
+  if (timeoutTimer) {
+    clearTimeout(timeoutTimer)
+    timeoutTimer = null
+  }
+}
+
+function handleVideoEnded() {
+  resetVideoState()
+}
+
+function scheduleAutoplay() {
+  if (!props.videoSrc) return
+  stopTimers()
+  autoplayTimer = setTimeout(() => {
+    startVideoPlayback(false)
+  }, props.autoplayDelay)
+}
+
+watch(
+  () => props.show,
+  (visible) => {
+    if (visible) {
+      resetVideoState()
+      if (props.videoSrc) {
+        scheduleAutoplay()
+      }
+    } else {
+      stopTimers()
+      resetVideoState()
+    }
+  },
+  { immediate: true }
+)
+
+watch(
+  () => props.videoSrc,
+  () => {
+    if (props.show) {
+      resetVideoState()
+      if (props.videoSrc) {
+        scheduleAutoplay()
+      }
+    }
+  }
+)
 
 onMounted(() => {
   window.addEventListener('scroll', onScrollClose, { passive: true })
@@ -48,6 +206,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  stopTimers()
+  resetVideoState()
   window.removeEventListener('scroll', onScrollClose)
   window.removeEventListener('touchmove', onScrollClose)
   window.removeEventListener('keydown', onKey)
@@ -55,6 +215,76 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.modal-frame {
+  max-width: min(90vw, 72rem);
+  max-height: 90vh;
+  padding: 1.25rem;
+}
+
+.media-shell {
+  position: relative;
+  width: min(80vw, 64rem);
+  max-height: 80vh;
+  aspect-ratio: 4 / 3;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: rgba(18, 18, 18, 0.9);
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.4);
+}
+
+.media-item {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+}
+
+.media-item--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.media-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.media-spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 0.25rem solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: spin 1s linear infinite;
+}
+
+.play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.35);
+  text-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.5);
+  transition: background 0.2s ease;
+}
+
+.play-overlay:hover {
+  background: rgba(0, 0, 0, 0.55);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -63,5 +293,21 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .media-shell {
+    width: 90vw;
+    max-height: 70vh;
+  }
 }
 </style>

@@ -45,7 +45,7 @@
               <div
                 v-if="hasImage(item)"
                 :class="isRTL ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
-                @click="openItemMedia(item)"
+                @click="openImage(resolveImageSrc(item))"
               >
                 <img
                   :src="resolveImageSrc(item)"
@@ -60,11 +60,9 @@
     </div>
 
     <ImageModal
-      :show="!!selectedMedia"
-      :image-src="selectedMedia?.image || ''"
-      :image-alt="selectedMedia?.alt || ''"
-      :video-src="selectedMedia?.video || ''"
-      @close="selectedMedia = null"
+      :show="!!selectedImage"
+      :image-src="selectedImage"
+      @close="selectedImage = null"
     />
   </div>
 </template>
@@ -81,7 +79,7 @@ const props = defineProps({
   },
 })
 
-const selectedMedia = ref(null)
+const selectedImage = ref(null)
 const langState = useLang()
 const currentLang = computed(() => langState.value)
 const isRTL = computed(() => currentLang.value === 'fa')
@@ -95,13 +93,8 @@ const sections = computed(() => {
   return props.menu.sections
 })
 
-function openItemMedia(item) {
-  if (!hasImage(item)) return
-  selectedMedia.value = {
-    image: resolveImageSrc(item),
-    video: resolveVideoSrc(item),
-    alt: resolveItemAlt(item),
-  }
+function openImage(imageSrc) {
+  selectedImage.value = imageSrc
 }
 
 // Determine if an item has a usable image
@@ -124,23 +117,6 @@ function resolveImageSrc(item) {
   if (!img) return ''
   if (typeof img === 'string') return img
   if (typeof img === 'object') return img.src || img.url || img.path || ''
-  return ''
-}
-
-function resolveVideoSrc(item) {
-  if (!item || !item.video) return ''
-  const video = item.video
-  if (typeof video === 'string') return video
-  if (typeof video === 'object') return video.src || video.url || video.path || ''
-  return ''
-}
-
-function resolveItemAlt(item) {
-  if (!item || !item.name) return ''
-  if (typeof item.name === 'string') return item.name
-  if (typeof item.name === 'object') {
-    return item.name.en || item.name.fa || ''
-  }
   return ''
 }
 
