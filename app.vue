@@ -1,15 +1,5 @@
 <script setup>
-import { computed } from 'vue'
-
-const baseTransition = { name: 'fade-load', mode: 'out-in' }
-const skipTransition = useState('skipPageTransition', () => false)
-
-const pageTransition = computed(() => {
-  if (skipTransition.value) {
-    return false
-  }
-  return baseTransition
-})
+const pageTransition = { name: 'fade-load', mode: 'out-in' }
 </script>
 
 <template>
@@ -33,6 +23,11 @@ const pageTransition = computed(() => {
 .fade-load-enter-to,
 .fade-load-leave-from {
   opacity: 1;
+}
+
+body.no-page-transition .fade-load-enter-active,
+body.no-page-transition .fade-load-leave-active {
+  transition: none !important;
 }
 
 @keyframes gradientDrift {

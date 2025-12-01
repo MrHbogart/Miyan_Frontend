@@ -40,7 +40,7 @@
               v-if="canManuallyTriggerVideo"
               type="button"
               class="play-overlay"
-              @click="startVideoPlayback(true)"
+              @click="attemptVideoPlayback(true)"
             >
               ▶
             </button>
@@ -114,8 +114,12 @@ function resetVideoState() {
   canManuallyTriggerVideo.value = false
   const el = videoRef.value
   if (el) {
-    el.pause()
-    el.currentTime = 0
+    try {
+      el.pause()
+      el.currentTime = 0
+    } catch (error) {
+      // ignore seek errors
+    }
   }
 }
 
@@ -127,17 +131,23 @@ function onKey(event) {
   if (event.key === 'Escape') emit('close')
 }
 
-async function startVideoPlayback(manual = false) {
+async function attemptVideoPlayback(manual = false) {
   if (!props.videoSrc || !videoRef.value) return
 
   stopTimers()
   videoLoading.value = true
   showVideo.value = true
+  canManuallyTriggerVideo.value = false
+
+  try {
+    videoRef.value.currentTime = 0
+  } catch (error) {
+    // ignore
+  }
 
   try {
     await videoRef.value.play()
     videoLoading.value = false
-    canManuallyTriggerVideo.value = false
     timeoutTimer = setTimeout(() => {
       handleVideoEnded()
     }, props.videoTimeout)
@@ -149,6 +159,15 @@ async function startVideoPlayback(manual = false) {
     } else {
       console.warn('Video playback failed', error)
     }
+  }
+}
+
+function prepareVideo() {
+  if (!props.videoSrc || !videoRef.value) return
+  try {
+    videoRef.value.load()
+  } catch (error) {
+    // ignore load errors
   }
 }
 
@@ -167,7 +186,7 @@ function scheduleAutoplay() {
   if (!props.videoSrc) return
   stopTimers()
   autoplayTimer = setTimeout(() => {
-    startVideoPlayback(false)
+    attemptVideoPlayback(false)
   }, props.autoplayDelay)
 }
 
@@ -177,6 +196,7 @@ watch(
     if (visible) {
       resetVideoState()
       if (props.videoSrc) {
+        prepareVideo()
         scheduleAutoplay()
       }
     } else {
@@ -193,6 +213,7 @@ watch(
     if (props.show) {
       resetVideoState()
       if (props.videoSrc) {
+        prepareVideo()
         scheduleAutoplay()
       }
     }
