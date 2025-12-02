@@ -26,7 +26,6 @@ export default defineNuxtPlugin(() => {
   window.addEventListener('orientationchange', scheduleViewportUpdate)
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', scheduleViewportUpdate)
-    window.visualViewport.addEventListener('scroll', scheduleViewportUpdate)
   }
 
   onNuxtReady(() => {

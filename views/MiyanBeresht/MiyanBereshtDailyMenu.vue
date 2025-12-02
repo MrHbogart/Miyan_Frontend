@@ -35,7 +35,7 @@ const { data: menu, pending, error, refresh } = await useAsyncData(
   'beresht-daily-menu',
   () => api.getBereshtTodayMenu(),
   {
-    default: () => null,
+    default: () => ({ sections: [] }),
     server: true,
     lazy: false,
   }

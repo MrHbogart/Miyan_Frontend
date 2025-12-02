@@ -264,6 +264,7 @@ onUnmounted(() => {
 .modal-frame {
   max-width: 100vw;
   max-height: 100vh;
+  min-height: calc(var(--app-vh, 1vh) * 100);
   padding: 1rem;
   display: flex;
   align-items: center;

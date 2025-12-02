@@ -35,7 +35,7 @@ const { data: menu, pending, error, refresh } = await useAsyncData(
   'madi-base-menu',
   () => api.getMadiMenu(),
   {
-    default: () => null,
+    default: () => ({ sections: [] }),
     server: true,
     lazy: false,
   }
