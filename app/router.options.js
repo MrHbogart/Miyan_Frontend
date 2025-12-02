@@ -4,13 +4,17 @@ export default {
     // If there is a saved position (back/forward), honor it.
     if (savedPosition) return savedPosition
 
-    // Resolve segments: expected route format: /<lang>/<parent>/<child...>
-    const toSegs = (to.path || '').split('/').filter(Boolean)
-    const fromSegs = (from && from.path ? from.path : '').split('/').filter(Boolean)
+    const resolveParent = (route) => {
+      if (!route) return ''
+      const metaParent = route.meta?.pageTheme?.group
+      if (metaParent) return metaParent
+      const segs = (route.path || '').split('/').filter(Boolean)
+      // Index 1 is the parent when lang prefix exists; otherwise fallback to index 0.
+      return segs[1] || segs[0] || ''
+    }
 
-    // Parent is the second segment (index 1) since index 0 is language
-    const toParent = toSegs[1] || null
-    const fromParent = fromSegs[1] || null
+    const toParent = resolveParent(to)
+    const fromParent = resolveParent(from)
 
     // If parent changed (navigating between top-level branches), scroll to top.
     if (toParent !== fromParent) {

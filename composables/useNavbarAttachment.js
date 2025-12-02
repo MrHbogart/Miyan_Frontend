@@ -14,6 +14,11 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
   const navHeight = ref(0)
   let rafId = null
 
+  const syncAttachment = (value) => {
+    attached.value = value
+    globalNavAttached.value = value
+  }
+
   // Simple animation timings
   const TRANSITION_DURATION = 350
   const EASING = 'cubic-bezier(0.4, 0.0, 0.2, 1)'
@@ -24,15 +29,17 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
    */
   function checkAttachment() {
     const sent = navbarSentinel.value
-    if (!sent) return
+    if (!sent) {
+      syncAttachment(false)
+      return
+    }
     
     const rect = sent.getBoundingClientRect()
     const headerH = headerHeight.value || 0
     const shouldAttach = rect.top <= headerH
 
-    if (shouldAttach !== attached.value) {
-      attached.value = shouldAttach
-      globalNavAttached.value = shouldAttach
+    if (shouldAttach !== attached.value || shouldAttach !== globalNavAttached.value) {
+      syncAttachment(shouldAttach)
     }
   }
 
@@ -89,7 +96,9 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
   const navInlineStyle = computed(() => {
     const baseStyle = {
       backgroundColor: `rgba(255, 255, 255, ${navBgOpacity.value})`,
-      transition: `background ${TRANSITION_DURATION}ms ${EASING}, backdrop-filter ${TRANSITION_DURATION}ms ${EASING}, box-shadow ${TRANSITION_DURATION}ms ${EASING}`
+      transition: `background ${TRANSITION_DURATION}ms ${EASING}, backdrop-filter ${TRANSITION_DURATION}ms ${EASING}, box-shadow ${TRANSITION_DURATION}ms ${EASING}`,
+      paddingLeft: 'env(safe-area-inset-left)',
+      paddingRight: 'env(safe-area-inset-right)'
     }
 
     if (isNavFixed.value) {
@@ -99,7 +108,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
         position: 'fixed',
         top: 'var(--header-height)',
         left: '0',
-        width: '100vw',
+        width: '100%',
         zIndex: '30',
         backdropFilter: 'saturate(120%) blur(6px)',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
@@ -135,6 +144,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
 
   onMounted(() => {
     if (typeof window === 'undefined') return
+    syncAttachment(false)
     updateNavHeight()
     checkAttachment()
 
@@ -149,6 +159,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     window.removeEventListener('resize', onResize)
     window.removeEventListener('load', onLoad)
     if (rafId) window.cancelAnimationFrame(rafId)
+    syncAttachment(false)
   })
 
   return {

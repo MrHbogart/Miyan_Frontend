@@ -10,20 +10,20 @@
           <div class="media-shell">
             <img
               v-if="hasImage"
-              :src="imageSrc"
+              :src="effectiveImageSrc"
               :alt="imageAlt"
               class="media-item"
-              :class="{ 'media-item--hidden': showVideo }"
+              :class="{ 'media-item--hidden': shouldShowVideo }"
               loading="lazy"
               decoding="async"
             />
 
             <video
-              v-if="videoSrc"
+              v-if="hasVideoAsset"
               ref="videoRef"
-              :src="videoSrc"
+              :src="effectiveVideoSrc"
               class="media-item"
-              :class="{ 'media-item--hidden': !showVideo }"
+              :class="{ 'media-item--hidden': !shouldShowVideo }"
               playsinline
               preload="auto"
               muted
@@ -89,9 +89,20 @@ const canManuallyTriggerVideo = ref(false)
 let autoplayTimer = null
 let timeoutTimer = null
 
-const hasImage = computed(() => !!props.imageSrc)
-const hasVideoAsset = computed(() => !!props.videoSrc)
+const gifAsImageSrc = computed(() => {
+  const src = (props.videoSrc || '').trim().toLowerCase()
+  return src.endsWith('.gif') ? props.videoSrc : ''
+})
+
+const effectiveImageSrc = computed(() => gifAsImageSrc.value || props.imageSrc)
+const effectiveVideoSrc = computed(() => (gifAsImageSrc.value ? '' : props.videoSrc))
+
+const hasImage = computed(() => !!effectiveImageSrc.value)
+const hasVideoAsset = computed(() => !!effectiveVideoSrc.value)
 const shouldRender = computed(() => props.show && (hasImage.value || hasVideoAsset.value))
+const shouldShowVideo = computed(() => showVideo.value && hasVideoAsset.value)
+let previousOverflow = ''
+let previousBodyOverflow = ''
 
 function emitClose() {
   emit('close')
@@ -132,7 +143,7 @@ function onKey(event) {
 }
 
 async function attemptVideoPlayback(manual = false) {
-  if (!props.videoSrc || !videoRef.value) return
+  if (!effectiveVideoSrc.value || !videoRef.value) return
 
   stopTimers()
   videoLoading.value = true
@@ -163,7 +174,7 @@ async function attemptVideoPlayback(manual = false) {
 }
 
 function prepareVideo() {
-  if (!props.videoSrc || !videoRef.value) return
+  if (!effectiveVideoSrc.value || !videoRef.value) return
   try {
     videoRef.value.load()
   } catch (error) {
@@ -183,7 +194,7 @@ function handleVideoEnded() {
 }
 
 function scheduleAutoplay() {
-  if (!props.videoSrc) return
+  if (!effectiveVideoSrc.value) return
   stopTimers()
   autoplayTimer = setTimeout(() => {
     attemptVideoPlayback(false)
@@ -194,25 +205,35 @@ watch(
   () => props.show,
   (visible) => {
     if (visible) {
+      if (typeof document !== 'undefined') {
+        previousOverflow = document.documentElement.style.overflow
+        previousBodyOverflow = document.body?.style?.overflow || ''
+        document.documentElement.style.overflow = 'hidden'
+        if (document.body) document.body.style.overflow = 'hidden'
+      }
       resetVideoState()
-      if (props.videoSrc) {
+      if (effectiveVideoSrc.value) {
         prepareVideo()
         scheduleAutoplay()
       }
     } else {
       stopTimers()
       resetVideoState()
+      if (typeof document !== 'undefined') {
+        document.documentElement.style.overflow = previousOverflow || ''
+        if (document.body) document.body.style.overflow = previousBodyOverflow || ''
+      }
     }
   },
   { immediate: true }
 )
 
 watch(
-  () => props.videoSrc,
+  () => effectiveVideoSrc.value,
   () => {
     if (props.show) {
       resetVideoState()
-      if (props.videoSrc) {
+      if (effectiveVideoSrc.value) {
         prepareVideo()
         scheduleAutoplay()
       }
@@ -229,6 +250,10 @@ onMounted(() => {
 onUnmounted(() => {
   stopTimers()
   resetVideoState()
+  if (typeof document !== 'undefined') {
+    document.documentElement.style.overflow = previousOverflow || ''
+    if (document.body) document.body.style.overflow = previousBodyOverflow || ''
+  }
   window.removeEventListener('scroll', onScrollClose)
   window.removeEventListener('touchmove', onScrollClose)
   window.removeEventListener('keydown', onKey)
@@ -237,27 +262,38 @@ onUnmounted(() => {
 
 <style scoped>
 .modal-frame {
-  max-width: min(90vw, 72rem);
-  max-height: 90vh;
-  padding: 1.25rem;
+  max-width: 100vw;
+  max-height: 100vh;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .media-shell {
   position: relative;
-  width: min(80vw, 64rem);
-  max-height: 80vh;
+  display: grid;
+  place-items: center;
+  width: min(92vw, 64rem);
+  max-width: 100%;
   aspect-ratio: 4 / 3;
-  border-radius: 0.75rem;
+  max-height: 82vh;
+  padding: 0;
+  border-radius: 0;
   overflow: hidden;
-  background: rgba(18, 18, 18, 0.9);
-  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.4);
+  background: transparent;
+  box-shadow: none;
 }
 
 .media-item {
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
+  object-position: center;
   transition: opacity 0.3s ease;
+  display: block;
 }
 
 .media-item--hidden {
@@ -283,7 +319,7 @@ onUnmounted(() => {
 .media-spinner {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 999px;
+  border-radius: 0;
   border: 0.25rem solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   animation: spin 1s linear infinite;
@@ -327,8 +363,13 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .media-shell {
-    width: 90vw;
-    max-height: 70vh;
+    width: 94vw;
+    max-height: 72vh;
+    padding: 0;
+  }
+
+  .media-item {
+    max-height: 100%;
   }
 }
 </style>

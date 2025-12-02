@@ -25,9 +25,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   router.afterEach(() => {
     if (!pendingParentReset) return
     pendingParentReset = false
-    requestAnimationFrame(() => {
-      resetParentScroll()
-      document.body.classList.remove(DISABLE_CLASS)
-    })
+    resetParentScroll()
+    document.body.classList.remove(DISABLE_CLASS)
   })
 })

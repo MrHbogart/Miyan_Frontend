@@ -2,8 +2,10 @@ import { onNuxtReady } from '#app'
 
 function setViewportUnit() {
   if (typeof window === 'undefined') return
-  const vh = window.innerHeight * 0.01
+  const height = window.visualViewport?.height || window.innerHeight
+  const vh = height * 0.01
   document.documentElement.style.setProperty('--app-vh', `${vh}px`)
+  document.documentElement.style.setProperty('--vh', `${vh}px`)
 }
 
 let rafId: number | null = null
@@ -22,6 +24,10 @@ export default defineNuxtPlugin(() => {
   setViewportUnit()
   window.addEventListener('resize', scheduleViewportUpdate)
   window.addEventListener('orientationchange', scheduleViewportUpdate)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', scheduleViewportUpdate)
+    window.visualViewport.addEventListener('scroll', scheduleViewportUpdate)
+  }
 
   onNuxtReady(() => {
     setViewportUnit()
@@ -31,6 +37,10 @@ export default defineNuxtPlugin(() => {
     import.meta.hot.on('vite:beforeFullReload', () => {
       window.removeEventListener('resize', scheduleViewportUpdate)
       window.removeEventListener('orientationchange', scheduleViewportUpdate)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', scheduleViewportUpdate)
+        window.visualViewport.removeEventListener('scroll', scheduleViewportUpdate)
+      }
     })
   }
 })

@@ -13,7 +13,7 @@
         <button
           v-if="error"
           type="button"
-          class="px-4 py-2 rounded bg-slate-900 text-white text-sm uppercase tracking-wide"
+          class="px-4 py-2 bg-slate-900 text-white text-sm uppercase tracking-wide"
           @click="refresh"
         >
           {{ translateState('retry') }}

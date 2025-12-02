@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="min-h-screen flex flex-col text-gray-900" :dir="currentDir">
     <Header :scrolled="scrolled" />
-    <main class="flex-1" :style="pageGradientStyle">
+    <main class="flex-1 flex flex-col" :style="pageGradientStyle">
       <slot />
     </main>
     <Footer />
@@ -73,6 +73,11 @@ const pageGradientStyle = computed(() => {
     backgroundPosition: 'center',
     animation: `gradientDrift ${theme.duration} ease-in-out infinite`,
     transition: 'background-image 1.2s ease, background-position 1.2s ease',
+    minHeight: 'max(100svh, calc(var(--app-vh, 1vh) * 100))',
+    paddingTop: 'env(safe-area-inset-top)',
+    paddingBottom: 'env(safe-area-inset-bottom)',
+    paddingLeft: 'env(safe-area-inset-left)',
+    paddingRight: 'env(safe-area-inset-right)',
   }
 })
 

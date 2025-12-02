@@ -11,7 +11,8 @@
             <div
               v-if="item && item.name"
               :class="[
-                'grid md:grid-cols-2 gap-4 items-start',
+                'grid gap-4 items-start',
+                showMedia(item) ? 'md:grid-cols-2' : 'grid-cols-1'
               ]"
               dir="ltr"
             >
@@ -43,8 +44,8 @@
               </div>
 
               <div
-                v-if="hasImage(item)"
-                :class="isRTL ? 'order-1 md:order-1 overflow-hidden rounded-sm' : 'order-1 md:order-2 overflow-hidden rounded-sm'"
+                v-if="showMedia(item)"
+                :class="isRTL ? 'order-1 md:order-1 overflow-hidden' : 'order-1 md:order-2 overflow-hidden'"
                 @click="openItemMedia(item)"
               >
                 <img
@@ -85,6 +86,12 @@ const selectedMedia = ref(null)
 const langState = useLang()
 const currentLang = computed(() => langState.value)
 const isRTL = computed(() => currentLang.value === 'fa')
+const showImagesEnabled = computed(() => {
+  const menu = props.menu || {}
+  if (typeof menu.show_images === 'boolean') return menu.show_images
+  if (typeof menu.pictureless === 'boolean') return !menu.pictureless
+  return true
+})
 
 // Get sections directly from menu.sections
 // The API/mock data structure has sections at the top level
@@ -96,12 +103,17 @@ const sections = computed(() => {
 })
 
 function openItemMedia(item) {
-  if (!hasImage(item)) return
+  if (!showMedia(item)) return
   selectedMedia.value = {
     image: resolveImageSrc(item),
     video: resolveVideoSrc(item),
     alt: resolveItemAlt(item),
   }
+}
+
+function showMedia(item) {
+  if (!showImagesEnabled.value) return false
+  return hasImage(item)
 }
 
 // Determine if an item has a usable image

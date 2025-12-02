@@ -18,7 +18,7 @@
               <img :src="siteMedia.bereshtLogo" alt="Miyan Beresht" class="logo-img" />
             </template>
             <template v-else>
-              <span class="logo-text">Miyan Beresht</span>
+              <span class="logo-text">Beresht</span>
             </template>
           </NuxtLink>
         </div>
@@ -38,7 +38,7 @@
               <img :src="siteMedia.madiLogo" alt="Miyan Madi" class="logo-img" />
             </template>
             <template v-else>
-              <span class="logo-text">Miyan Madi</span>
+              <span class="logo-text">Madi</span>
             </template>
           </NuxtLink>
         </div>
@@ -97,7 +97,9 @@ watch(headerTargetOpacity, (v) => {
 const headerStyle = computed(() => ({
   backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
   paddingTop: 'env(safe-area-inset-top)',
-  WebkitPaddingTop: 'env(safe-area-inset-top)'
+  WebkitPaddingTop: 'env(safe-area-inset-top)',
+  paddingLeft: 'env(safe-area-inset-left)',
+  paddingRight: 'env(safe-area-inset-right)'
 }))
 
 // Update header bottom Y position
@@ -190,8 +192,21 @@ onUnmounted(() => {
 
 <style scoped>
 header { 
-  height: 10vh; 
+  height: auto;
+  min-height: 64px;
   transition: background-color 400ms ease, backdrop-filter 400ms ease;
+}
+
+@media (max-width: 640px) {
+  header {
+    min-height: 56px;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 900px) {
+  header {
+    min-height: 64px;
+  }
 }
 
 /* Child visibility transitions */
@@ -236,12 +251,14 @@ header {
 .status-safe-area {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  left: calc(env(safe-area-inset-left) * -1);
+  right: calc(env(safe-area-inset-right) * -1);
   height: env(safe-area-inset-top);
   z-index: 45;
   transition: background-color 400ms ease, backdrop-filter 400ms ease;
   pointer-events: none;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* English logo text styling */

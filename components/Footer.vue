@@ -1,5 +1,9 @@
 <template>
-  <footer class="w-full mt-0 py-8 bg-black/90 border-t border-white/10" dir="ltr">
+  <footer
+    class="w-full mt-0 py-8 bg-black/90 border-t border-white/10"
+    dir="ltr"
+    :style="footerSafeArea"
+  >
     <div class="max-w-6xl mx-auto px-6 text-sm opacity-100 flex justify-between items-center text-white">
       <div class="font-cinzel">© {{ currentYear }} Miyan Group</div>
 
@@ -32,6 +36,11 @@ const route = useRoute()
 const langState = useLang()
 const lang = computed(() => langState.value)
 const currentYear = new Date().getFullYear()
+const footerSafeArea = {
+  paddingBottom: 'calc(env(safe-area-inset-bottom) + 2rem)',
+  paddingLeft: 'env(safe-area-inset-left)',
+  paddingRight: 'env(safe-area-inset-right)',
+}
 
 function changeLang(l) {
   if (lang.value === l) return
@@ -49,5 +58,10 @@ function changeLang(l) {
 </script>
 
 <style scoped>
-footer { background: #000 }
+footer {
+  background: #000 !important;
+  color: #fff;
+  position: relative;
+  z-index: 5;
+}
 </style>

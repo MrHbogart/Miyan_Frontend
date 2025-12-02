@@ -1,20 +1,23 @@
-const ROOT_SEGMENT_INDEX = 0
-
 function normalizePath(path) {
   if (!path) return ''
   if (typeof path !== 'string') return ''
   return path.replace(/\/+/g, '/')
 }
 
-function getTopLevelSegment(route) {
-  const normalized = normalizePath(route?.path || '')
+export function resolveParentId(route) {
+  if (!route) return ''
+  const metaParent = route.meta?.pageTheme?.group
+  if (metaParent) return metaParent
+
+  const normalized = normalizePath(route.path || '')
   if (!normalized) return ''
   const segments = normalized.split('/').filter(Boolean)
-  return segments[ROOT_SEGMENT_INDEX] || ''
+  // With lang prefix the second segment is the parent; otherwise use the first.
+  return segments[1] || segments[0] || ''
 }
 
 export function isParentRouteChange(from, to) {
-  return getTopLevelSegment(from) !== getTopLevelSegment(to)
+  return resolveParentId(from) !== resolveParentId(to)
 }
 
 export function resetParentScroll() {

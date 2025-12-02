@@ -281,7 +281,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border-radius: 10px;
+  border-radius: 0;
   transition: transform 1s ease, box-shadow 1s ease;
   position: relative;
   overflow: hidden;
@@ -327,7 +327,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   flex-direction: column;
   gap: 0.4rem;
   padding: 1rem 1.1rem;
-  border-radius: 12px;
+  border-radius: 0;
   text-decoration: none;
   color: inherit;
   background: rgba(255, 255, 255, 0.9);
@@ -439,7 +439,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   text-transform: uppercase;
   background: rgba(255, 255, 255, 0.78);
   padding: 0.35rem 1.2rem;
-  border-radius: 999px;
+  border-radius: 0;
 }
 
 /* modal grid items */

@@ -403,7 +403,7 @@ onMounted(() => {
   right: 0.65rem;
   width: 2rem;
   height: 2rem;
-  border-radius: 50%;
+  border-radius: 0;
   border: 1px solid rgba(249, 246, 240, 0.5);
   background: rgba(32, 18, 8, 0.75);
   color: #f9f6f0;

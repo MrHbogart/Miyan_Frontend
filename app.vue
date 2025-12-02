@@ -1,10 +1,18 @@
 <script setup>
-const pageTransition = { name: 'fade-load', mode: 'out-in' }
+const pageTransition = { name: 'fade-load' }
+const pageKey = (route) => {
+  const lang = route.params?.lang
+  const group = route.meta?.pageTheme?.group
+  if (group) {
+    return [lang, group].filter(Boolean).join(':')
+  }
+  return route.fullPath
+}
 </script>
 
 <template>
   <NuxtLayout>
-    <NuxtPage :transition="pageTransition" />
+    <NuxtPage :transition="pageTransition" :page-key="pageKey" />
   </NuxtLayout>
 </template>
 
