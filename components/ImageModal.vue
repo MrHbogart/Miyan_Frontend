@@ -88,6 +88,8 @@ const videoLoading = ref(false)
 const canManuallyTriggerVideo = ref(false)
 let autoplayTimer = null
 let timeoutTimer = null
+let cancelClickListener = null
+let cancelScrollListener = null
 
 const gifAsImageSrc = computed(() => {
   const src = (props.videoSrc || '').trim().toLowerCase()
@@ -140,6 +142,10 @@ function onScrollClose() {
 
 function onKey(event) {
   if (event.key === 'Escape') emit('close')
+}
+
+function onAnyInteraction() {
+  emit('close')
 }
 
 async function attemptVideoPlayback(manual = false) {
@@ -245,6 +251,15 @@ onMounted(() => {
   window.addEventListener('scroll', onScrollClose, { passive: true })
   window.addEventListener('touchmove', onScrollClose, { passive: true })
   window.addEventListener('keydown', onKey)
+  // Close on any tap/click outside the modal; we already stop propagation inside
+  cancelClickListener = (e) => {
+    if (!(e?.target instanceof HTMLElement)) return
+    emit('close')
+  }
+  cancelScrollListener = () => emit('close')
+  window.addEventListener('click', cancelClickListener, { passive: true })
+  window.addEventListener('touchstart', cancelClickListener, { passive: true })
+  window.addEventListener('wheel', cancelScrollListener, { passive: true })
 })
 
 onUnmounted(() => {
@@ -257,6 +272,9 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onScrollClose)
   window.removeEventListener('touchmove', onScrollClose)
   window.removeEventListener('keydown', onKey)
+   window.removeEventListener('click', cancelClickListener)
+   window.removeEventListener('touchstart', cancelClickListener)
+   window.removeEventListener('wheel', cancelScrollListener)
 })
 </script>
 
