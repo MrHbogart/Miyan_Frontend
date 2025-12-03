@@ -263,7 +263,9 @@ onUnmounted(() => {
 <style scoped>
 .modal-frame {
   max-width: 100vw;
-  max-height: 100vh;
+  max-height: 100svh;
+  max-height: calc(var(--vh, 1vh) * 100);
+  min-height: 100svh;
   min-height: calc(var(--app-vh, 1vh) * 100);
   padding: 1rem;
   display: flex;
@@ -278,7 +280,8 @@ onUnmounted(() => {
   width: min(92vw, 64rem);
   max-width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 82vh;
+  max-height: 82svh;
+  max-height: calc(var(--vh, 1vh) * 82);
   padding: 0;
   border-radius: 0;
   overflow: hidden;

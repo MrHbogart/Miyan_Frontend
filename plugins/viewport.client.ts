@@ -1,9 +1,14 @@
 import { onNuxtReady } from '#app'
 
+let baselineVH = 0
+
 function setViewportUnit() {
   if (typeof window === 'undefined') return
-  const height = window.visualViewport?.height || window.innerHeight
-  const vh = height * 0.01
+  const inner = window.innerHeight || 0
+  const visual = window.visualViewport?.height || 0
+  baselineVH = baselineVH || Math.max(inner, visual)
+  const stable = Math.max(inner, visual, baselineVH)
+  const vh = stable * 0.01
   document.documentElement.style.setProperty('--app-vh', `${vh}px`)
   document.documentElement.style.setProperty('--vh', `${vh}px`)
 }
@@ -23,7 +28,10 @@ export default defineNuxtPlugin(() => {
 
   setViewportUnit()
   window.addEventListener('resize', scheduleViewportUpdate)
-  window.addEventListener('orientationchange', scheduleViewportUpdate)
+  window.addEventListener('orientationchange', () => {
+    baselineVH = 0
+    scheduleViewportUpdate()
+  })
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', scheduleViewportUpdate)
   }
@@ -38,7 +46,6 @@ export default defineNuxtPlugin(() => {
       window.removeEventListener('orientationchange', scheduleViewportUpdate)
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', scheduleViewportUpdate)
-        window.visualViewport.removeEventListener('scroll', scheduleViewportUpdate)
       }
     })
   }

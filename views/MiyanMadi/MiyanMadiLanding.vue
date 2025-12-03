@@ -195,7 +195,8 @@ onMounted(() => {
 <style scoped>
 .landing-shell {
   position: relative;
-  min-height: 100vh;
+  min-height: 100svh;
+  min-height: calc(var(--vh, 1vh) * 100);
   padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   color: #0f2535;
   --viz-velocity: 1;

@@ -233,7 +233,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 /* Base shell */
 .landing-shell {
   position: relative;
-  min-height: 100vh;
+  min-height: 100svh;
+  min-height: calc(var(--vh, 1vh) * 100);
   padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   background: transparent;
   color: #0f0f0f;
@@ -244,7 +245,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .miyan-hero-panel {
   display: grid;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100svh;
+  min-height: calc(var(--vh, 1vh) * 100);
   gap: clamp(1.5rem, 3vw, 3rem);
   padding: clamp(1.5rem, 3vw, 3rem);
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
@@ -385,7 +387,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 
 /* modal panel */
 .miyan-modal-panel {
-  min-height: 85vh;
+  min-height: 85svh;
+  min-height: calc(var(--vh, 1vh) * 85);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -492,7 +495,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   position: relative;
   isolation: isolate;
   width: 100%;
-  min-height: min(100vh, 60rem);
+  min-height: min(100svh, 60rem);
+  min-height: min(calc(var(--vh, 1vh) * 100), 60rem);
   overflow: hidden;
   padding: clamp(1.25rem, 2.5vw, 2rem);
   scroll-snap-align: start;
@@ -721,7 +725,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
     max-width: 100%;
   }
   .story-scene {
-    min-height: 100vh;
+    min-height: 100svh;
+    min-height: calc(var(--vh, 1vh) * 100);
     padding: 1rem;
   }
   .hero-media {
