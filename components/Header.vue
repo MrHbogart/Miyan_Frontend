@@ -9,7 +9,10 @@
     }]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
-    <div class="status-safe-area" :style="statusStyle" />
+    <div class="status-safe-area status-safe-area--top" :style="statusStyle" />
+    <div class="status-safe-area status-safe-area--bottom" :style="statusStyle" />
+    <div class="status-safe-area status-safe-area--left" :style="statusStyle" />
+    <div class="status-safe-area status-safe-area--right" :style="statusStyle" />
     <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
@@ -250,15 +253,41 @@ header {
 /* Status-safe-area overlay styles */
 .status-safe-area {
   position: fixed;
+  z-index: 45;
+  transition: background-color 400ms ease, backdrop-filter 400ms ease;
+  pointer-events: none;
+}
+
+.status-safe-area--top {
   top: 0;
   left: calc(env(safe-area-inset-left) * -1);
   right: calc(env(safe-area-inset-right) * -1);
   height: env(safe-area-inset-top);
-  z-index: 45;
-  transition: background-color 400ms ease, backdrop-filter 400ms ease;
-  pointer-events: none;
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+}
+
+.status-safe-area--bottom {
+  bottom: 0;
+  left: calc(env(safe-area-inset-left) * -1);
+  right: calc(env(safe-area-inset-right) * -1);
+  height: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.status-safe-area--left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: env(safe-area-inset-left);
+}
+
+.status-safe-area--right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: env(safe-area-inset-right);
 }
 
 /* English logo text styling */

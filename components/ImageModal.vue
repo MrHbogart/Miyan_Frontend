@@ -88,8 +88,7 @@ const videoLoading = ref(false)
 const canManuallyTriggerVideo = ref(false)
 let autoplayTimer = null
 let timeoutTimer = null
-let cancelClickListener = null
-let cancelScrollListener = null
+let interactionCleanup = null
 
 const gifAsImageSrc = computed(() => {
   const src = (props.videoSrc || '').trim().toLowerCase()
@@ -144,8 +143,26 @@ function onKey(event) {
   if (event.key === 'Escape') emit('close')
 }
 
-function onAnyInteraction() {
-  emit('close')
+function attachGlobalInteractions() {
+  if (interactionCleanup) return
+  const close = () => emit('close')
+  const onClick = () => close()
+  const onTouch = () => close()
+  const onWheel = () => close()
+  const onScroll = () => close()
+
+  window.addEventListener('click', onClick, { passive: true })
+  window.addEventListener('touchstart', onTouch, { passive: true })
+  window.addEventListener('wheel', onWheel, { passive: true })
+  window.addEventListener('scroll', onScroll, { passive: true })
+
+  interactionCleanup = () => {
+    window.removeEventListener('click', onClick)
+    window.removeEventListener('touchstart', onTouch)
+    window.removeEventListener('wheel', onWheel)
+    window.removeEventListener('scroll', onScroll)
+    interactionCleanup = null
+  }
 }
 
 async function attemptVideoPlayback(manual = false) {
@@ -218,6 +235,9 @@ watch(
         if (document.body) document.body.style.overflow = 'hidden'
       }
       resetVideoState()
+      requestAnimationFrame(() => {
+        attachGlobalInteractions()
+      })
       if (effectiveVideoSrc.value) {
         prepareVideo()
         scheduleAutoplay()
@@ -225,6 +245,7 @@ watch(
     } else {
       stopTimers()
       resetVideoState()
+      if (interactionCleanup) interactionCleanup()
       if (typeof document !== 'undefined') {
         document.documentElement.style.overflow = previousOverflow || ''
         if (document.body) document.body.style.overflow = previousBodyOverflow || ''
@@ -251,20 +272,12 @@ onMounted(() => {
   window.addEventListener('scroll', onScrollClose, { passive: true })
   window.addEventListener('touchmove', onScrollClose, { passive: true })
   window.addEventListener('keydown', onKey)
-  // Close on any tap/click outside the modal; we already stop propagation inside
-  cancelClickListener = (e) => {
-    if (!(e?.target instanceof HTMLElement)) return
-    emit('close')
-  }
-  cancelScrollListener = () => emit('close')
-  window.addEventListener('click', cancelClickListener, { passive: true })
-  window.addEventListener('touchstart', cancelClickListener, { passive: true })
-  window.addEventListener('wheel', cancelScrollListener, { passive: true })
 })
 
 onUnmounted(() => {
   stopTimers()
   resetVideoState()
+  if (interactionCleanup) interactionCleanup()
   if (typeof document !== 'undefined') {
     document.documentElement.style.overflow = previousOverflow || ''
     if (document.body) document.body.style.overflow = previousBodyOverflow || ''
@@ -272,9 +285,6 @@ onUnmounted(() => {
   window.removeEventListener('scroll', onScrollClose)
   window.removeEventListener('touchmove', onScrollClose)
   window.removeEventListener('keydown', onKey)
-   window.removeEventListener('click', cancelClickListener)
-   window.removeEventListener('touchstart', cancelClickListener)
-   window.removeEventListener('wheel', cancelScrollListener)
 })
 </script>
 
