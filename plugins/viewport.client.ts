@@ -1,24 +1,32 @@
 import { onNuxtReady } from '#app'
 
 let baselineVH = 0
+let baselineVW = 0
+let rafId: number | null = null
 
-function setViewportUnit() {
+function computeBaseline(force = false) {
   if (typeof window === 'undefined') return
+  if (baselineVH && baselineVW && !force) return
   const inner = window.innerHeight || 0
+  const innerW = window.innerWidth || 0
   const visual = window.visualViewport?.height || 0
-  baselineVH = baselineVH || Math.max(inner, visual)
-  const stable = Math.max(inner, visual, baselineVH)
-  const vh = stable * 0.01
+  baselineVH = Math.max(inner, visual)
+  baselineVW = innerW
+}
+
+function setViewportUnit(force = false) {
+  if (typeof window === 'undefined') return
+  computeBaseline(force)
+  if (!baselineVH) return
+  const vh = baselineVH * 0.01
   document.documentElement.style.setProperty('--app-vh', `${vh}px`)
   document.documentElement.style.setProperty('--vh', `${vh}px`)
 }
 
-let rafId: number | null = null
-
-function scheduleViewportUpdate() {
+function scheduleViewportUpdate(force = false) {
   if (rafId !== null) return
   rafId = window.requestAnimationFrame(() => {
-    setViewportUnit()
+    setViewportUnit(force)
     rafId = null
   })
 }
@@ -26,15 +34,25 @@ function scheduleViewportUpdate() {
 export default defineNuxtPlugin(() => {
   if (process.server) return
 
+  // Capture baseline once on load
   setViewportUnit()
-  window.addEventListener('resize', scheduleViewportUpdate)
+
+  // Only react to orientation changes; ignore chrome height shrink/expand
   window.addEventListener('orientationchange', () => {
     baselineVH = 0
-    scheduleViewportUpdate()
+    baselineVW = 0
+    scheduleViewportUpdate(true)
   })
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', scheduleViewportUpdate)
-  }
+
+  // If viewport width changes significantly (e.g., desktop resize/split view), recompute
+  window.addEventListener('resize', () => {
+    const width = window.innerWidth || 0
+    if (Math.abs(width - baselineVW) > 80) {
+      baselineVH = 0
+      baselineVW = 0
+      scheduleViewportUpdate(true)
+    }
+  })
 
   onNuxtReady(() => {
     setViewportUnit()
@@ -42,11 +60,8 @@ export default defineNuxtPlugin(() => {
 
   if (import.meta.hot) {
     import.meta.hot.on('vite:beforeFullReload', () => {
-      window.removeEventListener('resize', scheduleViewportUpdate)
-      window.removeEventListener('orientationchange', scheduleViewportUpdate)
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', scheduleViewportUpdate)
-      }
+      window.removeEventListener('resize', () => scheduleViewportUpdate(true))
+      window.removeEventListener('orientationchange', () => scheduleViewportUpdate(true))
     })
   }
 })

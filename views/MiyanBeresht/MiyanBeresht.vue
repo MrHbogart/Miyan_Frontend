@@ -113,5 +113,8 @@ useSwipeNavigation(childSwipe, {
   flex-direction: column;
   min-height: 100svh;
   min-height: calc(var(--vh, 1vh) * 100);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 </style>
