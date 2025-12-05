@@ -337,13 +337,12 @@ onUnmounted(() => {
 
 .media-shell {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: min(92vw, 64rem);
   max-width: 100%;
-  aspect-ratio: 4 / 3;
-  max-height: 82svh;
-  max-height: calc(var(--vh, 1vh) * 82);
+  max-height: calc(var(--vh, 1vh) * 85);
   padding: 0;
   border-radius: 0;
   overflow: hidden;
@@ -352,12 +351,12 @@ onUnmounted(() => {
 }
 
 .media-item {
-  width: 100%;
-  height: 100%;
   max-width: 100%;
   max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
-  object-position: center;
+  object-position: center center;
   transition: opacity 0.3s ease;
   display: block;
 }
@@ -429,13 +428,14 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .media-shell {
-    width: 94vw;
-    max-height: 72vh;
+    width: 96vw;
+    max-height: calc(var(--vh, 1vh) * 80);
     padding: 0;
   }
 
   .media-item {
     max-height: 100%;
+    width: auto;
   }
 }
 </style>

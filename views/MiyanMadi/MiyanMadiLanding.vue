@@ -359,14 +359,14 @@ onMounted(() => {
 
 .madi-location {
   margin: clamp(3rem, 6vw, 4.5rem) 0 0;
-  padding: clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1rem, 4vw, 2.25rem);
   border-radius: 0;
   border: none;
   background: rgba(6, 52, 92, 0.9);
   color: #e8f5ff;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: clamp(1.5rem, 4vw, 2.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: clamp(1.25rem, 3vw, 2.25rem);
 }
 
 .madi-location p,
@@ -388,6 +388,18 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+@media (max-width: 540px) {
+  .madi-location {
+    padding: max(1rem, 3.5vw);
+    gap: max(1rem, 3vw);
+    grid-template-columns: 1fr;
+  }
+
+  .map-canvas {
+    min-height: 12rem;
+  }
 }
 
 .map-canvas {
