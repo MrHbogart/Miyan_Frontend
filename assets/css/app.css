@@ -214,3 +214,8 @@ html[lang="fa"] *,
   letter-spacing: 0 !important;
   font-feature-settings: "calt" 1, "liga" 1;
 }
+
+/* Block landscape usage to keep the experience portrait-locked */
+.orientation-blocker {
+  display: none;
+}

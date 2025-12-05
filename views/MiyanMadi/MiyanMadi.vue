@@ -31,7 +31,7 @@
               v-for="item in displayNavItems"
               :key="item.name"
               :to="getLocalizedPath(item.path)"
-              class="flex-1 min-w-0 px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold"
+              class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold"
               :class="[
                 { 'font-bold': isActive(item.path) },
                 { 'font-cinzel font-light tracking-wide': !isRTL },

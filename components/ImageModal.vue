@@ -6,7 +6,7 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
         @click="emitClose"
       >
-        <div class="modal-frame" @click.stop>
+        <div class="modal-frame">
           <div class="media-shell">
             <img
               v-if="hasImage"
@@ -22,6 +22,7 @@
               v-if="hasVideoAsset"
               ref="videoRef"
               :src="effectiveVideoSrc"
+              :poster="effectiveImageSrc"
               class="media-item"
               :class="{ 'media-item--hidden': !shouldShowVideo }"
               playsinline
@@ -29,6 +30,7 @@
               muted
               @ended="handleVideoEnded"
               @loadeddata="handleVideoLoaded"
+              @canplay="handleVideoCanPlay"
             ></video>
 
             <div v-if="videoLoading" class="media-overlay">
@@ -40,7 +42,7 @@
               v-if="canManuallyTriggerVideo"
               type="button"
               class="play-overlay"
-              @click="attemptVideoPlayback(true)"
+              @click.stop="attemptVideoPlayback(true)"
             >
               ▶
             </button>
@@ -86,6 +88,8 @@ const videoRef = ref(null)
 const showVideo = ref(false)
 const videoLoading = ref(false)
 const canManuallyTriggerVideo = ref(false)
+const minDelayElapsed = ref(false)
+const waitingForCanPlay = ref(false)
 let autoplayTimer = null
 let timeoutTimer = null
 let interactionCleanup = null
@@ -124,6 +128,8 @@ function resetVideoState() {
   showVideo.value = false
   videoLoading.value = false
   canManuallyTriggerVideo.value = false
+  minDelayElapsed.value = false
+  waitingForCanPlay.value = false
   const el = videoRef.value
   if (el) {
     try {
@@ -167,11 +173,25 @@ function attachGlobalInteractions() {
 
 async function attemptVideoPlayback(manual = false) {
   if (!effectiveVideoSrc.value || !videoRef.value) return
+  if (showVideo.value) return
+
+  if (manual) {
+    minDelayElapsed.value = true
+  } else if (!minDelayElapsed.value) {
+    return
+  }
+
+  const ready = videoRef.value.readyState >= 2
+  if (!ready) {
+    waitingForCanPlay.value = true
+    videoLoading.value = true
+    return
+  }
 
   stopTimers()
   videoLoading.value = true
-  showVideo.value = true
   canManuallyTriggerVideo.value = false
+  waitingForCanPlay.value = false
 
   try {
     videoRef.value.currentTime = 0
@@ -182,6 +202,7 @@ async function attemptVideoPlayback(manual = false) {
   try {
     await videoRef.value.play()
     videoLoading.value = false
+    showVideo.value = true
     timeoutTimer = setTimeout(() => {
       handleVideoEnded()
     }, props.videoTimeout)
@@ -212,14 +233,27 @@ function handleVideoLoaded() {
   }
 }
 
+function handleVideoCanPlay() {
+  if (!effectiveVideoSrc.value) return
+  if (minDelayElapsed.value) {
+    attemptVideoPlayback(false)
+  } else {
+    waitingForCanPlay.value = true
+  }
+}
+
 function handleVideoEnded() {
+  stopTimers()
   resetVideoState()
 }
 
 function scheduleAutoplay() {
   if (!effectiveVideoSrc.value) return
   stopTimers()
+  minDelayElapsed.value = false
+  waitingForCanPlay.value = false
   autoplayTimer = setTimeout(() => {
+    minDelayElapsed.value = true
     attemptVideoPlayback(false)
   }, props.autoplayDelay)
 }

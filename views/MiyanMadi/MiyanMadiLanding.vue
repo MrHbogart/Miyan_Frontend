@@ -324,7 +324,13 @@ onMounted(() => {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(1, 18, 35, 0.95), rgba(1, 18, 35, 0.2));
+  background: linear-gradient(
+    180deg,
+    rgba(1, 18, 35, 0.95) 0%,
+    rgba(1, 18, 35, 0.65) 28%,
+    rgba(1, 18, 35, 0.3) 60%,
+    rgba(1, 18, 35, 0.15) 100%
+  );
 }
 
 .story-copy {

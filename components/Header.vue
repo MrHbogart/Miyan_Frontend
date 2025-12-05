@@ -229,7 +229,9 @@ header {
 .logo-link {
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 100%;
+  width: 100%;
   cursor: pointer;
   border-radius: 0px;
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
