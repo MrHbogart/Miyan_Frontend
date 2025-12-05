@@ -18,8 +18,17 @@
               decoding="async"
             />
 
+            <img
+              v-if="isGifVideo && hasAnimatedImage"
+              :src="gifPlaybackSrc"
+              :alt="imageAlt"
+              class="media-item"
+              :class="{ 'media-item--hidden': !shouldShowVideo }"
+              decoding="async"
+            />
+
             <video
-              v-if="hasVideoAsset"
+              v-else-if="hasVideoAsset"
               ref="videoRef"
               :src="effectiveVideoSrc"
               :poster="effectiveImageSrc"
@@ -33,7 +42,7 @@
               @canplay="handleVideoCanPlay"
             ></video>
 
-            <div v-if="videoLoading" class="media-overlay">
+            <div v-if="videoLoading && !isGifVideo" class="media-overlay">
               <span class="media-spinner" aria-hidden="true"></span>
               <p class="text-xs tracking-wide uppercase">Loading video…</p>
             </div>
@@ -94,20 +103,40 @@ let autoplayTimer = null
 let timeoutTimer = null
 let interactionCleanup = null
 
-const gifAsImageSrc = computed(() => {
-  const src = (props.videoSrc || '').trim().toLowerCase()
-  return src.endsWith('.gif') ? props.videoSrc : ''
-})
-
-const effectiveImageSrc = computed(() => gifAsImageSrc.value || props.imageSrc)
-const effectiveVideoSrc = computed(() => (gifAsImageSrc.value ? '' : props.videoSrc))
+const isGifVideo = computed(() => (props.videoSrc || '').trim().toLowerCase().endsWith('.gif'))
+const effectiveImageSrc = computed(() => props.imageSrc || (isGifVideo.value ? props.videoSrc : ''))
+const gifPlaybackSrc = computed(() => (isGifVideo.value ? props.videoSrc : ''))
+const effectiveVideoSrc = computed(() => (isGifVideo.value ? '' : props.videoSrc))
 
 const hasImage = computed(() => !!effectiveImageSrc.value)
-const hasVideoAsset = computed(() => !!effectiveVideoSrc.value)
+const hasAnimatedImage = computed(() => !!gifPlaybackSrc.value)
+const hasVideoAsset = computed(() => !!effectiveVideoSrc.value || isGifVideo.value)
 const shouldRender = computed(() => props.show && (hasImage.value || hasVideoAsset.value))
 const shouldShowVideo = computed(() => showVideo.value && hasVideoAsset.value)
 let previousOverflow = ''
 let previousBodyOverflow = ''
+let previousThemeColor = ''
+
+function ensureThemeMeta() {
+  if (typeof document === 'undefined') return null
+  let m = document.querySelector('meta[name="theme-color"]')
+  if (!m) {
+    m = document.createElement('meta')
+    m.setAttribute('name', 'theme-color')
+    document.head.appendChild(m)
+  }
+  return m
+}
+
+function setThemeColor(color) {
+  const meta = ensureThemeMeta()
+  if (!meta) return
+  try {
+    meta.setAttribute('content', color)
+  } catch (e) {
+    // ignore
+  }
+}
 
 function emitClose() {
   emit('close')
@@ -172,14 +201,17 @@ function attachGlobalInteractions() {
 }
 
 async function attemptVideoPlayback(manual = false) {
-  if (!effectiveVideoSrc.value || !videoRef.value) return
   if (showVideo.value) return
+  if (!manual && !minDelayElapsed.value) return
 
-  if (manual) {
-    minDelayElapsed.value = true
-  } else if (!minDelayElapsed.value) {
+  if (isGifVideo.value) {
+    showVideo.value = true
+    videoLoading.value = false
+    canManuallyTriggerVideo.value = false
     return
   }
+
+  if (!effectiveVideoSrc.value || !videoRef.value) return
 
   const ready = videoRef.value.readyState >= 2
   if (!ready) {
@@ -218,7 +250,7 @@ async function attemptVideoPlayback(manual = false) {
 }
 
 function prepareVideo() {
-  if (!effectiveVideoSrc.value || !videoRef.value) return
+  if (!effectiveVideoSrc.value || !videoRef.value || isGifVideo.value) return
   try {
     videoRef.value.load()
   } catch (error) {
@@ -234,7 +266,7 @@ function handleVideoLoaded() {
 }
 
 function handleVideoCanPlay() {
-  if (!effectiveVideoSrc.value) return
+  if (!effectiveVideoSrc.value || isGifVideo.value) return
   if (minDelayElapsed.value) {
     attemptVideoPlayback(false)
   } else {
@@ -248,7 +280,7 @@ function handleVideoEnded() {
 }
 
 function scheduleAutoplay() {
-  if (!effectiveVideoSrc.value) return
+  if (!hasVideoAsset.value) return
   stopTimers()
   minDelayElapsed.value = false
   waitingForCanPlay.value = false
@@ -267,13 +299,18 @@ watch(
         previousBodyOverflow = document.body?.style?.overflow || ''
         document.documentElement.style.overflow = 'hidden'
         if (document.body) document.body.style.overflow = 'hidden'
+        const meta = ensureThemeMeta()
+        previousThemeColor = meta?.getAttribute('content') || ''
+        setThemeColor('#000000')
       }
       resetVideoState()
       requestAnimationFrame(() => {
         attachGlobalInteractions()
       })
-      if (effectiveVideoSrc.value) {
-        prepareVideo()
+      if (hasVideoAsset.value) {
+        if (!isGifVideo.value) {
+          prepareVideo()
+        }
         scheduleAutoplay()
       }
     } else {
@@ -283,6 +320,10 @@ watch(
       if (typeof document !== 'undefined') {
         document.documentElement.style.overflow = previousOverflow || ''
         if (document.body) document.body.style.overflow = previousBodyOverflow || ''
+        if (previousThemeColor) {
+          setThemeColor(previousThemeColor)
+          previousThemeColor = ''
+        }
       }
     }
   },
@@ -290,12 +331,14 @@ watch(
 )
 
 watch(
-  () => effectiveVideoSrc.value,
+  () => [effectiveVideoSrc.value, gifPlaybackSrc.value],
   () => {
     if (props.show) {
       resetVideoState()
-      if (effectiveVideoSrc.value) {
-        prepareVideo()
+      if (hasVideoAsset.value) {
+        if (!isGifVideo.value) {
+          prepareVideo()
+        }
         scheduleAutoplay()
       }
     }
@@ -315,6 +358,10 @@ onUnmounted(() => {
   if (typeof document !== 'undefined') {
     document.documentElement.style.overflow = previousOverflow || ''
     if (document.body) document.body.style.overflow = previousBodyOverflow || ''
+  }
+  if (previousThemeColor) {
+    setThemeColor(previousThemeColor)
+    previousThemeColor = ''
   }
   window.removeEventListener('scroll', onScrollClose)
   window.removeEventListener('touchmove', onScrollClose)
