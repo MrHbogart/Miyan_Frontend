@@ -47,7 +47,7 @@
 
     <!-- Child Router View -->
     <div ref="childSwipe" class="child-swipe-wrapper">
-      <Transition :name="childTransition">
+      <Transition :name="childTransition" mode="out-in">
         <div :key="routeKey">
           <slot />
         </div>

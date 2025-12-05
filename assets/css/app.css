@@ -114,6 +114,14 @@ body::after {
   opacity: 0;
 }
 
+.swipe-left-enter-to,
+.swipe-left-leave-from,
+.swipe-right-enter-to,
+.swipe-right-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
 /* header style rules */
 header { will-change: transform, background-color }
 .header-hidden { transform: translateY(-100%) }
@@ -131,6 +139,13 @@ header { will-change: transform, background-color }
   padding-left: 0;
   padding-right: 0;
   padding-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .content-shell--flush {
+    padding-left: max(env(safe-area-inset-left), 1rem);
+    padding-right: max(env(safe-area-inset-right), 1rem);
+  }
 }
 
 .child-swipe-wrapper {

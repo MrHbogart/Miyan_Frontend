@@ -28,12 +28,15 @@
       </div>
     </section>
 
-    <MiyanLanding />
+    <Transition :name="childTransition" mode="out-in">
+      <MiyanLanding :key="route.fullPath" />
+    </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
 import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
@@ -44,6 +47,7 @@ import { useLang } from '~/composables/useLang'
 import MiyanLanding from './MiyanLanding.vue'
 
 const siteMedia = siteMediaDefaults
+const route = useRoute()
 
 const { heroVideo, modalOverlayAlpha, overlayTransition } = useHeroIntro({
   overlayBase: 0.4,
