@@ -385,8 +385,8 @@ onUnmounted(() => {
 .media-shell {
   position: relative;
   display: block;
-  width: min(96vw, 68rem);
-  max-width: 100%;
+  width: min(90vw, 68rem);
+  max-width: 90vw;
   height: min(calc(var(--vh, 1vh) * 70), 70vh);
   max-height: min(calc(var(--vh, 1vh) * 70), 70vh);
   padding: 0;
@@ -477,7 +477,8 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .media-shell {
-    width: 96vw;
+    width: 90vw;
+    max-width: 90vw;
     height: min(calc(var(--vh, 1vh) * 70), 70vh);
     max-height: min(calc(var(--vh, 1vh) * 70), 70vh);
     padding: 0;
