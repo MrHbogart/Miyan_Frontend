@@ -384,12 +384,11 @@ onUnmounted(() => {
 
 .media-shell {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: min(92vw, 64rem);
   max-width: 100%;
   max-height: calc(var(--vh, 1vh) * 85);
+  aspect-ratio: 4 / 3;
   padding: 0;
   border-radius: 0;
   overflow: hidden;
@@ -398,6 +397,9 @@ onUnmounted(() => {
 }
 
 .media-item {
+  position: absolute;
+  inset: 0;
+  margin: auto;
   max-width: 100%;
   max-height: 100%;
   width: auto;

@@ -318,4 +318,9 @@ header {
   transform: scale(1.03) translateY(-1px);
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19);
 }
+
+:global(header .max-w-6xl) {
+  padding-left: max(1.25rem, env(safe-area-inset-left));
+  padding-right: max(1.25rem, env(safe-area-inset-right));
+}
 </style>

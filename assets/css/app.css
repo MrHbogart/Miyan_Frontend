@@ -85,6 +85,14 @@ body::after {
   left: calc(env(safe-area-inset-left, 0px) * -1);
   right: calc(env(safe-area-inset-right, 0px) * -1);
 }
+.hero-fill-safe video,
+.hero-fill-safe img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
 
 .swipe-left-enter-active,
 .swipe-left-leave-active,
@@ -113,8 +121,8 @@ header { will-change: transform, background-color }
 /* opt-in presentation helpers */
 .content-shell {
   margin: 0 auto;
-  padding-left: clamp(1.5rem, 8vw, 6rem);
-  padding-right: clamp(1.5rem, 8vw, 6rem);
+  padding-left: max(env(safe-area-inset-left), clamp(1.5rem, 8vw, 6rem));
+  padding-right: max(env(safe-area-inset-right), clamp(1.5rem, 8vw, 6rem));
 }
 
 .content-shell--flush {
@@ -135,8 +143,8 @@ header { will-change: transform, background-color }
   overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding-left: max(env(safe-area-inset-left), 1rem);
+  padding-right: max(env(safe-area-inset-right), 1rem);
 }
 
 .brand-surface {
@@ -231,6 +239,18 @@ html[lang="fa"] *,
 [dir="rtl"] * {
   letter-spacing: 0 !important;
   font-feature-settings: "calt" 1, "liga" 1;
+}
+
+@media (orientation: landscape) {
+  .content-shell {
+    padding-left: max(env(safe-area-inset-left), clamp(1rem, 5vw, 3rem));
+    padding-right: max(env(safe-area-inset-right), clamp(1rem, 5vw, 3rem));
+  }
+
+  .nav-placeholder {
+    padding-left: max(env(safe-area-inset-left), 0.75rem);
+    padding-right: max(env(safe-area-inset-right), 0.75rem);
+  }
 }
 
 /* Block landscape usage to keep the experience portrait-locked */
