@@ -42,24 +42,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Fill safe edges (landscape notches) with the same surface color and keep content centered */
-body::before,
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: env(safe-area-inset-left);
-  background: var(--surface, #FFFFFF);
-  pointer-events: none;
-  z-index: 1;
-}
-body::after {
-  left: auto;
-  right: 0;
-  width: env(safe-area-inset-right);
-}
-
 /* Luxury design tokens with refined colors */
 :root {
   --surface: #fdfcfa;
@@ -143,8 +125,8 @@ header { will-change: transform, background-color }
 
 @media (max-width: 640px) {
   .content-shell--flush {
-    padding-left: max(env(safe-area-inset-left), 1rem);
-    padding-right: max(env(safe-area-inset-right), 1rem);
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
@@ -258,13 +240,18 @@ html[lang="fa"] *,
 
 @media (orientation: landscape) {
   .content-shell {
-    padding-left: max(env(safe-area-inset-left), clamp(1rem, 5vw, 3rem));
-    padding-right: max(env(safe-area-inset-right), clamp(1rem, 5vw, 3rem));
+    padding-left: clamp(0.75rem, 4vw, 2rem);
+    padding-right: clamp(0.75rem, 4vw, 2rem);
+  }
+
+  .content-shell--flush {
+    padding-left: clamp(0.75rem, 4vw, 1.5rem);
+    padding-right: clamp(0.75rem, 4vw, 1.5rem);
   }
 
   .nav-placeholder {
-    padding-left: max(env(safe-area-inset-left), 0.75rem);
-    padding-right: max(env(safe-area-inset-right), 0.75rem);
+    padding-left: clamp(0.75rem, 4vw, 1.5rem);
+    padding-right: clamp(0.75rem, 4vw, 1.5rem);
   }
 }
 

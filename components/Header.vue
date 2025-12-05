@@ -320,7 +320,14 @@ header {
 }
 
 :global(header .max-w-6xl) {
-  padding-left: max(1.25rem, env(safe-area-inset-left));
-  padding-right: max(1.25rem, env(safe-area-inset-right));
+  padding-left: clamp(1.25rem, 4vw, 2.5rem);
+  padding-right: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+@media (orientation: portrait) {
+  :global(header .max-w-6xl) {
+    padding-left: max(env(safe-area-inset-left), clamp(1.25rem, 4vw, 2.5rem));
+    padding-right: max(env(safe-area-inset-right), clamp(1.25rem, 4vw, 2.5rem));
+  }
 }
 </style>
