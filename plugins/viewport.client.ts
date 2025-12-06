@@ -12,11 +12,13 @@ function measureViewport() {
 
 function setViewportUnit() {
   if (typeof window === 'undefined') return
-  const { h } = measureViewport()
+  const { h, w } = measureViewport()
   if (!h) return
   const vh = h * 0.01
   document.documentElement.style.setProperty('--app-vh', `${vh}px`)
   document.documentElement.style.setProperty('--vh', `${vh}px`)
+  document.documentElement.style.setProperty('--app-vw', `${w * 0.01}px`)
+  document.documentElement.style.setProperty('--vw', `${w * 0.01}px`)
 }
 
 function scheduleViewportUpdate() {
