@@ -47,12 +47,7 @@ export function useMenuPrefetcher() {
     })
   }
 
-  function prefetchAllMenus() {
-    Object.keys(PREFETCH_TARGETS).forEach((branch) => prefetchMenusForBranch(branch))
-  }
-
   return {
     prefetchMenusForBranch,
-    prefetchAllMenus,
   }
 }

@@ -12,9 +12,6 @@ const CACHE_CONFIG = {
 }
 
 const CACHE_KEYS = {
-  MIYAN_GALLERY: 'miyanGallery',
-  MIYAN_PROJECTS: 'miyanProjects',
-  SITE_MEDIA: 'siteMedia',
   BERESHT_MENU: 'bereshtMenu',
   BERESHT_TODAY_MENU: 'bereshtTodayMenu',
   MADI_MENU: 'madiMenu',
@@ -205,9 +202,6 @@ function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
   }
 
   return {
-    getMiyanGallery: () => fetchWithCache(CACHE_KEYS.MIYAN_GALLERY, '/group/miyan_gallery/', { maxAge: 24 * 3600000 }),
-    getMiyanProjects: () => fetchWithCache(CACHE_KEYS.MIYAN_PROJECTS, '/group/miyan_gallery/', { maxAge: 24 * 3600000 }),
-    getSiteMedia: () => fetchWithCache(CACHE_KEYS.SITE_MEDIA, '/siteMedia', { maxAge: 24 * 3600000 }),
     getBereshtTodayMenu: async () => {
       const results = await fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/beresht_menu', { maxAge: 300000 })
       const list = Array.isArray(results) ? results : []

@@ -35,15 +35,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useNavbarAttachment } from '@/composables/useNavbarAttachment'
-import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
-import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
 import { useLocalizedChildRoutes } from '@/composables/useLocalizedChildRoutes'
 import { navigationCopy } from '@/state/siteCopy'
-import { useLang } from '~/composables/useLang'
+import siteMediaDefaults from '@/state/siteMediaDefaults'
 import MiyanLanding from './MiyanLanding.vue'
 
 const siteMedia = siteMediaDefaults
@@ -54,22 +50,7 @@ const { heroVideo, modalOverlayAlpha, overlayTransition } = useHeroIntro({
   scrollRange: 380,
 })
 
-const navbarRef = ref(null)
-const navbarSentinel = ref(null)
-const { navInlineStyle, sentinelStyle } = useNavbarAttachment(navbarRef, navbarSentinel)
-const childSwipe = ref(null)
-
-const navConfig = navigationCopy.miyan
-const langState = useLang()
-const lang = computed(() => langState.value)
-const isRTL = computed(() => lang.value === 'fa')
-const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))
-const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(displayNavItems)
-
-useSwipeNavigation(childSwipe, {
-  onLeft: () => shiftChild(1),
-  onRight: () => shiftChild(-1),
-})
+const { childTransition } = useLocalizedChildRoutes(navigationCopy.miyan)
 </script>
 
 <style scoped>

@@ -76,6 +76,14 @@ body {
   display: block;
 }
 
+@media (orientation: landscape) and (max-width: 1024px) {
+  .hero-fill-safe {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+}
+
 .swipe-left-enter-active,
 .swipe-left-leave-active,
 .swipe-right-enter-active,
@@ -127,6 +135,14 @@ header { will-change: transform, background-color }
   .content-shell--flush {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+}
+
+/* Restore measured horizontal breathing room for menu child views on desktop */
+@media (min-width: 1024px) {
+  .content-shell--flush {
+    padding-left: clamp(1.5rem, 6vw, 4.5rem);
+    padding-right: clamp(1.5rem, 6vw, 4.5rem);
   }
 }
 
@@ -240,18 +256,18 @@ html[lang="fa"] *,
 
 @media (orientation: landscape) {
   .content-shell {
-    padding-left: clamp(0.75rem, 4vw, 2rem);
-    padding-right: clamp(0.75rem, 4vw, 2rem);
+    padding-left: clamp(0.5rem, 3vw, 1.25rem);
+    padding-right: clamp(0.5rem, 3vw, 1.25rem);
   }
 
   .content-shell--flush {
-    padding-left: clamp(0.75rem, 4vw, 1.5rem);
-    padding-right: clamp(0.75rem, 4vw, 1.5rem);
+    padding-left: clamp(0.5rem, 3vw, 1rem);
+    padding-right: clamp(0.5rem, 3vw, 1rem);
   }
 
   .nav-placeholder {
-    padding-left: clamp(0.75rem, 4vw, 1.5rem);
-    padding-right: clamp(0.75rem, 4vw, 1.5rem);
+    padding-left: clamp(0.5rem, 3vw, 1rem);
+    padding-right: clamp(0.5rem, 3vw, 1rem);
   }
 }
 

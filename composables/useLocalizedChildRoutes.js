@@ -76,6 +76,5 @@ export function useLocalizedChildRoutes(navItems = []) {
     getLocalizedPath,
     resolveLang,
     shiftChild,
-    orderedNavItems: items,
   }
 }

@@ -97,8 +97,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     const baseStyle = {
       backgroundColor: `rgba(255, 255, 255, ${navBgOpacity.value})`,
       transition: `background ${TRANSITION_DURATION}ms ${EASING}, backdrop-filter ${TRANSITION_DURATION}ms ${EASING}, box-shadow ${TRANSITION_DURATION}ms ${EASING}`,
-      paddingLeft: 'env(safe-area-inset-left)',
-      paddingRight: 'env(safe-area-inset-right)'
+      boxSizing: 'border-box',
     }
 
     if (isNavFixed.value) {
@@ -108,8 +107,12 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
         position: 'fixed',
         top: 'var(--header-height)',
         left: '0',
+        right: '0',
         width: '100%',
+        height: navHeight.value ? `${navHeight.value}px` : undefined,
         zIndex: '30',
+        paddingLeft: 'max(env(safe-area-inset-left), 1rem)',
+        paddingRight: 'max(env(safe-area-inset-right), 1rem)',
         backdropFilter: 'saturate(120%) blur(6px)',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
       }
