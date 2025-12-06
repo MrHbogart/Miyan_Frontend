@@ -39,9 +39,9 @@ export default defineNuxtPlugin(() => {
   window.addEventListener('orientationchange', onResize, { passive: true })
   window.addEventListener('resize', onResize, { passive: true })
 
+  // Avoid visualViewport scroll events (they fire with top/bottom bars and cause layout jumps)
   if (window.visualViewport) {
     window.visualViewport.addEventListener('resize', onVVResize, { passive: true })
-    window.visualViewport.addEventListener('scroll', onVVResize, { passive: true })
   }
 
   onNuxtReady(() => {
@@ -54,7 +54,6 @@ export default defineNuxtPlugin(() => {
       window.removeEventListener('resize', onResize)
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', onVVResize)
-        window.visualViewport.removeEventListener('scroll', onVVResize)
       }
     })
   }

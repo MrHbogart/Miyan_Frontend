@@ -26,6 +26,7 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'fa', dir: 'rtl' },
       meta: [
         { name: 'description', content: 'Miyan Group cafés and roastery' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
       ],
       link: [
         { rel: 'icon', type: 'image/png', href: '/images/miyan_logo_white.png' },

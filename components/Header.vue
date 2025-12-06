@@ -125,11 +125,14 @@ function updateHeaderBottom() {
 }
 
 // Status bar styling
-const statusStyle = computed(() => ({
-  backgroundColor: scrolled ? 'rgba(255,255,255,0.85)' : '#000000',
-  backdropFilter: scrolled ? 'saturate(120%) blur(6px)' : 'none',
-  transition: 'background 400ms ease, backdrop-filter 400ms ease'
-}))
+const statusStyle = computed(() => {
+  const opacity = Math.max(0, Math.min(1, Number(headerBgOpacity.value) || 0))
+  return {
+    backgroundColor: `rgba(255,255,255,${opacity})`,
+    backdropFilter: opacity ? 'saturate(120%) blur(6px)' : 'none',
+    transition: 'background 400ms ease, backdrop-filter 400ms ease'
+  }
+})
 
 // Setup theme meta tags
 function ensureThemeMeta() {
