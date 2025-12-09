@@ -234,7 +234,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .landing-shell {
   position: relative;
   min-height: 100svh;
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
   padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   background: transparent;
   color: #0f0f0f;
@@ -246,7 +246,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   display: grid;
   width: 100%;
   min-height: 100svh;
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
   gap: clamp(1.5rem, 3vw, 3rem);
   padding: clamp(1.5rem, 3vw, 3rem);
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
@@ -256,7 +256,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 /* media: larger, cleaner shadow */
 .hero-media {
   position: relative;
-  min-height: 76vh;
+  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 76);
   background-size: cover;
   background-position: center;
   overflow: hidden;
@@ -388,7 +388,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 /* modal panel */
 .miyan-modal-panel {
   min-height: 85svh;
-  min-height: calc(var(--vh, 1vh) * 85);
+  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 85);
   width: 100%;
   display: flex;
   justify-content: center;
@@ -488,6 +488,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   display: grid;
   gap: clamp(1.5rem, 4vw, 2.5rem);
   scroll-snap-type: y proximity;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* story scene: bigger, less overlay, improved animation */
@@ -496,12 +498,16 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   isolation: isolate;
   width: 100%;
   min-height: min(100svh, 60rem);
-  min-height: min(calc(var(--vh, 1vh) * 100), 60rem);
+  min-height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100), 60rem);
   overflow: hidden;
   padding: clamp(1.25rem, 2.5vw, 2rem);
   scroll-snap-align: start;
   background: transparent;
   margin: 0 auto;
+  padding-left: max(env(safe-area-inset-left), clamp(1.25rem, 2.5vw, 2rem));
+  padding-right: max(env(safe-area-inset-right), clamp(1.25rem, 2.5vw, 2rem));
+  width: 100%;
+  max-width: 100%;
 }
 
 /* image surface: cover and sit behind content; bigger scale so edges feel immersive */
@@ -720,8 +726,10 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   }
 
   .story-scene {
-    min-height: clamp(22rem, 78vh, 46rem);
+    min-height: clamp(22rem, calc(var(--app-vh-fixed, var(--vh, 1vh)) * 78), 46rem);
     padding: clamp(1.1rem, 4vw, 1.75rem);
+    padding-left: max(env(safe-area-inset-left), clamp(1.1rem, 4vw, 1.75rem));
+    padding-right: max(env(safe-area-inset-right), clamp(1.1rem, 4vw, 1.75rem));
   }
 }
 
@@ -737,11 +745,11 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   }
   .story-scene {
     min-height: 100svh;
-    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
     padding: 1rem;
   }
   .hero-media {
-    min-height: 48vh;
+    min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 48);
   }
 }
 </style>

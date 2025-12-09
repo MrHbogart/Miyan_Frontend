@@ -373,9 +373,9 @@ onUnmounted(() => {
 .modal-frame {
   max-width: 100vw;
   max-height: 100svh;
-  max-height: calc(var(--vh, 1vh) * 100);
+  max-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
   min-height: 100svh;
-  min-height: calc(var(--app-vh, 1vh) * 100);
+  min-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -387,8 +387,8 @@ onUnmounted(() => {
   display: block;
   width: min(90vw, 68rem);
   max-width: 90vw;
-  height: min(calc(var(--vh, 1vh) * 70), 70vh);
-  max-height: min(calc(var(--vh, 1vh) * 70), 70vh);
+  height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 70), 70vh);
+  max-height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 70), 70vh);
   padding: 0;
   border-radius: 0;
   overflow: hidden;

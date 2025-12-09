@@ -207,7 +207,7 @@ onMounted(() => {
 .landing-shell {
   position: relative;
   min-height: 100svh;
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
   padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   background: transparent;
   color: #241308;
@@ -564,21 +564,27 @@ onMounted(() => {
   overflow: visible;
   scroll-snap-type: y proximity;
   padding-bottom: clamp(3rem, 5vw, 4rem);
+  width: 100%;
+  max-width: 100%;
 }
 
 .story-scene {
   position: sticky;
-  top: clamp(2.5rem, 18vh, 7rem);
+  top: clamp(2.5rem, calc(var(--app-vh-fixed, var(--vh, 1vh)) * 18), 7rem);
   isolation: isolate;
   width: 100%;
   margin: auto;
-  min-height: min(100vh, 60rem);
+  min-height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100), 60rem);
   padding: clamp(1.75rem, 3vw, 2.75rem);
   overflow: hidden;
   color: rgba(40, 24, 15, 0.92);
   box-shadow: 0 12px 36px rgba(8, 4, 2, 0.15);
   scroll-snap-align: start;
   background: rgba(255, 255, 255, 0.85);
+  padding-left: max(env(safe-area-inset-left), clamp(1.75rem, 3vw, 2.75rem));
+  padding-right: max(env(safe-area-inset-right), clamp(1.75rem, 3vw, 2.75rem));
+  width: 100%;
+  max-width: 100%;
 }
 
 .story-scene::before {
@@ -637,8 +643,10 @@ onMounted(() => {
   .story-scene {
     position: relative;
     top: 0;
-    min-height: clamp(22rem, 70vh, 40rem);
+    min-height: clamp(22rem, calc(var(--app-vh-fixed, var(--vh, 1vh)) * 70), 40rem);
     padding: clamp(1.25rem, 4vw, 2rem);
+    padding-left: max(env(safe-area-inset-left), clamp(1.25rem, 4vw, 2rem));
+    padding-right: max(env(safe-area-inset-right), clamp(1.25rem, 4vw, 2rem));
     box-shadow: 0 8px 26px rgba(8, 4, 2, 0.12);
   }
 

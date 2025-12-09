@@ -33,7 +33,14 @@ import { menuStateCopy } from '~/state/menuStateCopy'
 const api = useMiyanApi()
 const { data: menu, pending, error, refresh } = await useAsyncData(
   'madi-base-menu',
-  () => api.getMadiMenu(),
+  async () => {
+    try {
+      const result = await api.getMadiMenu()
+      return result || { sections: [] }
+    } catch (err) {
+      return { sections: [] }
+    }
+  },
   {
     default: () => ({ sections: [] }),
     server: true,

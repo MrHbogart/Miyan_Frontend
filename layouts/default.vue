@@ -73,7 +73,7 @@ const pageGradientStyle = computed(() => {
     backgroundPosition: 'center',
     animation: `gradientDrift ${theme.duration} ease-in-out infinite`,
     transition: 'background-image 1.2s ease, background-position 1.2s ease',
-    minHeight: 'max(100svh, calc(var(--app-vh, 1vh) * 100))',
+    minHeight: 'max(100svh, calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100))',
     paddingTop: 'env(safe-area-inset-top)',
     paddingBottom: 'env(safe-area-inset-bottom)',
     paddingLeft: 'env(safe-area-inset-left)',

@@ -196,7 +196,7 @@ onMounted(() => {
 .landing-shell {
   position: relative;
   min-height: 100svh;
-  min-height: calc(var(--vh, 1vh) * 100);
+  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
   padding: clamp(4rem, 7vw, 6rem) clamp(1.5rem, 6vw, 4rem) calc(5rem + env(safe-area-inset-bottom));
   color: #0f2535;
   --viz-velocity: 1;
@@ -296,17 +296,23 @@ onMounted(() => {
   gap: clamp(1.5rem, 4vw, 2rem);
   position: relative;
   padding-bottom: clamp(3rem, 4vw, 4rem);
+  width: 100%;
+  max-width: 100%;
 }
 
 .story-scene {
   position: sticky;
-  top: clamp(2.5rem, 20vh, 6rem);
-  min-height: min(100vh, 52rem);
+  top: clamp(2.5rem, calc(var(--app-vh-fixed, var(--vh, 1vh)) * 20), 6rem);
+  min-height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100), 52rem);
   border-radius: 0;
   overflow: hidden;
   background: rgba(10, 36, 58, 0.6);
   box-shadow: none;
   isolation: isolate;
+  padding-left: max(env(safe-area-inset-left), clamp(1.5rem, 4vw, 3rem));
+  padding-right: max(env(safe-area-inset-right), clamp(1.5rem, 4vw, 3rem));
+  width: 100%;
+  max-width: 100%;
 }
 
 .story-scene::before {
@@ -410,7 +416,9 @@ onMounted(() => {
   .story-scene {
     position: relative;
     top: 0;
-    min-height: clamp(22rem, 72vh, 40rem);
+    min-height: clamp(22rem, calc(var(--app-vh-fixed, var(--vh, 1vh)) * 72), 40rem);
+    padding-left: max(env(safe-area-inset-left), clamp(1.5rem, 4vw, 3rem));
+    padding-right: max(env(safe-area-inset-right), clamp(1.5rem, 4vw, 3rem));
   }
 }
 

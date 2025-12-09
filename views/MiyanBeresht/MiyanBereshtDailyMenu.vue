@@ -33,7 +33,14 @@ import { menuStateCopy } from '~/state/menuStateCopy'
 const api = useMiyanApi()
 const { data: menu, pending, error, refresh } = await useAsyncData(
   'beresht-daily-menu',
-  () => api.getBereshtTodayMenu(),
+  async () => {
+    try {
+      const result = await api.getBereshtTodayMenu()
+      return result || { sections: [] }
+    } catch (err) {
+      return { sections: [] }
+    }
+  },
   {
     default: () => ({ sections: [] }),
     server: true,

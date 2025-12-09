@@ -61,9 +61,15 @@ const { childTransition } = useLocalizedChildRoutes(navigationCopy.miyan)
 .nav-placeholder section {
   width: 100%;
 }
-@media (max-width: 768px) {
+@media (max-width: 768px) and (orientation: portrait) {
   video {
     object-position: calc(50% - 150px) center !important;
+  }
+}
+
+@media (orientation: landscape) {
+  video {
+    object-position: center center !important;
   }
 }
 </style>
