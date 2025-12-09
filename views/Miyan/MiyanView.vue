@@ -71,5 +71,12 @@ const { childTransition } = useLocalizedChildRoutes(navigationCopy.miyan)
   video {
     object-position: center center !important;
   }
+
+  .hero-fill-safe {
+    left: 0;
+    right: 0;
+    width: 100vw;
+    max-width: 100vw;
+  }
 }
 </style>

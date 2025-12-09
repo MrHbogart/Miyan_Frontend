@@ -117,5 +117,6 @@ useSwipeNavigation(childSwipe, {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  background: var(--surface, #fdfcfa);
 }
 </style>

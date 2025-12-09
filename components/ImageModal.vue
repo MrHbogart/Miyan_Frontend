@@ -379,8 +379,9 @@ onUnmounted(() => {
   max-width: 100vw;
   height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
   max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
+  padding: 0;
+  transition: width 450ms ease, height 450ms ease, transform 450ms ease;
+  will-change: width, height, transform;
 }
 
 @supports (width: 100dvw) {
@@ -400,6 +401,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: width 450ms ease, height 450ms ease, padding 450ms ease;
+  will-change: width, height, padding;
 }
 
 .media-shell {
@@ -414,6 +417,8 @@ onUnmounted(() => {
   overflow: hidden;
   background: transparent;
   box-shadow: none;
+  transition: width 450ms ease, height 450ms ease;
+  will-change: width, height;
 }
 
 .media-item {
@@ -426,7 +431,7 @@ onUnmounted(() => {
   height: 100%;
   object-fit: contain;
   object-position: center center;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 450ms ease;
   display: block;
 }
 

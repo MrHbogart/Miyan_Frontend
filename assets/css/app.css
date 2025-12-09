@@ -304,18 +304,18 @@ html[lang="fa"] *,
 
 @media (orientation: landscape) {
   .content-shell {
-    padding-left: clamp(0.5rem, 3vw, 1.25rem);
-    padding-right: clamp(0.5rem, 3vw, 1.25rem);
+    padding-left: max(env(safe-area-inset-left), 0px);
+    padding-right: max(env(safe-area-inset-right), 0px);
   }
 
   .content-shell--flush {
-    padding-left: clamp(0.5rem, 3vw, 1rem);
-    padding-right: clamp(0.5rem, 3vw, 1rem);
+    padding-left: max(env(safe-area-inset-left), 0px);
+    padding-right: max(env(safe-area-inset-right), 0px);
   }
 
   .nav-placeholder {
-    padding-left: clamp(0.5rem, 3vw, 1rem);
-    padding-right: clamp(0.5rem, 3vw, 1rem);
+    padding-left: max(env(safe-area-inset-left), 0px);
+    padding-right: max(env(safe-area-inset-right), 0px);
   }
 }
 
