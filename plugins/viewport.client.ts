@@ -59,6 +59,14 @@ export default defineNuxtPlugin(() => {
   window.addEventListener('orientationchange', onResize, { passive: true })
   window.addEventListener('resize', onResize, { passive: true })
 
+  // visualViewport API gives us the 'real' inner area on mobile (handles Safari address-bar)
+  if (window.visualViewport) {
+    // Resize on visualViewport.resize to respond to address-bar show/hide and keyboard
+    window.visualViewport.addEventListener('resize', onResize, { passive: true })
+    // Also listen to scroll since some browsers update visual viewport while scrolling
+    window.visualViewport.addEventListener('scroll', onResize, { passive: true })
+  }
+
   onNuxtReady(() => {
     setViewportUnit(true)
   })
@@ -67,6 +75,10 @@ export default defineNuxtPlugin(() => {
     import.meta.hot.on('vite:beforeFullReload', () => {
       window.removeEventListener('orientationchange', onResize)
       window.removeEventListener('resize', onResize)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', onResize)
+        window.visualViewport.removeEventListener('scroll', onResize)
+      }
     })
   }
 })
