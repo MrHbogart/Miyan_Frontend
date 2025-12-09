@@ -402,6 +402,18 @@ onMounted(() => {
   }
 }
 
+@media (max-width: 960px), (max-height: 760px) {
+  .immersive-stack {
+    gap: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .story-scene {
+    position: relative;
+    top: 0;
+    min-height: clamp(22rem, 72vh, 40rem);
+  }
+}
+
 .map-canvas {
   position: relative;
   border-radius: 0;
@@ -461,6 +473,14 @@ onMounted(() => {
 
 .map-meta a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 680px) {
+  .map-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
 }
 
 .location-hours {

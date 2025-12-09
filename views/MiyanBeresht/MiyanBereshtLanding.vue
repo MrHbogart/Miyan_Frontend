@@ -470,6 +470,14 @@ onMounted(() => {
   text-decoration: underline;
 }
 
+@media (max-width: 680px) {
+  .map-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+}
+
 .location-hours {
   font-size: 0.95rem;
   letter-spacing: 0.08em;
@@ -619,6 +627,30 @@ onMounted(() => {
 
 [dir="ltr"] .story-copy { text-align: left; }
 [dir="rtl"] .story-copy { text-align: right; }
+
+@media (max-width: 960px), (max-height: 760px) {
+  .immersive-stack {
+    scroll-snap-type: none;
+    gap: clamp(1.25rem, 4vw, 1.75rem);
+  }
+
+  .story-scene {
+    position: relative;
+    top: 0;
+    min-height: clamp(22rem, 70vh, 40rem);
+    padding: clamp(1.25rem, 4vw, 2rem);
+    box-shadow: 0 8px 26px rgba(8, 4, 2, 0.12);
+  }
+
+  .story-copy {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    max-width: 100%;
+    padding: clamp(1.25rem, 4vw, 2rem);
+  }
+}
 
 @media (max-width: 48rem) {
   .beresht-hero {

@@ -1,6 +1,6 @@
 <template>
   <div class="view-shell">
-    <section class="w-full h-screen flex items-center justify-center overflow-hidden">
+    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden">
       <div class="absolute inset-0 z-0 hero-fill-safe">
   <video ref="heroVideo" :src="siteMedia.madiHeroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
         <div
@@ -115,7 +115,7 @@ useSwipeNavigation(childSwipe, {
   min-height: 100svh;
   min-height: calc(var(--vh, 1vh) * 100);
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   overflow-x: hidden;
 }
 </style>

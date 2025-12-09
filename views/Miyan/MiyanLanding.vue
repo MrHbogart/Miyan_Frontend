@@ -714,6 +714,17 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   color: rgba(84, 62, 49, 0.62);
 }
 
+@media (max-width: 960px) {
+  .immersive-stack {
+    scroll-snap-type: none;
+  }
+
+  .story-scene {
+    min-height: clamp(22rem, 78vh, 46rem);
+    padding: clamp(1.1rem, 4vw, 1.75rem);
+  }
+}
+
 /* small adaptive tweaks for very small screens */
 @media (max-width: 640px) {
   .miyan-hero-panel {

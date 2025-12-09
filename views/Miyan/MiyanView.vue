@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Hero Section -->
-    <section class="w-full h-screen flex items-center justify-center overflow-hidden">
+    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0 hero-fill-safe">
           <video ref="heroVideo" 
             :src="siteMedia.miyanHeroVideo" 
