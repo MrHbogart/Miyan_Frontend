@@ -17,15 +17,22 @@ html, body, #app, #__nuxt {
 
 #app,
 #__nuxt {
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
   min-height: 100svh;
-  min-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
+  min-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
   min-height: 100dvh;
   box-sizing: border-box;
+}
+
+/* Portrait mode: apply safe-area insets as padding to contain content */
+@media (orientation: portrait) {
+  #app,
+  #__nuxt {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
 /* keep overscroll surface consistent with the app */
@@ -89,6 +96,15 @@ body {
     left: 0;
     right: 0;
     width: 100%;
+  }
+}
+
+/* In landscape, ensure hero-fill-safe uses full device width including notches */
+@media (orientation: landscape) {
+  .hero-fill-safe {
+    left: calc(env(safe-area-inset-left, 0px) * -1);
+    right: calc(env(safe-area-inset-right, 0px) * -1);
+    width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
   }
 }
 
@@ -173,19 +189,13 @@ main,
 .miyan-modal-panel,
 .immersive-stack,
 .story-scene {
-  /* Make these elements visually full-bleed while respecting safe-area insets.
-     Some containers (e.g. #app / main) add env(safe-area-inset-*) padding which
-     can shift full-width children off-center. Counter that by expanding the
-     element size and applying a negative margin equal to the inset. Browsers
-     that don't support env() will use 0px so this is safe universally. */
   box-sizing: border-box;
-  margin-left: calc(env(safe-area-inset-left, 0px) * -1);
-  margin-right: calc(env(safe-area-inset-right, 0px) * -1);
-  width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
-  max-width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  width: 100%;
+  max-width: 100%;
 }
 
-@supports (width: 100dvw) {
+/* Portrait mode: compensate root safe-area padding to expand full-bleed elements */
+@media (orientation: portrait) {
   .view-shell,
   .landing-shell,
   .nav-placeholder,
@@ -196,12 +206,50 @@ main,
   .miyan-modal-panel,
   .immersive-stack,
   .story-scene {
-    /* When available prefer the dynamic viewport unit and also compensate
-       for safe-area insets so layout is centered and full-bleed. */
-    width: calc(100dvw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
-    max-width: calc(100dvw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
     margin-left: calc(env(safe-area-inset-left, 0px) * -1);
     margin-right: calc(env(safe-area-inset-right, 0px) * -1);
+    width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+    max-width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  }
+}
+
+@supports (width: 100dvw) {
+  /* Landscape mode: use 100dvw which includes the safe-area space */
+  @media (orientation: landscape) {
+    .view-shell,
+    .landing-shell,
+    .nav-placeholder,
+    main,
+    .hero-fill-safe,
+    .modal-frame,
+    .miyan-hero-panel,
+    .miyan-modal-panel,
+    .immersive-stack,
+    .story-scene {
+      width: 100dvw;
+      max-width: 100dvw;
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+  
+  /* Portrait mode: use 100dvw with safe-area compensation */
+  @media (orientation: portrait) {
+    .view-shell,
+    .landing-shell,
+    .nav-placeholder,
+    main,
+    .hero-fill-safe,
+    .modal-frame,
+    .miyan-hero-panel,
+    .miyan-modal-panel,
+    .immersive-stack,
+    .story-scene {
+      width: calc(100dvw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+      max-width: calc(100dvw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+      margin-left: calc(env(safe-area-inset-left, 0px) * -1);
+      margin-right: calc(env(safe-area-inset-right, 0px) * -1);
+    }
   }
 }
 
@@ -326,9 +374,35 @@ html[lang="fa"] *,
     padding-left: max(env(safe-area-inset-left), 0px);
     padding-right: max(env(safe-area-inset-right), 0px);
   }
+  
+  /* Ensure footer and other content spans full width and is centered */
+  main {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* Block landscape usage to keep the experience portrait-locked */
 .orientation-blocker {
   display: none;
+}
+
+/* Landscape-specific centering and full-bleed fixes */
+@media (orientation: landscape) {
+  /* Hero sections should use full viewport height with proper centering */
+  section.relative.w-full.flex.items-center.justify-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  
+  /* Ensure hero content divs center properly */
+  section.relative.w-full.flex.items-center.justify-center > div[class*="z-10"] {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

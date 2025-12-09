@@ -63,5 +63,18 @@ footer {
   color: #fff;
   position: relative;
   z-index: 5;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Landscape: extend footer to use full device width */
+@media (orientation: landscape) {
+  footer {
+    margin-left: calc(env(safe-area-inset-left, 0px) * -1);
+    margin-right: calc(env(safe-area-inset-right, 0px) * -1);
+    width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+    max-width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  }
 }
 </style>

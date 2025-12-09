@@ -9,7 +9,7 @@
     }]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
-    <div class="max-w-6xl mx-auto px-6 py-4 pt-5 md:pt-4">
+    <div class="header-content-wrapper">
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
           <NuxtLink :to="linkTargets.beresht" class="logo-link" :class="{ 'is-active': isActive(linkTargets.beresht) }">
@@ -281,6 +281,33 @@ header {
 :global(header .max-w-6xl) {
   padding-left: clamp(1.25rem, 4vw, 2.5rem);
   padding-right: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+/* Wrapper for header content that spans full width in landscape */
+:global(.header-content-wrapper) {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 1rem 1.5rem;
+  padding-top: max(1.25rem, calc(env(safe-area-inset-top) + 1rem));
+  padding-left: max(1.5rem, env(safe-area-inset-left));
+  padding-right: max(1.5rem, env(safe-area-inset-right));
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  :global(.header-content-wrapper) {
+    padding: 1rem 3rem;
+    padding-top: max(1rem, calc(env(safe-area-inset-top) + 1rem));
+  }
+}
+
+@media (orientation: landscape) {
+  :global(.header-content-wrapper) {
+    padding: 0.5rem 1.5rem;
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
 }
 
 @media (orientation: portrait) {
