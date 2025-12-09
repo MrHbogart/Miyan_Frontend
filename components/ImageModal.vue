@@ -3,7 +3,7 @@
     <Transition name="fade">
       <div
         v-if="shouldRender"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+        class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
         @click="emitClose"
       >
         <div class="modal-frame">
@@ -370,13 +370,33 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.modal-frame {
+.modal-overlay {
+  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
   max-width: 100vw;
-  max-height: 100svh;
-  max-height: calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100);
-  min-height: 100svh;
+  height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+@supports (width: 100dvw) {
+  .modal-overlay {
+    width: calc(var(--app-vw-fixed, var(--app-vw, 1vw)) * 100);
+    max-width: calc(var(--app-vw-fixed, var(--app-vw, 1vw)) * 100);
+  }
+}
+
+.modal-frame {
+  width: 100%;
+  max-width: 100%;
+  height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
   min-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
-  padding: 1rem;
+  padding: clamp(0.75rem, 2vw, 1.25rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -385,10 +405,10 @@ onUnmounted(() => {
 .media-shell {
   position: relative;
   display: block;
-  width: min(90vw, 68rem);
-  max-width: 90vw;
-  height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 70), 70vh);
-  max-height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 70), 70vh);
+  width: 100%;
+  max-width: 100%;
+  height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
   padding: 0;
   border-radius: 0;
   overflow: hidden;
@@ -402,8 +422,8 @@ onUnmounted(() => {
   margin: auto;
   max-width: 100%;
   max-height: 100%;
-  width: auto;
-  height: auto;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   object-position: center center;
   transition: opacity 0.3s ease;
