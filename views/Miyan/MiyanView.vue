@@ -1,15 +1,16 @@
 <template>
   <div>
     <!-- Hero Section -->
-    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden">
+    <section class="relative w-full flex items-center justify-center overflow-hidden"
+      :style="{ height: 'calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100)' }">
         <div class="absolute inset-0 z-0 hero-fill-safe">
-          <video ref="heroVideo" 
-            :src="siteMedia.miyanHeroVideo" 
-            autoplay 
-            muted 
-            loop 
-            playsinline 
-            class="absolute inset-0 w-full h-full object-cover"
+          <video ref="heroVideo"
+            :src="siteMedia.miyanHeroVideo"
+            autoplay
+            muted
+            loop
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover hero-video"
           />
         <div
           class="absolute inset-0 transition-all"
@@ -19,7 +20,7 @@
           }"
         ></div>
       </div>
-      <div class="relative z-10 text-center px-6 max-w-xs mx-auto">
+      <div class="relative z-10 text-center px-6 max-w-xs mx-auto hero-content">
         <img 
           :src="siteMedia.miyanLogo" 
           alt="Miyan Logo" 
@@ -61,22 +62,17 @@ const { childTransition } = useLocalizedChildRoutes(navigationCopy.miyan)
 .nav-placeholder section {
   width: 100%;
 }
-@media (max-width: 768px) and (orientation: portrait) {
-  video {
-    object-position: calc(50% - 150px) center !important;
-  }
+/* Smooth video transforms and lock object-position guidance to global styles. */
+.hero-video {
+  transition: transform 320ms cubic-bezier(.2,.9,.25,1), opacity 260ms ease;
+  will-change: transform, opacity;
+  /* ensure video covers without sudden scale jumps */
+  min-width: 100%;
+  min-height: 100%;
+  transform-origin: center center;
 }
-
-@media (orientation: landscape) {
-  video {
-    object-position: center center !important;
-  }
-
-  .hero-fill-safe {
-    left: 0;
-    right: 0;
-    width: 100vw;
-    max-width: 100vw;
-  }
+.hero-content {
+  transition: transform 420ms cubic-bezier(.2,.9,.25,1), opacity 320ms ease;
+  will-change: transform, opacity;
 }
 </style>

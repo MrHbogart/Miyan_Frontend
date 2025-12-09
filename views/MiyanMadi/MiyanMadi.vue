@@ -1,8 +1,9 @@
 <template>
   <div class="view-shell">
-    <section class="relative w-full h-screen flex items-center justify-center overflow-hidden">
+    <section class="relative w-full flex items-center justify-center overflow-hidden"
+      :style="{ height: 'calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100)' }">
       <div class="absolute inset-0 z-0 hero-fill-safe">
-  <video ref="heroVideo" :src="siteMedia.madiHeroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover"/>
+        <video ref="heroVideo" :src="siteMedia.madiHeroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover hero-video"/>
         <div
           class="absolute inset-0 transition-all"
           :style="{
@@ -11,7 +12,7 @@
           }"
         ></div>
       </div>
-      <div class="relative z-10 text-center px-6 max-w-xs mx-auto">
+      <div class="relative z-10 text-center px-6 max-w-xs mx-auto hero-content">
         <img :src="siteMedia.madiLogo" alt="Miyan Madi" class="w-full h-auto drop-shadow-lg brightness-0 invert" />
       </div>
     </section>
@@ -118,5 +119,17 @@ useSwipeNavigation(childSwipe, {
   max-width: 100%;
   overflow-x: hidden;
   background: var(--surface, #fdfcfa);
+}
+
+.hero-video {
+  transition: transform 320ms cubic-bezier(.2,.9,.25,1), opacity 260ms ease;
+  will-change: transform, opacity;
+  min-width: 100%;
+  min-height: 100%;
+  transform-origin: center center;
+}
+.hero-content {
+  transition: transform 420ms cubic-bezier(.2,.9,.25,1), opacity 320ms ease;
+  will-change: transform, opacity;
 }
 </style>

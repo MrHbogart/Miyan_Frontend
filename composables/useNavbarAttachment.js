@@ -102,13 +102,16 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
 
     if (isNavFixed.value) {
       // Fixed state - attached to header with backdrop and shadow
+      // Use negative left/right offsets and expanded width so the bar visually
+      // fills the entire device viewport (including unsafe insets). Inner
+      // padding uses safe-area insets so content stays away from notches.
       return {
         ...baseStyle,
         position: 'fixed',
         top: 'var(--header-height)',
-        left: '0',
-        right: '0',
-        width: '100%',
+        left: 'calc(env(safe-area-inset-left, 0px) * -1)',
+        right: 'calc(env(safe-area-inset-right, 0px) * -1)',
+        width: 'calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
         height: navHeight.value ? `${navHeight.value}px` : undefined,
         zIndex: '30',
         paddingLeft: 'max(env(safe-area-inset-left), 1rem)',
