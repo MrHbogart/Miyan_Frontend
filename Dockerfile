@@ -36,6 +36,9 @@ COPY --from=builder /app/public ./public
 
 EXPOSE 3000
 
+# Ensure curl and CA certs are available for healthchecks and runtime needs
+RUN apk add --no-cache curl ca-certificates
+
 # Ensure runtime does not run as root. Use the official `node` user present
 # in the base image and make `/app` writable by that user.
 RUN chown -R node:node /app || true
