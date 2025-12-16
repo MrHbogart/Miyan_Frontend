@@ -377,8 +377,9 @@ onUnmounted(() => {
   right: 0;
   width: 100vw;
   max-width: 100vw;
-  height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
-  max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
+  min-height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
+  max-height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
   padding: 0;
   transition: width 450ms ease, height 450ms ease, transform 450ms ease;
   will-change: width, height, transform;
@@ -386,17 +387,25 @@ onUnmounted(() => {
 
 @supports (width: 100dvw) {
   .modal-overlay {
-    width: calc(var(--app-vw-fixed, var(--app-vw, 1vw)) * 100);
-    max-width: calc(var(--app-vw-fixed, var(--app-vw, 1vw)) * 100);
+    width: calc(var(--app-vw, var(--vw, 1vw)) * 100);
+    max-width: calc(var(--app-vw, var(--vw, 1vw)) * 100);
+  }
+}
+
+@supports (height: 100dvh) {
+  .modal-overlay {
+    height: 100dvh;
+    min-height: 100dvh;
+    max-height: 100dvh;
   }
 }
 
 .modal-frame {
   width: 100%;
   max-width: 100%;
-  height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
-  max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
-  min-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
+  max-height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
+  min-height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
   padding: clamp(0.75rem, 2vw, 1.25rem);
   display: flex;
   align-items: center;
@@ -410,8 +419,8 @@ onUnmounted(() => {
   display: block;
   width: 100%;
   max-width: 100%;
-  height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
-  max-height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100);
+  height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
+  max-height: calc(var(--app-vh, var(--vh, 1vh)) * 100);
   padding: 0;
   border-radius: 0;
   overflow: hidden;

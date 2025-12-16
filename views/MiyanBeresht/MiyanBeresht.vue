@@ -64,6 +64,7 @@ import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { useHeroIntro } from '@/composables/useHeroIntro'
 import { useSwipeNavigation } from '@/composables/useSwipeNavigation'
 import { useLocalizedChildRoutes } from '@/composables/useLocalizedChildRoutes'
+import { useMenuPrefetch } from '@/composables/useMenuData'
 import { navigationCopy } from '@/state/siteCopy'
 import { useLang } from '~/composables/useLang'
 
@@ -87,6 +88,8 @@ const isRTL = computed(() => lang.value === 'fa')
 const displayNavItems = computed(() => (isRTL.value ? [...navConfig].reverse() : navConfig))
 const { childTransition, getLocalizedPath, shiftChild } = useLocalizedChildRoutes(displayNavItems)
 const routeKey = computed(() => route.fullPath)
+
+useMenuPrefetch('beresht')
 
 const isActive = (rawPath = '') => {
   const normalized = rawPath.replace(/^\/+/, '')

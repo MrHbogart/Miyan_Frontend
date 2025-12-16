@@ -26,27 +26,11 @@
 <script setup>
 import { computed } from 'vue'
 import StructuredMenu from '@/components/StructuredMenu.vue'
-import { useMiyanApi } from '~/composables/useMiyanApi'
+import { useMenuData } from '~/composables/useMenuData'
 import { useLang } from '~/composables/useLang'
 import { menuStateCopy } from '~/state/menuStateCopy'
 
-const api = useMiyanApi()
-const { data: menu, pending, error, refresh } = await useAsyncData(
-  'madi-daily-menu',
-  async () => {
-    try {
-      const result = await api.getMadiTodayMenu()
-      return result || { sections: [] }
-    } catch (err) {
-      return { sections: [] }
-    }
-  },
-  {
-    default: () => ({ sections: [] }),
-    server: true,
-    lazy: false,
-  }
-)
+const { data: menu, pending, error, refresh } = await useMenuData('madi-daily-menu')
 
 const hasSections = computed(() => {
   const sections = menu.value?.sections
