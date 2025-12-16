@@ -86,6 +86,36 @@ const selectedMedia = ref(null)
 const langState = useLang()
 const currentLang = computed(() => langState.value)
 const isRTL = computed(() => currentLang.value === 'fa')
+const runtimeConfig = useRuntimeConfig()
+
+const INTERNAL_MEDIA_HOSTS = new Set([
+  'backend',
+  'backend:8000',
+  'localhost',
+  'localhost:3000',
+  'localhost:8000',
+  '127.0.0.1',
+  '127.0.0.1:3000',
+  '127.0.0.1:8000',
+])
+
+const mediaOrigin = computed(() => {
+  const candidates = [runtimeConfig.public?.siteDomain, runtimeConfig.public?.apiBaseUrl]
+  for (const raw of candidates) {
+    if (!raw) continue
+    try {
+      const url = new URL(raw)
+      return `${url.protocol}//${url.host}`
+    } catch (error) {
+      // ignore invalid candidate
+    }
+  }
+  if (process.client && typeof window !== 'undefined' && window.location?.origin) {
+    return window.location.origin
+  }
+  return ''
+})
+
 const showImagesEnabled = computed(() => {
   const menu = props.menu || {}
   if (typeof menu.show_images === 'boolean') return menu.show_images
@@ -113,38 +143,26 @@ function openItemMedia(item) {
 
 function showMedia(item) {
   if (!showImagesEnabled.value) return false
-  return hasImage(item)
+  return !!resolveImageSrc(item)
 }
 
-// Determine if an item has a usable image
-function hasImage(item) {
-  if (!item) return false
-  const img = item.image
-  if (!img) return false
-  if (typeof img === 'string') return img.trim().length > 0
-  if (typeof img === 'object') {
-    // common shapes: { src: '...', url: '...' }
-    const src = img.src || img.url || img.path || ''
-    return typeof src === 'string' && src.trim().length > 0
-  }
-  return false
+function extractMediaValue(item, key = 'image') {
+  if (!item) return ''
+  const media = item[key]
+  if (!media) return ''
+  if (typeof media === 'string') return media
+  if (typeof media === 'object') return media.src || media.url || media.path || ''
+  return ''
 }
 
 function resolveImageSrc(item) {
-  if (!item) return ''
-  const img = item.image
-  if (!img) return ''
-  if (typeof img === 'string') return img
-  if (typeof img === 'object') return img.src || img.url || img.path || ''
-  return ''
+  const raw = extractMediaValue(item, 'image')
+  return normalizeMediaUrl(raw)
 }
 
 function resolveVideoSrc(item) {
-  if (!item || !item.video) return ''
-  const video = item.video
-  if (typeof video === 'string') return video
-  if (typeof video === 'object') return video.src || video.url || video.path || ''
-  return ''
+  const raw = extractMediaValue(item, 'video')
+  return normalizeMediaUrl(raw)
 }
 
 function resolveItemAlt(item) {
@@ -163,6 +181,46 @@ function translateCopy(obj) {
   if (typeof obj !== 'object') return ''
   const value = obj[currentLang.value] || obj['fa'] || obj['en'] || ''
   return String(value)
+}
+
+function normalizeMediaUrl(raw) {
+  const value = (raw || '').trim()
+  if (!value) return ''
+
+  if (value.startsWith('data:')) return value
+  if (value.startsWith('//')) return `https:${value}`
+
+  const baseOrigin = mediaOrigin.value
+
+  try {
+    const parsed = new URL(value)
+    const hostWithPort = parsed.port ? `${parsed.hostname}:${parsed.port}` : parsed.hostname
+    const baseUrl = baseOrigin ? new URL(baseOrigin) : null
+    const baseHost = baseUrl ? (baseUrl.port ? `${baseUrl.hostname}:${baseUrl.port}` : baseUrl.hostname) : ''
+
+    if (
+      baseUrl &&
+      (INTERNAL_MEDIA_HOSTS.has(hostWithPort) || (parsed.protocol === 'http:' && hostWithPort === baseHost && baseOrigin.startsWith('https://')))
+    ) {
+      parsed.protocol = baseUrl.protocol
+      parsed.hostname = baseUrl.hostname
+      parsed.port = baseUrl.port
+      return parsed.toString()
+    }
+
+    return parsed.toString()
+  } catch (error) {
+    // not an absolute URL; fall through to relative handling
+  }
+
+  if (!baseOrigin) return value
+
+  try {
+    const normalizedPath = value.startsWith('/') ? value : `/${value}`
+    return new URL(normalizedPath, baseOrigin).toString()
+  } catch (error) {
+    return value
+  }
 }
 </script>
 
