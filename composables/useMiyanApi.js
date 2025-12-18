@@ -73,6 +73,27 @@ function unwrapResults(payload) {
   return payload
 }
 
+function isMenuMatch(menu, targets = []) {
+  const type = (menu?.menu_type || menu?.menuType || '').toString().toLowerCase()
+  const titleFa = (menu?.title?.fa || '').toString().toLowerCase()
+  const titleEn = (menu?.title?.en || '').toString().toLowerCase()
+
+  return targets.some((target) => {
+    const needle = target.toLowerCase()
+    return type === needle || titleFa.includes(needle) || titleEn.includes(needle)
+  })
+}
+
+function normalizeMenuPayload(payload, { prefer } = {}) {
+  const data = unwrapResults(payload)
+  if (!data) return null
+  if (!Array.isArray(data)) return data
+
+  const preferred = prefer ? data.find((menu) => prefer(menu)) : null
+  if (preferred) return preferred
+  return data[0] || null
+}
+
 function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
   const storage = enableCache && typeof window !== 'undefined' ? window.localStorage : null
 
@@ -203,24 +224,28 @@ function createCachedClient({ apiBaseUrl, enableCache, fallbackDomain }) {
 
   return {
     getBereshtTodayMenu: async () => {
-      const results = await fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/beresht_menu', { maxAge: 300000 })
-      const list = Array.isArray(results) ? results : []
-      return list[0]?.todays || list[0] || null
+      const results = await fetchWithCache(CACHE_KEYS.BERESHT_TODAY_MENU, '/beresht/menu/today/', { maxAge: 300000 })
+      return normalizeMenuPayload(results, {
+        prefer: (menu) => isMenuMatch(menu, ['today', "today's special", 'پخت روز']),
+      })
     },
     getBereshtMenu: async () => {
-      const results = await fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/beresht_menu', { maxAge: 3600000 })
-      const list = Array.isArray(results) ? results : []
-      return list[1] || list[0] || null
+      const results = await fetchWithCache(CACHE_KEYS.BERESHT_MENU, '/beresht/menu/main/', { maxAge: 3600000 })
+      return normalizeMenuPayload(results, {
+        prefer: (menu) => isMenuMatch(menu, ['main', 'menu', 'منوی نوشیدنی']),
+      })
     },
     getMadiTodayMenu: async () => {
-      const results = await fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/madi_menu', { maxAge: 300000 })
-      const list = Array.isArray(results) ? results : []
-      return list[0]?.todays || list[0] || null
+      const results = await fetchWithCache(CACHE_KEYS.MADI_TODAY_MENU, '/madi/menu/today/', { maxAge: 300000 })
+      return normalizeMenuPayload(results, {
+        prefer: (menu) => isMenuMatch(menu, ['today', "today's special", 'پخت روز']),
+      })
     },
     getMadiMenu: async () => {
-      const results = await fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/madi_menu', { maxAge: 3600000 })
-      const list = Array.isArray(results) ? results : []
-      return list[1] || list[0] || null
+      const results = await fetchWithCache(CACHE_KEYS.MADI_MENU, '/madi/menu/main/', { maxAge: 3600000 })
+      return normalizeMenuPayload(results, {
+        prefer: (menu) => isMenuMatch(menu, ['main', 'menu', 'منوی نوشیدنی']),
+      })
     },
   }
 }
