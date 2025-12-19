@@ -4,10 +4,14 @@
     :class="showImagesEnabled ? 'max-w-6xl' : 'max-w-2xl md:max-w-3xl'"
     :dir="currentLang === 'fa' ? 'rtl' : 'ltr'"
   >
-      <div class="space-y-6" v-if="sections && sections.length">
-          <section v-for="(section, sIdx) in sections" :key="sIdx" class="pb-10 last:pb-0">
+      <div v-if="sections && sections.length">
+          <section
+            v-for="(section, sIdx) in sections"
+            :key="sIdx"
+            class="pb-10 mb-8 md:mb-10 last:pb-0 last:mb-0"
+          >
             <h2
-              class="text-[1.65rem] md:text-[1.85rem] mb-3 mt-8 md:mt-10"
+              class="text-[1.65rem] md:text-[1.85rem] mb-1"
               :class="isRTL ? 'text-right' : 'text-left'"
             >
               <span v-if="isRTL" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(section.title) }}</span>

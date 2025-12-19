@@ -214,7 +214,7 @@ export const miyanBereshtLandingCopy = {
     hours: { fa: 'هر روز ۰۷۰۰ تا ۲۳۳۰', en: 'Daily 0700 to 2330' },
     phone: { fa: '۰۲۱ ۲۲۴۴ ۷۷۰۰', en: '+98 21 2244 7700' },
     // coordinates: { fa: '۳۵ ۸۰۷۹ شمالی ۵۱ ۴۰۹۱ شرقی', en: '35 8079 N 51 4091 E' },
-    mapCenter: { lat: 32.6169517, lng: 51.6697203 },
+    mapCenter: { lat: 32.617737, lng: 51.670332 },
     mapZoom: 16,
     mapLabel: { fa: 'ولنجک', en: 'Velenjak' },
     cta: { fa: 'مشاهده مسیر', en: 'View route' },
