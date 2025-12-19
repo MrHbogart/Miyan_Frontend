@@ -572,6 +572,8 @@ onMounted(() => {
   position: sticky;
   top: clamp(2.5rem, calc(var(--app-vh-fixed, var(--vh, 1vh)) * 18), 7rem);
   isolation: isolate;
+  display: flex;
+  align-items: flex-end;
   width: 100%;
   margin: auto;
   min-height: min(calc(var(--app-vh-fixed, var(--vh, 1vh)) * 100), 60rem);
@@ -611,10 +613,11 @@ onMounted(() => {
 }
 
 .story-copy {
-  position: absolute;
-  bottom: var(--story-copy-gutter);
-  left: var(--story-copy-gutter);
-  right: var(--story-copy-gutter);
+  position: relative;
+  margin-top: auto;
+  align-self: flex-end;
+  width: 100%;
+  padding: var(--story-copy-gutter);
   z-index: 1;
   display: flex;
   flex-direction: column;

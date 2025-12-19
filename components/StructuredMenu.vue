@@ -1,8 +1,15 @@
 <template>
-  <div class="w-full max-w-6xl mx-auto p-4 md:px-8" :dir="currentLang === 'fa' ? 'rtl' : 'ltr'">
+  <div
+    class="w-full mx-auto p-4 md:px-8"
+    :class="showImagesEnabled ? 'max-w-6xl' : 'max-w-3xl md:max-w-4xl'"
+    :dir="currentLang === 'fa' ? 'rtl' : 'ltr'"
+  >
       <div class="space-y-6" v-if="sections && sections.length">
           <section v-for="(section, sIdx) in sections" :key="sIdx" class="pb-8 last:pb-0">
-            <h2 class="text-2xl mb-6 text-center">
+            <h2
+              class="text-2xl mb-6"
+              :class="isRTL ? 'text-right' : 'text-left'"
+            >
               <span v-if="isRTL" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(section.title) }}</span>
               <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
             </h2>
