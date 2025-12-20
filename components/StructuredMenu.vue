@@ -18,7 +18,7 @@
               <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
             </h2>
             <div class="h-px bg-black/70 mb-6"></div>
-        <div class="grid gap-6 md:gap-8">
+        <div class="grid gap-4 md:gap-6">
           <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group px-0 md:px-6">
             <div
               v-if="item && item.name"
