@@ -154,7 +154,11 @@ const locationInfo = miyanMadiLandingCopy.location
 
 const locationLines = computed(() => (isRTL.value ? locationInfo.addressLines.fa : locationInfo.addressLines.en))
 
-const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinates.fa : locationInfo.coordinates.en))
+const locationCoordinates = computed(() => {
+  const coords = locationInfo?.coordinates
+  if (!coords) return ''
+  return isRTL.value ? coords.fa : coords.en
+})
 const mapCenter = computed(() => [locationInfo.mapCenter.lat, locationInfo.mapCenter.lng])
 const mapZoom = locationInfo.mapZoom ?? 16
 const mapMarkerLabel = computed(() => (isRTL.value ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en))

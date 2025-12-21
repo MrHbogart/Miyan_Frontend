@@ -193,7 +193,11 @@ function storySurface(image) {
 
 const locationLines = computed(() => (isRTL.value ? locationInfo.addressLines.fa : locationInfo.addressLines.en))
 
-const locationCoordinates = computed(() => (isRTL.value ? locationInfo.coordinates.fa : locationInfo.coordinates.en))
+const locationCoordinates = computed(() => {
+  const coords = locationInfo?.coordinates
+  if (!coords) return ''
+  return isRTL.value ? coords.fa : coords.en
+})
 
 useRevealObserver(landingRoot, { threshold: 0.15 })
 

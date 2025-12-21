@@ -18,12 +18,12 @@
               <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
             </h2>
             <div class="h-px bg-black/70 mb-6"></div>
-        <div class="grid gap-4 md:gap-6">
+        <div class="grid gap-3 md:gap-5">
           <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group px-0 md:px-6">
             <div
               v-if="item && item.name"
               :class="[
-                'grid gap-4 items-start',
+                'grid gap-3 items-start',
                 showMedia(item) ? 'md:grid-cols-2' : 'grid-cols-1'
               ]"
               dir="ltr"
