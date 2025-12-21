@@ -75,4 +75,11 @@ const { childTransition } = useLocalizedChildRoutes(navigationCopy.miyan)
   transition: transform 420ms cubic-bezier(.2,.9,.25,1), opacity 320ms ease;
   will-change: transform, opacity;
 }
+
+@media (max-width: 640px) and (orientation: portrait) {
+  /* Shift only the video surface on small portrait screens; overlays/logo stay centered */
+  .hero-video {
+    object-position: calc(50% - 200px) center;
+  }
+}
 </style>
