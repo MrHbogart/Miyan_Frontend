@@ -1,23 +1,23 @@
 <template>
   <footer
     class="w-full mt-0 py-10 bg-black/90 border-t border-white/10"
-    dir="ltr"
+    :dir="isRTL ? 'rtl' : 'ltr'"
     :style="footerSafeArea"
   >
     <div class="max-w-6xl mx-auto px-6 text-sm text-white flex flex-col gap-8">
-      <div class="grid gap-6 md:grid-cols-4">
-        <div class="space-y-2">
-          <p class="text-xs uppercase tracking-[0.3em] text-white/50">
+      <div class="grid gap-6 md:grid-cols-4" :class="isRTL ? 'text-right' : 'text-left'">
+        <div class="space-y-2" :class="textClass">
+          <p class="footer-heading text-sm uppercase tracking-[0.3em] text-white font-semibold">
             {{ isRTL ? 'میان' : 'Miyan' }}
           </p>
-          <p :class="textClass" class="text-base leading-relaxed text-white/80">
+          <p class="text-base leading-relaxed text-white/70 font-normal">
             {{ isRTL ? footerCopy.about.fa : footerCopy.about.en }}
           </p>
         </div>
 
-        <div v-for="section in footerSections" :key="section.key" class="space-y-2">
-          <p class="text-xs uppercase tracking-[0.2em] text-white/60">{{ section.title }}</p>
-          <ul class="space-y-1.5 text-white/80" :class="textClass">
+        <div v-for="section in footerSections" :key="section.key" class="space-y-2" :class="textClass">
+          <p class="footer-heading text-sm uppercase tracking-[0.18em] text-white font-semibold">{{ section.title }}</p>
+          <ul class="space-y-1.5 text-white/70 font-normal">
             <li v-for="link in section.links" :key="link.label.en">
               <NuxtLink
                 v-if="link.path"
@@ -38,33 +38,40 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-4 border-t border-white/10 pt-4 md:flex-row md:items-center md:justify-between">
+      <div class="flex flex-col gap-4 border-t border-white/10 pt-4 md:flex-row md:items-center md:justify-between" dir="ltr">
+        <div class="flex flex-col items-start gap-1 text-white/80" :class="textClass">
+          <span class="font-cinzel text-sm">© {{ currentYear }} Miyan Group</span>
+          <a
+            class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-xs md:text-sm"
+            :dir="isRTL ? 'rtl' : 'ltr'"
+            href="https://www.linkedin.com/in/hosseinsaeidi/"
+            target="_blank"
+            rel="noopener"
+          >
+            <span class="font-light">
+              {{ isRTL ? 'طراحی و توسعه توسط' : 'Designed and Developed by' }}
+            </span>
+            <img
+              :src="linkedinLogo"
+              alt="LinkedIn"
+              class="inline-block h-[1.1em] w-auto object-contain align-middle"
+            />
+          </a>
+        </div>
+
         <div class="flex items-center gap-2">
           <button
             @click.prevent="changeLang('fa')"
-            :class="['px-2 py-1 rounded-sm text-xs tracking-wide', lang === 'fa' ? 'bg-white text-black font-semibold' : 'text-white/70']"
+            :class="['px-2 py-1 rounded-none text-xs tracking-wide', lang === 'fa' ? 'bg-white text-black font-semibold' : 'text-white/70']"
           >
             FA
           </button>
           <button
             @click.prevent="changeLang('en')"
-            :class="['px-2 py-1 rounded-sm text-xs tracking-wide', lang === 'en' ? 'bg-white text-black font-semibold' : 'text-white/70']"
+            :class="['px-2 py-1 rounded-none text-xs tracking-wide', lang === 'en' ? 'bg-white text-black font-semibold' : 'text-white/70']"
           >
             EN
           </button>
-        </div>
-
-        <div class="flex flex-col items-start md:items-end gap-1 text-white/80">
-          <span class="font-cinzel text-sm">© {{ currentYear }} Miyan Group</span>
-          <a
-            class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-xs md:text-sm"
-            href="https://www.linkedin.com/in/hosseinsaeidi/"
-            target="_blank"
-            rel="noopener"
-          >
-            <span>{{ isRTL ? 'طراحی و توسعه توسط' : 'Designed and Developed by' }}</span>
-            <img :src="linkedinLogo" alt="LinkedIn" class="inline-block w-4 h-4 object-contain" />
-          </a>
         </div>
       </div>
     </div>
@@ -122,7 +129,6 @@ const footerSections = computed(() => [
     links: [
       { label: { fa: 'info@miyangroup.com', en: 'info@miyangroup.com' }, href: 'mailto:info@miyangroup.com' },
       { label: { fa: '+98 21 2244 7700', en: '+98 21 2244 7700' }, href: 'tel:+982122447700' },
-      { label: { fa: '+98 21 8889 4400', en: '+98 21 8889 4400' }, href: 'tel:+982188894400' },
     ],
   },
 ])
@@ -157,6 +163,18 @@ footer {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+}
+.footer-heading {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding-top: 0.05rem;
+  line-height: 1.1;
+  text-decoration-line: overline;
+  text-decoration-color: rgba(255, 255, 255, 0.9);
+  text-decoration-thickness: 1px;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
 }
 
 /* Landscape: extend footer to use full device width */

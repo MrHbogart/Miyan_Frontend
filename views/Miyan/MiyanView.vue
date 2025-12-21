@@ -79,7 +79,7 @@ const { childTransition } = useLocalizedChildRoutes(navigationCopy.miyan)
 @media (max-width: 640px) and (orientation: portrait) {
   /* Shift only the video surface on small portrait screens; overlays/logo stay centered */
   .hero-video {
-    object-position: calc(50% - 200px) center;
+    object-position: calc(50% - 100px) center;
   }
 }
 </style>
