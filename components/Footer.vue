@@ -51,11 +51,7 @@
             <span class="font-light">
               {{ isRTL ? 'طراحی و توسعه توسط' : 'Designed and Developed by' }}
             </span>
-            <img
-              :src="linkedinLogo"
-              alt="LinkedIn"
-              class="inline-block h-[1.1em] w-auto object-contain align-middle"
-            />
+            <span class="font-medium">Hossein Saeidi</span>
           </a>
         </div>
 
@@ -82,7 +78,6 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useLang, setLang } from '~/composables/useLang'
-import linkedinLogo from '@/assets/images/linkedin.png'
 
 const router = useRouter()
 const route = useRoute()

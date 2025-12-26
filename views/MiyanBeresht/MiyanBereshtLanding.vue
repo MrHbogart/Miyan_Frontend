@@ -80,8 +80,9 @@
       </div>
       <div class="location-map" role="region" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
         <div class="map-canvas">
-          <LocationMap :center="mapCenter" :zoom="mapZoom" :marker-label="mapMarkerLabel" />
+          <LocationMap :center="mapCenter || []" :zoom="mapZoom" :marker-label="mapMarkerLabel" />
           <a
+            v-if="hasMapLink"
             class="map-launch"
             :href="mapLink"
             target="_blank"
@@ -90,12 +91,15 @@
           >
             ↗
           </a>
+          <span v-else class="map-launch" aria-hidden="true">↗</span>
         </div>
         <div class="map-meta">
-          <a class="map-coords" :href="mapLink" target="_blank" rel="noopener">{{ locationCoordinates }}</a>
-          <a class="map-cta" :href="mapLink" target="_blank" rel="noopener">
+          <a v-if="hasMapLink" class="map-coords" :href="mapLink" target="_blank" rel="noopener">{{ locationCoordinates }}</a>
+          <span v-else class="map-coords">{{ locationCoordinates }}</span>
+          <a v-if="hasMapLink" class="map-cta" :href="mapLink" target="_blank" rel="noopener">
             {{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}
           </a>
+          <span v-else class="map-cta">{{ isRTL ? locationInfo.cta.fa : locationInfo.cta.en }}</span>
         </div>
       </div>
     </div>
@@ -139,10 +143,21 @@ const heroCopy = miyanBereshtLandingCopy.hero
 const experienceCopy = miyanBereshtLandingCopy.experience
 
 const locationInfo = miyanBereshtLandingCopy.location
-const mapCenter = computed(() => [locationInfo.mapCenter.lat, locationInfo.mapCenter.lng])
-const mapZoom = locationInfo.mapZoom ?? 16
-const mapMarkerLabel = computed(() => (isRTL.value ? locationInfo.mapLabel.fa : locationInfo.mapLabel.en))
-const mapLink = computed(() => `https://www.google.com/maps/search/?api=1&query=${locationInfo.mapCenter.lat},${locationInfo.mapCenter.lng}`)
+const mapCenter = computed(() => {
+  const center = locationInfo?.mapCenter
+  const lat = Number(center?.lat)
+  const lng = Number(center?.lng)
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  return [lat, lng]
+})
+const mapZoom = locationInfo?.mapZoom ?? 16
+const mapMarkerLabel = computed(() => (isRTL.value ? locationInfo?.mapLabel?.fa : locationInfo?.mapLabel?.en) || '')
+const mapLink = computed(() => {
+  if (!mapCenter.value) return ''
+  const [lat, lng] = mapCenter.value
+  return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+})
+const hasMapLink = computed(() => mapLink.value.length > 0)
 
 const marqueeStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)

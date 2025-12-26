@@ -1,7 +1,7 @@
 <template>
   <ClientOnly>
     <component
-      v-if="mapReady"
+      v-if="canRenderMap"
       :is="LMap"
       class="leaflet-map-shell"
       :zoom="zoom"
@@ -16,7 +16,7 @@
     </component>
     <template #fallback>
       <div class="leaflet-map-shell map-fallback" aria-hidden="true">
-        <span>{{ markerLabel || 'Loading map...' }}</span>
+        <span>{{ fallbackLabel }}</span>
       </div>
     </template>
   </ClientOnly>
@@ -31,7 +31,8 @@ import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 const props = defineProps({
   center: {
     type: Array,
-    required: true,
+    required: false,
+    default: () => [],
   },
   zoom: {
     type: Number,
@@ -74,11 +75,24 @@ if (process.client) {
   })()
 }
 
-const mapCenter = computed(() => props.center)
+const mapCenter = computed(() => {
+  const center = props.center
+  if (!Array.isArray(center) || center.length !== 2) return null
+  const lat = Number(center[0])
+  const lng = Number(center[1])
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  return [lat, lng]
+})
+const canRenderMap = computed(() => mapReady.value && !!mapCenter.value)
 const mapOptions = { zoomControl: false, attributionControl: false }
 const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 const tileAttribution = '© OpenStreetMap contributors'
 const markerLabel = computed(() => props.markerLabel)
+const fallbackLabel = computed(() => {
+  if (markerLabel.value) return markerLabel.value
+  if (!mapCenter.value) return 'Map unavailable'
+  return 'Loading map...'
+})
 
 </script>
 
