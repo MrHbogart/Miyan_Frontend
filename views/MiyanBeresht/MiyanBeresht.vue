@@ -145,14 +145,8 @@ useSwipeNavigation(childSwipe, {
 }
 
 .nav-link--active {
-  background: rgba(var(--nav-active-rgb, 253, 253, 253), var(--nav-active-alpha, 0.45)); /* follows navbar opacity */
+  background: rgba(var(--nav-active-rgb, 251, 251, 251), var(--nav-active-alpha, 0.45)); /* follows navbar opacity */
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
 }
 
-.nav-inner {
-  width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 0.75rem;
-}
 </style>

@@ -1,13 +1,13 @@
-import { useMenuPrefetcher } from '~/utils/menuPrefetcher'
+import { useMenuPrefetch } from '~/composables/useMenuData'
 
 export default defineNuxtPlugin(() => {
   const hasPrefetched = useState('menu-prefetch:all', () => false)
   if (hasPrefetched.value) return
 
-  const { prefetchMenusForBranch } = useMenuPrefetcher()
+  const prefetchBranch = (branch) => useMenuPrefetch(branch)
   const startPrefetch = () => {
-    prefetchMenusForBranch('beresht')
-    prefetchMenusForBranch('madi')
+    prefetchBranch('beresht')
+    prefetchBranch('madi')
     hasPrefetched.value = true
   }
 

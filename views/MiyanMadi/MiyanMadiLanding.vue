@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRevealObserver } from '@/composables/useRevealObserver'
 import { useScrollVelocity } from '@/composables/useScrollVelocity'
 import { useSceneProgress } from '@/composables/useSceneProgress'
@@ -107,7 +107,7 @@ import siteMediaDefaults from '@/state/siteMediaDefaults'
 import { miyanMadiLandingCopy } from '@/state/siteCopy'
 import LocationMap from '@/components/LocationMap.vue'
 import { useLang } from '~/composables/useLang'
-import { useMenuPrefetcher } from '~/utils/menuPrefetcher'
+import { useMenuPrefetch } from '~/composables/useMenuData'
 
 const siteMedia = siteMediaDefaults
 const landingRoot = ref(null)
@@ -204,11 +204,7 @@ function storySurface(image) {
 }
 
 useRevealObserver(landingRoot, { threshold: 0.18 })
-
-const { prefetchMenusForBranch } = useMenuPrefetcher()
-onMounted(() => {
-  prefetchMenusForBranch('madi')
-})
+useMenuPrefetch('madi')
 </script>
 
 <style scoped>
