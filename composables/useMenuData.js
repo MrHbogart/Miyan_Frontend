@@ -1,3 +1,4 @@
+import { onMounted } from 'vue'
 import { useMiyanApi } from '~/composables/useMiyanApi'
 
 const MENU_KEYS = {
@@ -13,6 +14,7 @@ const MENU_HANDLERS = {
 }
 
 const defaultMenuState = () => ({ sections: [] })
+const hasMenuSections = (menu) => Array.isArray(menu?.sections) && menu.sections.length > 0
 
 async function fetchMenuByKey(key, api) {
   const loader = MENU_HANDLERS[key]
@@ -30,17 +32,30 @@ export function useMenuData(key, options = {}) {
   const api = useMiyanApi()
   const handler = () => fetchMenuByKey(key, api)
 
-  return useAsyncData(
+  const asyncData = useAsyncData(
     key,
     handler,
     {
       default: defaultMenuState,
-      server: true,
+      server: false,
       lazy: false,
       dedupe: 'defer',
       ...options,
     },
   )
+
+  if (process.client) {
+    const { data, pending, error, refresh } = asyncData
+
+    onMounted(() => {
+      if (pending.value) return
+      if (error.value || !hasMenuSections(data.value)) {
+        refresh()
+      }
+    })
+  }
+
+  return asyncData
 }
 
 export function useMenuPrefetch(branch) {
