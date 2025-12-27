@@ -116,7 +116,7 @@ const headerVisualStyle = computed(() => {
     borderBottom: opacity ? '0px solid rgba(255,255,255,0.06)' : 'none',
     transition: 'background 400ms ease, backdrop-filter 400ms ease',
     '--header-bg-opacity': opacity,
-    '--header-active-rgb': '253, 253, 253',
+    '--header-active-rgb': '251, 251, 251',
     '--header-active-alpha': activeAlpha,
   }
 })
@@ -235,7 +235,16 @@ header {
 .header-hidden { opacity: 0; transform: translateY(-6px); transition: opacity 320ms ease, transform 320ms cubic-bezier(.2,.9,.2,1) }
 .header-visible { opacity: 1; transform: translateY(0); transition: opacity 320ms ease, transform 320ms cubic-bezier(.2,.9,.2,1) }
 
-.header-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; column-gap: 12px; }
+.header-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 0.75rem;
+}
 .header-logo {
   height: 68px;
   margin-left: 0;
@@ -253,7 +262,7 @@ header {
   width: 100%;
   cursor: pointer;
   border-radius: 0px;
-  padding: 0.45rem 1rem;
+  padding: 0.35rem 0.7rem;
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
 }
 .logo-link.is-active {
@@ -288,13 +297,13 @@ header {
   color: #1f2937;
   line-height: 1;
   padding: 0 8px;
-  font-size: 24px;
+  font-size: 21px;
 }
 @media (min-width: 768px) {
-  .logo-text { font-size: 28px; }
+  .logo-text { font-size: 26px; }
 }
-.logo-text--center { font-weight: 450; font-size: 24px; }
-@media (min-width: 768px) { .logo-text--center { font-size: 28px; } }
+.logo-text--center { font-weight: 450; font-size: 23px; }
+@media (min-width: 768px) { .logo-text--center { font-size: 26px; } }
 .logo-link:not(.is-active):hover .logo-text,
 .logo-link:not(.is-active):focus .logo-text,
 .logo-link:not(.is-active):active .logo-text {

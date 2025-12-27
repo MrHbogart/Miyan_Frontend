@@ -150,8 +150,9 @@ useSwipeNavigation(childSwipe, {
 }
 
 .nav-inner {
-  width: calc(100% - 2.5rem);
-  max-width: 1180px;
+  width: 100%;
+  max-width: 1100px;
   margin: 0 auto;
+  padding: 0 0.75rem;
 }
 </style>

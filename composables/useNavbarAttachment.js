@@ -99,7 +99,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     const baseStyle = {
       backgroundColor: `rgba(255, 255, 255, ${opacity})`,
       '--nav-bg-opacity': opacity,
-      '--nav-active-rgb': '253, 253, 253',
+      '--nav-active-rgb': '251, 251, 251',
       '--nav-active-alpha': activeAlpha,
       transition: `background ${TRANSITION_DURATION}ms ${EASING}, backdrop-filter ${TRANSITION_DURATION}ms ${EASING}, box-shadow ${TRANSITION_DURATION}ms ${EASING}`,
       boxSizing: 'border-box',
