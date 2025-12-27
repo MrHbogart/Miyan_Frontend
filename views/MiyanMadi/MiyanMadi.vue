@@ -20,11 +20,11 @@
     <!-- Toggle Buttons -->
     <div class="nav-placeholder">
     <div ref="navbarSentinel" :style="sentinelStyle"></div>
-    <section ref="navbarRef" class="py-2 shadow-sm transition-all" :style="navInlineStyle" :dir="isRTL ? 'rtl' : 'ltr'">
-        <div class="w-full px-6 md:px-12">
+    <section ref="navbarRef" class="shadow-sm transition-all flex justify-center" :style="navInlineStyle" :dir="isRTL ? 'rtl' : 'ltr'">
+        <div class="nav-inner">
           <div
             :class="[
-              'flex flex-row w-full items-center justify-between gap-2 text-center',
+              'flex flex-row w-full items-center justify-between gap-1 text-center',
               isRTL ? 'flex-row-reverse' : ''
             ]"
           >
@@ -32,7 +32,7 @@
               v-for="item in displayNavItems"
               :key="item.name"
               :to="getLocalizedPath(item.path)"
-              class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold nav-link"
+              class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-4 md:px-6 py-3.5 md:py-4 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold nav-link"
               :class="[
                 { 'font-bold nav-link--active': isActive(item.path) },
                 { 'font-cinzel font-light tracking-wide': !isRTL },
@@ -107,6 +107,8 @@ useSwipeNavigation(childSwipe, {
 <style scoped>
 .nav-placeholder {
   position: relative;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .nav-placeholder section {
@@ -145,5 +147,11 @@ useSwipeNavigation(childSwipe, {
 .nav-link--active {
   background: rgba(var(--nav-active-rgb, 253, 253, 253), var(--nav-active-alpha, 0.45)); /* follows navbar opacity */
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
+}
+
+.nav-inner {
+  width: calc(100% - 2.5rem);
+  max-width: 1180px;
+  margin: 0 auto;
 }
 </style>

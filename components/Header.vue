@@ -215,19 +215,19 @@ onUnmounted(() => {
 <style scoped>
 header { 
   height: auto;
-  min-height: 64px;
+  min-height: 68px;
   transition: background-color 400ms ease, backdrop-filter 400ms ease;
 }
 
 @media (max-width: 640px) {
   header {
-    min-height: 56px;
+    min-height: 62px;
   }
 }
 
 @media (orientation: landscape) and (max-width: 900px) {
   header {
-    min-height: 64px;
+    min-height: 68px;
   }
 }
 
@@ -237,12 +237,12 @@ header {
 
 .header-grid { display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; column-gap: 12px; }
 .header-logo {
-  height: 40px;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
+  height: 68px;
+  margin-left: 0;
+  margin-right: 0;
 }
 @media (min-width: 768px) {
-  .header-logo { height: 56px; }
+  .header-logo { height: 72px; }
 }
 
 .logo-link {
@@ -253,6 +253,7 @@ header {
   width: 100%;
   cursor: pointer;
   border-radius: 0px;
+  padding: 0.45rem 1rem;
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
 }
 .logo-link.is-active {
@@ -260,7 +261,7 @@ header {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
 }
 .logo-img {
-  height: 100%;
+  height: 78%;
   width: auto;
   aspect-ratio: 4/1;
   object-fit: contain;
@@ -286,14 +287,14 @@ header {
   letter-spacing: 0.02em;
   color: #1f2937;
   line-height: 1;
-  padding: 0 6px;
-  font-size: 20px;
+  padding: 0 8px;
+  font-size: 24px;
 }
 @media (min-width: 768px) {
-  .logo-text { font-size: 26px; }
+  .logo-text { font-size: 28px; }
 }
 .logo-text--center { font-weight: 450; font-size: 24px; }
-@media (min-width: 768px) { .logo-text--center { font-size: 26px; } }
+@media (min-width: 768px) { .logo-text--center { font-size: 28px; } }
 .logo-link:not(.is-active):hover .logo-text,
 .logo-link:not(.is-active):focus .logo-text,
 .logo-link:not(.is-active):active .logo-text {
@@ -312,25 +313,24 @@ header {
   max-width: 100%;
   width: 100%;
   margin: 0;
-  padding: 1rem 1.5rem;
-  padding-top: max(1.25rem, calc(env(safe-area-inset-top) + 1rem));
-  padding-left: max(1.5rem, env(safe-area-inset-left));
-  padding-right: max(1.5rem, env(safe-area-inset-right));
+  padding: 0;
+  padding-left: max(0rem, env(safe-area-inset-left));
+  padding-right: max(0rem, env(safe-area-inset-right));
   box-sizing: border-box;
 }
 
 @media (min-width: 768px) {
   :global(.header-content-wrapper) {
-    padding: 1rem 3rem;
+    padding: 0;
     padding-top: max(1rem, calc(env(safe-area-inset-top) + 1rem));
   }
 }
 
 @media (orientation: landscape) {
   :global(.header-content-wrapper) {
-    padding: 0.5rem 1.5rem;
-    padding-left: max(1.5rem, env(safe-area-inset-left));
-    padding-right: max(1.5rem, env(safe-area-inset-right));
+    padding: 0;
+    padding-left: max(0rem, env(safe-area-inset-left));
+    padding-right: max(0rem, env(safe-area-inset-right));
   }
 }
 

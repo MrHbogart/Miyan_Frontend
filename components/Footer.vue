@@ -39,16 +39,16 @@
       </div>
 
       <div class="flex flex-row items-center justify-between gap-4 border-t border-white/10 pt-4 flex-nowrap" dir="ltr">
-        <div class="flex flex-col items-start gap-1 text-white/80" :class="textClass">
-          <span class="font-cinzel text-sm">© {{ currentYear }} Miyan Group</span>
+        <div class="flex flex-col items-start gap-0 text-white/80" :class="textClass">
+          <span class="font-cinzel text-sm leading-snug">© {{ currentYear }} Miyan Group</span>
           <a
-            class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-xs md:text-sm"
+            class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-[0.7rem] leading-snug"
             :dir="isRTL ? 'rtl' : 'ltr'"
             href="https://www.linkedin.com/in/hosseinsaeidi/"
             target="_blank"
             rel="noopener"
           >
-            <span class="font-medium">Hossein Saeidi</span>
+            <span class="footer-heading font-cinzel font-medium text-[0.7rem] uppercase tracking-[0.18em]">Hossein Saeidi</span>
           </a>
         </div>
 

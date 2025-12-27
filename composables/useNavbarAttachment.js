@@ -119,8 +119,8 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
         width: 'calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
         height: navHeight.value ? `${navHeight.value}px` : undefined,
         zIndex: '30',
-        paddingLeft: 'max(env(safe-area-inset-left), 1rem)',
-        paddingRight: 'max(env(safe-area-inset-right), 1rem)',
+        paddingLeft: 'env(safe-area-inset-left, 0px)',
+        paddingRight: 'env(safe-area-inset-right, 0px)',
         backdropFilter: 'saturate(120%) blur(6px)',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
       }
