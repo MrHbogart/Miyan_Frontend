@@ -38,7 +38,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-4 border-t border-white/10 pt-4 md:flex-row md:items-center md:justify-between" dir="ltr">
+      <div class="flex flex-row items-center justify-between gap-4 border-t border-white/10 pt-4 flex-nowrap" dir="ltr">
         <div class="flex flex-col items-start gap-1 text-white/80" :class="textClass">
           <span class="font-cinzel text-sm">© {{ currentYear }} Miyan Group</span>
           <a
@@ -48,14 +48,11 @@
             target="_blank"
             rel="noopener"
           >
-            <span class="font-light">
-              {{ isRTL ? 'طراحی و توسعه توسط' : 'Designed and Developed by' }}
-            </span>
             <span class="font-medium">Hossein Saeidi</span>
           </a>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-nowrap">
           <button
             @click.prevent="changeLang('fa')"
             :class="['px-2 py-1 rounded-none text-xs tracking-wide', lang === 'fa' ? 'bg-white text-black font-semibold' : 'text-white/70']"

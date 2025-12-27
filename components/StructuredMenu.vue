@@ -1,7 +1,7 @@
 <template>
   <div
     class="w-full mx-auto p-4 md:px-8"
-    :class="showImagesEnabled ? 'max-w-6xl' : 'max-w-2xl md:max-w-3xl'"
+    :class="menuWidthClass"
     :dir="currentLang === 'fa' ? 'rtl' : 'ltr'"
   >
       <div v-if="sections && sections.length">
@@ -134,6 +134,7 @@ const showImagesEnabled = computed(() => {
   if (typeof menu.pictureless === 'boolean') return !menu.pictureless
   return true
 })
+const menuWidthClass = computed(() => (showImagesEnabled.value ? 'max-w-6xl' : 'max-w-5xl'))
 
 // Get sections directly from menu.sections
 // The API/mock data structure has sections at the top level

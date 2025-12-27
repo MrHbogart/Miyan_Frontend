@@ -32,9 +32,9 @@
               v-for="item in displayNavItems"
               :key="item.name"
               :to="getLocalizedPath(item.path)"
-              class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold"
+              class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-3 md:px-4 py-3 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold nav-link"
               :class="[
-                { 'font-bold': isActive(item.path) },
+                { 'font-bold nav-link--active': isActive(item.path) },
                 { 'font-cinzel font-light tracking-wide': !isRTL },
                 { 'font-b-titr tracking-normal': isRTL }
               ]"
@@ -134,5 +134,15 @@ useSwipeNavigation(childSwipe, {
 .hero-content {
   transition: transform 420ms cubic-bezier(.2,.9,.25,1), opacity 320ms ease;
   will-change: transform, opacity;
+}
+
+.nav-link {
+  color: inherit;
+  background: transparent;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.nav-link--active {
+  background: rgba(253, 253, 253, 0.9); /* white minus ~2 per channel */
 }
 </style>
