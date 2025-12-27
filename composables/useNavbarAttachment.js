@@ -94,8 +94,13 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
    * Transparency fades from header to navbar during attachment
    */
   const navInlineStyle = computed(() => {
+    const opacity = navBgOpacity.value
+    const activeAlpha = Math.min(1, Math.max(0, opacity * 0.2))
     const baseStyle = {
-      backgroundColor: `rgba(255, 255, 255, ${navBgOpacity.value})`,
+      backgroundColor: `rgba(255, 255, 255, ${opacity})`,
+      '--nav-bg-opacity': opacity,
+      '--nav-active-rgb': '253, 253, 253',
+      '--nav-active-alpha': activeAlpha,
       transition: `background ${TRANSITION_DURATION}ms ${EASING}, backdrop-filter ${TRANSITION_DURATION}ms ${EASING}, box-shadow ${TRANSITION_DURATION}ms ${EASING}`,
       boxSizing: 'border-box',
     }

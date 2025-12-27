@@ -2,11 +2,7 @@
   <header
     dir="ltr"
     class="fixed w-full top-0 left-0 z-40"
-    :style="[headerStyle, {
-      backgroundColor: `rgba(255,255,255, ${headerBgOpacity})`,
-      borderBottom: headerBgOpacity ? '0px solid rgba(255,255,255,0.06)' : 'none',
-      transition: `background 400ms ease, backdrop-filter 400ms ease`
-    }]"
+    :style="[headerStyle, headerVisualStyle]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
     <div class="header-content-wrapper">
@@ -75,7 +71,18 @@ const linkTargets = computed(() => {
   }
 })
 
-const isActive = (target) => route.path.startsWith(target)
+const normalizePath = (p = '') => `/${p.replace(/^\/+|\/+$/g, '')}`
+const isActive = (target) => {
+  const current = normalizePath(route.path)
+  const targetPath = normalizePath(target)
+  const langRoot = normalizePath(langState.value || 'fa')
+
+  if (targetPath === langRoot) {
+    return current === langRoot
+  }
+
+  return current === targetPath || current.startsWith(`${targetPath}/`)
+}
 const lang = computed(() => langState.value)
 
 // Header state
@@ -100,6 +107,19 @@ const headerStyle = computed(() => ({
   paddingLeft: 'env(safe-area-inset-left)',
   paddingRight: 'env(safe-area-inset-right)'
 }))
+
+const headerVisualStyle = computed(() => {
+  const opacity = headerBgOpacity.value
+  const activeAlpha = Math.min(1, Math.max(0, opacity * 0.2))
+  return {
+    backgroundColor: `rgba(255,255,255, ${opacity})`,
+    borderBottom: opacity ? '0px solid rgba(255,255,255,0.06)' : 'none',
+    transition: 'background 400ms ease, backdrop-filter 400ms ease',
+    '--header-bg-opacity': opacity,
+    '--header-active-rgb': '253, 253, 253',
+    '--header-active-alpha': activeAlpha,
+  }
+})
 
 // Update header bottom Y position
 function updateHeaderBottom() {
@@ -234,6 +254,10 @@ header {
   cursor: pointer;
   border-radius: 0px;
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
+}
+.logo-link.is-active {
+  background: rgba(var(--header-active-rgb, 253, 253, 253), var(--header-active-alpha, 0.2));
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
 }
 .logo-img {
   height: 100%;

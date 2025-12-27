@@ -139,10 +139,11 @@ useSwipeNavigation(childSwipe, {
 .nav-link {
   color: inherit;
   background: transparent;
-  transition: background-color 200ms ease, color 200ms ease;
+  transition: background-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
 }
 
 .nav-link--active {
-  background: rgba(253, 253, 253, 0.9); /* white minus ~2 per channel */
+  background: rgba(var(--nav-active-rgb, 253, 253, 253), var(--nav-active-alpha, 0.45)); /* follows navbar opacity */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
 }
 </style>
