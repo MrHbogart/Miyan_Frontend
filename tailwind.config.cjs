@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   darkMode: 'class',
   content: [
@@ -18,8 +20,9 @@ module.exports = {
         brand: '#5C3A21' // modern dark brown
       },
       fontFamily: {
-        'b-titr': ['B Titr', 'system-ui'],
-        'cinzel': ['Cinzel', 'serif']
+        sans: ['var(--font-base)', ...defaultTheme.fontFamily.sans],
+        'b-titr': ['var(--font-fa)', 'B Titr', ...defaultTheme.fontFamily.sans],
+        'cinzel': ['var(--font-en)', ...defaultTheme.fontFamily.serif]
       }
     }
   },

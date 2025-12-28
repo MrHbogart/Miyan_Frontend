@@ -459,7 +459,7 @@ onUnmounted(() => {
   gap: 0.75rem;
   background: rgba(0, 0, 0, 0.45);
   color: #fff;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-base), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }

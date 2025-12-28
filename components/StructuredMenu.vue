@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full mx-auto p-4 md:px-8"
+    class="menu-shell w-full"
     :class="menuWidthClass"
     :dir="currentLang === 'fa' ? 'rtl' : 'ltr'"
   >
@@ -11,11 +11,11 @@
             class="pb-10 mb-8 md:mb-10 last:pb-0 last:mb-0"
           >
             <h2
-              class="text-[1.65rem] md:text-[1.85rem] mb-1"
+              class="menu-section-title"
               :class="isRTL ? 'text-right' : 'text-left'"
             >
-              <span v-if="isRTL" class="block font-b-titr mb-1" dir="rtl">{{ translateCopy(section.title) }}</span>
-              <span v-else class="block font-cinzel font-light tracking-wide">{{ translateCopy(section.title) }}</span>
+              <span v-if="isRTL" class="block font-b-titr" dir="rtl">{{ translateCopy(section.title) }}</span>
+              <span v-else class="block font-cinzel font-semibold tracking-[0.08em]">{{ translateCopy(section.title) }}</span>
             </h2>
             <div class="h-px bg-black/70 mb-6"></div>
         <div class="grid gap-3 md:gap-5">
@@ -32,25 +32,25 @@
                 <div class="mb-4" :dir="isRTL ? 'rtl' : 'ltr'">
                   <div class="flex items-start justify-between gap-4">
                     <div :class="[isRTL ? 'order-1 text-right flex-1' : 'order-2 text-left flex-1']">
-                      <h3 class="mb-2">
-                        <span v-if="isRTL" class="block font-b-titr text-xl mb-1">{{ translateCopy(item.name) }}</span>
-                        <span v-else class="block font-cinzel text-lg font-medium">{{ translateCopy(item.name) }}</span>
+                      <h3 class="menu-item-name mb-2">
+                        <span v-if="isRTL" class="block font-b-titr">{{ translateCopy(item.name) }}</span>
+                        <span v-else class="block font-cinzel font-semibold tracking-wide">{{ translateCopy(item.name) }}</span>
                       </h3>
                     </div>
 
                     <div
                       v-if="item.price"
-                      class="text-gray-700 min-w-[3rem]"
-                      :class="isRTL ? 'order-1 text-left font-b-titr text-lg' : 'order-2 text-right font-cinzel font-light text-base'"
+                      class="text-gray-700 min-w-[3rem] menu-price"
+                      :class="isRTL ? 'order-1 text-left font-b-titr' : 'order-2 text-right font-cinzel font-semibold tracking-wide'"
                       dir="ltr"
                     >
                       {{ translateCopy(item.price) }}
                     </div>
                   </div>
 
-                  <p v-if="item.description" class="text-gray-500" :class="isRTL ? 'text-right' : 'text-left'">
-                    <span v-if="isRTL" class="block font-b-titr text-sm mb-1">{{ translateCopy(item.description) }}</span>
-                    <span v-else class="block font-cinzel text-sm font-light">{{ translateCopy(item.description) }}</span>
+                  <p v-if="item.description" class="menu-description text-gray-600" :class="isRTL ? 'text-right' : 'text-left'">
+                    <span v-if="isRTL" class="block font-b-titr">{{ translateCopy(item.description) }}</span>
+                    <span v-else class="block font-cinzel font-normal">{{ translateCopy(item.description) }}</span>
                   </p>
                 </div>
               </div>
@@ -134,7 +134,7 @@ const showImagesEnabled = computed(() => {
   if (typeof menu.pictureless === 'boolean') return !menu.pictureless
   return true
 })
-const menuWidthClass = computed(() => (showImagesEnabled.value ? 'max-w-6xl' : 'max-w-5xl'))
+const menuWidthClass = computed(() => (showImagesEnabled.value ? 'menu-shell--wide' : 'menu-shell--compact'))
 
 // Get sections directly from menu.sections
 // The API/mock data structure has sections at the top level
@@ -238,6 +238,62 @@ function normalizeMediaUrl(raw) {
 </script>
 
 <style scoped>
+/* Keep menu width consistent even when loaded directly without parent padding. */
+.menu-shell {
+  --menu-max-width: 70rem;
+  width: 100%;
+  max-width: min(var(--menu-max-width), calc(100% - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  margin: 0 auto;
+  padding: 1.25rem max(env(safe-area-inset-left, 0px), 1rem) 0 max(env(safe-area-inset-right, 0px), 1rem);
+  box-sizing: border-box;
+}
+
+.menu-shell--wide { --menu-max-width: 72rem; }
+.menu-shell--compact { --menu-max-width: 66rem; }
+
+@media (min-width: 768px) {
+  .menu-shell {
+    padding-left: max(env(safe-area-inset-left, 0px), 1.75rem);
+    padding-right: max(env(safe-area-inset-right, 0px), 1.75rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .menu-shell {
+    padding-left: clamp(1.75rem, 4vw, 2.75rem);
+    padding-right: clamp(1.75rem, 4vw, 2.75rem);
+  }
+}
+
+.menu-section-title {
+  font-size: clamp(1.9rem, 3vw, 2.15rem);
+  font-weight: var(--font-weight-strong, 650);
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+[dir="rtl"] .menu-section-title { letter-spacing: 0.025em; }
+
+.menu-item-name {
+  font-size: clamp(1.2rem, 2.4vw, 1.45rem);
+  font-weight: var(--font-weight-strong, 650);
+  line-height: 1.25;
+}
+
+.menu-price {
+  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+  font-weight: var(--font-weight-strong, 650);
+}
+
+.menu-description {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .menu-description { font-size: 1.05rem; }
+}
+
 /* Smooth transitions for interactive elements */
 .group {
   transition: all 0.3s ease;

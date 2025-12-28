@@ -35,7 +35,7 @@
               class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-4 md:px-6 py-3.5 md:py-4 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold nav-link"
               :class="[
                 { 'font-bold nav-link--active': isActive(item.path) },
-                { 'font-cinzel font-light tracking-wide': !isRTL },
+                { 'font-cinzel tracking-wide': !isRTL },
                 { 'font-b-titr tracking-normal': isRTL }
               ]"
             >

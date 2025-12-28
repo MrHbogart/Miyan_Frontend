@@ -291,18 +291,18 @@ header {
   align-items: center;
   text-align: center;
   height: 100%;
-  font-family: 'Cinzel', serif;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  font-family: var(--font-en, 'Cinzel', serif);
+  font-weight: 500;
+  letter-spacing: 0.04em;
   color: #1f2937;
   line-height: 1;
   padding: 0 8px;
-  font-size: 21px;
+  font-size: 22px;
 }
 @media (min-width: 768px) {
-  .logo-text { font-size: 26px; }
+  .logo-text { font-size: 25px; }
 }
-.logo-text--center { font-weight: 450; font-size: 23px; }
+.logo-text--center { font-weight: 600; font-size: 24px; }
 @media (min-width: 768px) { .logo-text--center { font-size: 26px; } }
 .logo-link:not(.is-active):hover .logo-text,
 .logo-link:not(.is-active):focus .logo-text,

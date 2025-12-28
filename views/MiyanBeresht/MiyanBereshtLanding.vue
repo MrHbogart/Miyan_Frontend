@@ -130,8 +130,8 @@ const langState = useLang()
 const lang = computed(() => langState.value)
 const isRTL = computed(() => lang.value === 'fa')
 const dirAttr = computed(() => (isRTL.value ? 'rtl' : 'ltr'))
-const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
-const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
+const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right leading-relaxed' : 'font-sans text-left leading-relaxed'))
+const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right font-bold' : 'font-cinzel font-semibold tracking-wide text-left'))
 const pxToRem = (valuePx) => `${parseFloat((valuePx / 16).toFixed(4))}rem`
 const landingStyle = computed(() => ({
   '--viz-velocity': speedFactor.value.toFixed(3)
@@ -508,14 +508,14 @@ useMenuPrefetch('beresht')
 }
 
 .location-copy h2 {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-base), 'Cinzel', serif;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 .location-copy p,
 .location-list li {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-base), system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   font-size: 0.95rem;
   line-height: 1.6;
 }
@@ -638,7 +638,7 @@ useMenuPrefetch('beresht')
   flex-direction: column;
   gap: 0.15rem;
   color: rgba(255, 215, 72, 0.9);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-base), system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   max-width: min(36rem, calc(100% - (var(--story-copy-gutter) * 2)));
 }
 

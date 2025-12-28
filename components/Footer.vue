@@ -39,7 +39,7 @@
       </div>
 
       <div class="flex flex-row items-center justify-between gap-4 border-t border-white/10 pt-4 flex-nowrap" dir="ltr">
-        <div class="flex flex-col items-start gap-0 text-white/80" :class="textClass">
+        <div class="flex flex-col items-start gap-0 text-white/80 font-cinzel tracking-[0.18em]">
           <span class="font-cinzel text-sm leading-snug">© {{ currentYear }} Miyan Group</span>
           <a
             class="inline-flex items-center gap-2 text-white/70 hover:text-white transition-colors text-[0.7rem] leading-snug"
@@ -87,7 +87,7 @@ const footerSafeArea = {
   paddingLeft: 'env(safe-area-inset-left)',
   paddingRight: 'env(safe-area-inset-right)',
 }
-const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
+const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right leading-relaxed' : 'font-sans text-left leading-relaxed'))
 
 const footerCopy = {
   about: {

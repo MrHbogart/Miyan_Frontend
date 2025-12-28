@@ -135,8 +135,8 @@ const landingStyle = computed(() => ({
 
 // helper classes (left as minimal additions — they match how Beresht computed them previously)
 // If you already define textClass/titleClass globally, these will not conflict.
-const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-sans text-left'))
-const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right' : 'font-cinzel font-light text-left'))
+const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right leading-relaxed' : 'font-sans text-left leading-relaxed'))
+const titleClass = computed(() => (isRTL.value ? 'font-b-titr text-right font-bold' : 'font-cinzel font-semibold tracking-wide text-left'))
 
 const heroCopy = miyanLandingCopy.hero
 
@@ -288,7 +288,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(12px);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-base), system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   box-shadow: 0 6px 18px rgba(16, 11, 7, 0.06);
 }
 
@@ -406,7 +406,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(12px);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-base), system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
 }
 
 .modal-body::after {
@@ -551,7 +551,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   flex-direction: column;
   gap: 0.65rem;
   color: rgba(255, 255, 255, 0.95);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  font-family: var(--font-base), system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   max-width: min(56ch, 58%);
   margin: var(--story-copy-gutter);
   text-shadow: 0 0.35rem 1.5rem rgba(0, 0, 0, 0.45);
