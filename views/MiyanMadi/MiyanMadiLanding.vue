@@ -68,7 +68,6 @@
           <li v-for="(line, idx) in locationLines" :key="`madi-address-${idx}`">{{ line }}</li>
         </ul>
         <p class="location-hours">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
-        <p class="location-phone">{{ isRTL ? locationInfo.phone.fa : locationInfo.phone.en }}</p>
       </div>
       <div class="location-map" role="region" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
         <div class="map-canvas">
@@ -511,13 +510,6 @@ useMenuPrefetch('madi')
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-top: 0.6rem;
-}
-
-.location-phone {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-top: 0.2rem;
-  letter-spacing: 0.12em;
 }
 
 .location-copy h2 {

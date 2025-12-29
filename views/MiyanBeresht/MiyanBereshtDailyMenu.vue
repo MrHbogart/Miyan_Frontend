@@ -1,23 +1,23 @@
 <template>
   <div class="min-h-screen brand-surface brand-surface--beresht flex flex-col items-center py-8 w-full">
-    <div v-if="stateReady" class="content-shell content-shell--flush w-full">
-      <StructuredMenu :menu="menu" />
-    </div>
-    <div v-else class="w-full flex-1 flex items-center justify-center px-6">
-      <div class="text-center space-y-4">
-        <p class="text-base md:text-lg font-medium text-amber-900">
-          <span v-if="pending">{{ translateState('loading') }}</span>
-          <span v-else-if="error">{{ translateState('error') }}</span>
-          <span v-else>{{ translateState('empty') }}</span>
-        </p>
-        <button
-          v-if="error"
-          type="button"
-          class="px-4 py-2 bg-amber-900 text-white text-sm uppercase tracking-wide"
-          @click="refresh"
-        >
-          {{ translateState('retry') }}
-        </button>
+    <div class="content-shell content-shell--flush w-full">
+      <StructuredMenu v-if="stateReady" :menu="menu" />
+      <div v-else class="w-full flex-1 flex items-center justify-center px-6 py-10">
+        <div class="text-center space-y-4">
+          <p class="text-base md:text-lg font-medium text-amber-900">
+            <span v-if="pending">{{ translateState('loading') }}</span>
+            <span v-else-if="error">{{ translateState('error') }}</span>
+            <span v-else>{{ translateState('empty') }}</span>
+          </p>
+          <button
+            v-if="error"
+            type="button"
+            class="px-4 py-2 bg-amber-900 text-white text-sm uppercase tracking-wide"
+            @click="refresh"
+          >
+            {{ translateState('retry') }}
+          </button>
+        </div>
       </div>
     </div>
   </div>

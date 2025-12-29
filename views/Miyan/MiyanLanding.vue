@@ -3,35 +3,24 @@
     ref="landingRoot"
     class="landing-shell landing-shell--miyan brand-surface brand-surface--miyan content-shell"
     :dir="dirAttr"
-    :style="landingStyle"
   >
     <div class="miyan-hero-intro" data-reveal>
-      <div class="hero-intro-text" :class="textClass">
-        <p class="overline">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-        <h1 :class="titleClass">
-          {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
-        </h1>
-        <p>
-          {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
-        </p>
-        <div class="hero-intro-meta">
+      <div class="hero-intro-text hero-intro-single" :class="textClass" data-reveal>
+        <div class="hero-intro-headline">
+          <p class="overline">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
+          <h1 :class="titleClass">
+            {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
+          </h1>
+          <p class="hero-lede">
+            {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
+          </p>
+        </div>
+        <div class="hero-intro-divider" aria-hidden="true"></div>
+        <div class="hero-intro-meta hero-intro-meta--spread">
           <div class="meta-card" v-for="meta in heroMeta" :key="meta.label.en">
             <span class="meta-label">{{ isRTL ? meta.label.fa : meta.label.en }}</span>
             <span class="meta-value">{{ isRTL ? meta.value.fa : meta.value.en }}</span>
           </div>
-        </div>
-      </div>
-      <div class="hero-intro-dynamic">
-        <div class="miyan-marquee" :style="marqueeStyle" aria-hidden="true">
-          <span v-for="(word, index) in marqueeWords" :key="word.en + index" class="marquee-item">
-            {{ isRTL ? word.fa : word.en }}
-          </span>
-        </div>
-        <div class="intro-pillars">
-          <article v-for="pillar in heroPillars" :key="pillar.title.en" class="pillar-card">
-            <h3>{{ isRTL ? pillar.title.fa : pillar.title.en }}</h3>
-            <p>{{ isRTL ? pillar.copy.fa : pillar.copy.en }}</p>
-          </article>
         </div>
       </div>
     </div>
@@ -40,7 +29,7 @@
       <div class="hero-media" :style="[heroBackgroundStyle, heroMediaMotion]">
         <div class="hero-media-gradient" aria-hidden="true"></div>
       </div>
-      <div class="hero-copy-block" :class="textClass" :style="heroCopyMotion">
+      <div class="hero-copy-block" :class="textClass" :style="heroCopyMotion" data-reveal>
         <p class="overline">{{ isRTL ? branchSection.overline.fa : branchSection.overline.en }}</p>
         <h1 :class="titleClass">{{ isRTL ? branchSection.title.fa : branchSection.title.en }}</h1>
         <p>{{ isRTL ? branchSection.body.fa : branchSection.body.en }}</p>
@@ -117,7 +106,7 @@ import { miyanLandingCopy } from '@/state/siteCopy'
 import { useLang } from '~/composables/useLang'
 
 const landingRoot = ref(null)
-const { scrollY, speedFactor } = useScrollVelocity({
+const { scrollY } = useScrollVelocity({
   smoothing: 0.22,
   multiplier: 10,
   max: 1.45,
@@ -129,10 +118,6 @@ const isRTL = computed(() => lang.value === 'fa')
 const dirAttr = computed(() => (isRTL.value ? 'rtl' : 'ltr'))
 const pxToRem = (valuePx) => `${parseFloat((valuePx / 16).toFixed(3))}rem`
 
-const landingStyle = computed(() => ({
-  '--viz-velocity': speedFactor.value.toFixed(3),
-}))
-
 // helper classes (left as minimal additions — they match how Beresht computed them previously)
 // If you already define textClass/titleClass globally, these will not conflict.
 const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right leading-relaxed' : 'font-sans text-left leading-relaxed'))
@@ -142,28 +127,7 @@ const heroCopy = miyanLandingCopy.hero
 
 const branchSection = miyanLandingCopy.branches
 
-// fixed marquee words (typos corrected, last word filled)
-const marqueeWords = miyanLandingCopy.marqueeWords
-
-// HYBRID MARQUEE: scroll-driven translateX (Beresht style) with medium speed multiplier
-const MARQUEE_SPEED = 0.25 // medium as requested
-
-const marqueeStyle = computed(() => {
-  // curve smooths the start of motion (same idea as Beresht)
-  const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
-  // base offset (px) scaled by viz speed and chosen marquee speed
-  // for LTR we translate left (negative), for RTL we reverse
-  const direction = isRTL.value ? 1 : -1
-  const offsetPx = curve * 80 * speedFactor.value * MARQUEE_SPEED * direction
-  return {
-    transform: `translateX(${pxToRem(offsetPx)})`,
-    transition: `transform calc(900ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1)`,
-  }
-})
-
 const heroMeta = miyanLandingCopy.heroMeta
-
-const heroPillars = miyanLandingCopy.heroPillars
 
 const modalCopy = miyanLandingCopy.modal
 
@@ -241,6 +205,25 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   --viz-velocity: 1;
 }
 
+/* Shared reveal motion for hero/modals to mirror other views */
+.miyan-hero-intro,
+.hero-copy-block,
+.modal-body {
+  opacity: 0;
+  transform: translateY(2rem);
+  transition:
+    transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.19,.84,.37,1),
+    opacity calc(900ms / var(--viz-velocity, 1)) ease;
+  will-change: transform, opacity;
+}
+
+.miyan-hero-intro.is-visible,
+.hero-copy-block.is-visible,
+.modal-body.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* HERO PANEL */
 .miyan-hero-panel {
   display: grid;
@@ -315,6 +298,23 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   margin: 0;
   color: rgba(21, 16, 12, 0.9);
 }
+
+.hero-copy-block > * {
+  opacity: 0;
+  transform: translateY(0.8rem);
+  transition:
+    transform calc(1000ms / var(--viz-velocity, 1)) cubic-bezier(.2,.9,.25,1),
+    opacity calc(850ms / var(--viz-velocity, 1)) ease;
+  will-change: transform, opacity;
+}
+
+.hero-copy-block.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-copy-block.is-visible h1 { transition-delay: 70ms; }
+.hero-copy-block.is-visible .branch-grid { transition-delay: 140ms; }
 
 /* branch grid */
 .branch-grid {
@@ -419,6 +419,22 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   pointer-events: none;
   z-index: -1;
 }
+
+.modal-body > * {
+  opacity: 0;
+  transform: translateY(0.7rem);
+  transition:
+    transform calc(950ms / var(--viz-velocity, 1)) cubic-bezier(.2,.9,.25,1),
+    opacity calc(820ms / var(--viz-velocity, 1)) ease;
+  will-change: transform, opacity;
+}
+
+.modal-body.is-visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-body.is-visible .modal-grid { transition-delay: 120ms; }
 
 .modal-overline {
   letter-spacing: 0.45em;
@@ -580,37 +596,9 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* --------------------------------- */
-/* MARQUEE: Beresht-style hybrid     */
-/* scroll-driven translateX, subtle */
-/* --------------------------------- */
+/* Marquee hidden to keep hero copy minimal */
 .miyan-marquee {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem 2rem;
-  overflow: hidden;
-  font-size: clamp(1rem, 2vw, 1.3rem);
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  opacity: 0.6;
-  color: rgba(80, 80, 80, 0.82);
-  margin: 2rem 0 3rem;
-  transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
-  will-change: transform;
-  text-align: center;
-}
-
-.marquee-item {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  min-width: clamp(6rem, 32vw, 12rem);
-  padding: 0 0.4rem;
-  letter-spacing: 0.28em;
-  color: rgba(30, 24, 18, 0.9);
-  opacity: 0.88;
-  font-weight: 500;
+  display: none;
 }
 
 /* responsive grid tweaks */
@@ -624,9 +612,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 /* hero intro */
 .miyan-hero-intro {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: clamp(1.5rem, 3vw, 3rem);
+  display: flex;
+  justify-content: center;
   padding: clamp(1.5rem, 3vw, 3rem) 0;
   margin-bottom: clamp(2rem, 5vw, 3.5rem);
   position: relative;
@@ -637,7 +624,32 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
+}
+
+.hero-intro-single {
+  width: min(72rem, 100%);
+  padding: clamp(1.6rem, 3vw, 3.25rem);
+  margin-inline: auto;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 26px rgba(15, 10, 6, 0.06);
+}
+
+.hero-intro-headline {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 64ch;
+  opacity: 0;
+  transform: translateY(1.2rem);
+  transition:
+    transform calc(1050ms / var(--viz-velocity, 1)) cubic-bezier(.2,.9,.25,1),
+    opacity calc(900ms / var(--viz-velocity, 1)) ease;
+}
+
+.hero-intro-single.is-visible .hero-intro-headline {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 80ms;
 }
 
 .hero-intro-text h1 {
@@ -647,23 +659,47 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   font-weight: 400;
 }
 
-.hero-intro-text p {
+.hero-lede {
   color: rgba(38, 28, 18, 0.82);
   line-height: 1.8;
   margin: 0;
 }
 
+.hero-intro-text p {
+  margin: 0;
+}
+
+.hero-intro-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(26, 18, 12, 0.12), rgba(26, 18, 12, 0));
+  opacity: 0.4;
+}
+
+:deep([dir="rtl"] .hero-intro-divider) {
+  background: linear-gradient(90deg, rgba(26, 18, 12, 0), rgba(26, 18, 12, 0.18));
+}
+
 .hero-intro-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem 1.25rem;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(1.3rem);
+  transition:
+    transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.9,.25,1),
+    opacity calc(950ms / var(--viz-velocity, 1)) ease;
+}
+
+.hero-intro-single.is-visible .hero-intro-meta {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 140ms;
 }
 
 .meta-card {
-  flex: 1 1 8rem;
-  min-width: 9rem;
-  padding: 0.85rem 0;
-  border-bottom: 1px solid rgba(26, 18, 12, 0.15);
+  padding: 0.85rem 0.2rem 0.9rem;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -679,38 +715,6 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .meta-value {
   font-size: 1rem;
   font-weight: 500;
-}
-
-.hero-intro-dynamic {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  justify-content: space-between;
-}
-
-.intro-pillars {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 1.25rem;
-}
-
-.pillar-card {
-  padding: 0;
-  border: none;
-}
-
-.pillar-card h3 {
-  margin: 0 0 0.4rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.pillar-card p {
-  margin: 0;
-  line-height: 1.6;
-  color: rgba(32, 24, 17, 0.85);
 }
 
 .overline {

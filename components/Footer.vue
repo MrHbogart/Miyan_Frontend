@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="w-full mt-0 py-10 bg-black/90 border-t border-white/10"
+    class="w-full mt-0 py-10 bg-black/90"
     :dir="isRTL ? 'rtl' : 'ltr'"
     :style="footerSafeArea"
   >
@@ -23,6 +23,7 @@
                 v-if="link.path"
                 :to="buildPath(link.path)"
                 class="hover:text-white transition-colors"
+                :dir="link.dir || (isRTL ? 'rtl' : 'ltr')"
               >
                 {{ isRTL ? link.label.fa : link.label.en }}
               </NuxtLink>
@@ -30,6 +31,7 @@
                 v-else
                 :href="link.href"
                 class="hover:text-white transition-colors"
+                :dir="link.dir || (isRTL ? 'rtl' : 'ltr')"
               >
                 {{ isRTL ? link.label.fa : link.label.en }}
               </a>
@@ -38,7 +40,7 @@
         </div>
       </div>
 
-      <div class="flex flex-row items-center justify-between gap-4 border-t border-white/10 pt-4 flex-nowrap" dir="ltr">
+      <div class="flex flex-row items-center justify-between gap-4 pt-4 flex-nowrap" dir="ltr">
         <div class="flex flex-col items-start gap-0 text-white/80 font-cinzel tracking-[0.18em]">
           <span class="font-cinzel text-sm leading-snug">© {{ currentYear }} Miyan Group</span>
           <a
@@ -119,8 +121,8 @@ const footerSections = computed(() => [
     key: 'contact',
     title: isRTL.value ? 'تماس' : 'Contact',
     links: [
-      { label: { fa: 'info@miyangroup.com', en: 'info@miyangroup.com' }, href: 'mailto:info@miyangroup.com' },
-      { label: { fa: '+98 21 2244 7700', en: '+98 21 2244 7700' }, href: 'tel:+982122447700' },
+      { label: { fa: 'info@miyangroup.com', en: 'info@miyangroup.com' }, href: 'mailto:info@miyangroup.com', dir: 'ltr' },
+      { label: { fa: '+98 21 2244 7700', en: '+98 21 2244 7700' }, href: 'tel:+982122447700', dir: 'ltr' },
     ],
   },
 ])
