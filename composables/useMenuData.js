@@ -37,8 +37,8 @@ export function useMenuData(key, options = {}) {
     handler,
     {
       default: defaultMenuState,
-      // Allow server-side fetching so initial render matches client and widths are correct on first load.
-      server: true,
+      // Keep fetching on client to avoid server-side stalls; layout now stays consistent via content shell wrappers.
+      server: false,
       lazy: false,
       dedupe: 'defer',
       ...options,
