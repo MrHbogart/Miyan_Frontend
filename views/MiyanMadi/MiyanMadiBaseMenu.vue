@@ -1,9 +1,12 @@
 <template>
   <div class="min-h-screen brand-surface brand-surface--madi flex flex-col items-center py-8 w-full">
-    <div class="content-shell content-shell--flush w-full">
-      <StructuredMenu v-if="stateReady" :menu="menu" />
-      <div v-else class="w-full flex-1 flex items-center justify-center px-6 py-10">
-        <div class="text-center space-y-4">
+    <div class="content-shell content-shell--flush w-full relative overflow-hidden">
+      <StructuredMenu :menu="menu" />
+      <div
+        v-if="!stateReady"
+        class="absolute inset-0 flex items-center justify-center px-6 py-10 bg-white/85 backdrop-blur-[2px] text-center"
+      >
+        <div class="space-y-4">
           <p class="text-base md:text-lg font-medium text-slate-900">
             <span v-if="pending">{{ translateState('loading') }}</span>
             <span v-else-if="error">{{ translateState('error') }}</span>
