@@ -17,9 +17,9 @@ export const navigationCopy = {
 export const miyanLandingCopy = {
   hero: {
     overline: { fa: 'گروه میان', en: 'Miyan Group' },
-    title: { fa: 'روستری و کافه‌ها', en: 'Roastery & Cafés' },
+    title: { fa: 'میان کار و زندگی', en: 'Between Work & Life' },
     body: {
-      fa: 'روستری میان با یک برنامه مشترک، دو کافه را با قهوه تازه و شیرینی روز همراه می‌کند',
+      fa: '',
       en: 'Our roastery carries one program across two cafés: fresh roasts, thoughtful drinks, and a small daily bake',
     },
   },

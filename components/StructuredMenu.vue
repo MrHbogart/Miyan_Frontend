@@ -8,7 +8,8 @@
           <section
             v-for="(section, sIdx) in sections"
             :key="sIdx"
-            class="pb-10 mb-8 md:mb-10 last:pb-0 last:mb-0"
+            class="menu-section pb-10 mb-8 md:mb-10 last:pb-0 last:mb-0"
+            :class="{'menu-section--side': isSideSection(section)}"
           >
             <h2
               class="menu-section-title"
@@ -17,19 +18,37 @@
               <span v-if="isRTL" class="block font-b-titr" dir="rtl">{{ translateCopy(section.title) }}</span>
               <span v-else class="block font-cinzel font-semibold tracking-[0.08em]">{{ translateCopy(section.title) }}</span>
             </h2>
-            <div class="h-px bg-black/70 mb-6"></div>
-        <div class="grid gap-3 md:gap-5">
-          <article v-for="(item, idx) in (section.items || [])" :key="idx" class="group px-0 md:px-6">
+            <div
+              class="h-px bg-black/70"
+              :class="isSideSection(section) ? 'mb-4' : 'mb-6'"
+            ></div>
+        <div
+          class="grid menu-grid"
+          :class="isSideSection(section) ? 'gap-2.5 md:gap-3' : 'gap-3 md:gap-5'"
+        >
+          <article
+            v-for="(item, idx) in (section.items || [])"
+            :key="idx"
+            class="group px-0 md:px-6 menu-item-card"
+            :class="isSideSection(section) ? 'menu-item-card--side' : 'menu-item-card--main'"
+          >
             <div
               v-if="item && item.name"
               :class="[
-                'grid gap-3 items-start',
-                showMedia(item) ? 'md:grid-cols-2' : 'grid-cols-1'
+                'grid items-start menu-item-layout',
+                isSideSection(section) ? 'gap-2 md:gap-2.5 grid-cols-1' : 'gap-3',
+                showMedia(item, section) ? 'md:grid-cols-2' : 'grid-cols-1'
               ]"
               dir="ltr"
             >
               <div :class="isRTL ? 'order-2 md:order-2' : 'order-2 md:order-1'">
-                <div class="mb-4" :dir="isRTL ? 'rtl' : 'ltr'">
+                <div
+                  :class="[
+                    'menu-item-body',
+                    isSideSection(section) ? 'mb-3' : 'mb-4'
+                  ]"
+                  :dir="isRTL ? 'rtl' : 'ltr'"
+                >
                   <div class="flex items-start justify-between gap-4">
                     <div :class="[isRTL ? 'order-1 text-right flex-1' : 'order-2 text-left flex-1']">
                       <h3 class="menu-item-name mb-2">
@@ -56,9 +75,12 @@
               </div>
 
               <div
-                v-if="showMedia(item)"
-                :class="isRTL ? 'order-1 md:order-1 overflow-hidden' : 'order-1 md:order-2 overflow-hidden'"
-                @click="openItemMedia(item)"
+                v-if="showMedia(item, section)"
+                :class="[
+                  isRTL ? 'order-1 md:order-1 overflow-hidden' : 'order-1 md:order-2 overflow-hidden',
+                  'menu-item-media'
+                ]"
+                @click="openItemMedia(item, section)"
               >
                 <img
                   :src="resolveImageSrc(item)"
@@ -142,11 +164,19 @@ const sections = computed(() => {
   if (!props.menu || !props.menu.sections) {
     return []
   }
-  return props.menu.sections
+  return props.menu.sections.map((section) => {
+    if (!section || typeof section !== 'object') return section
+    return {
+      ...section,
+      is_main_section: section?.is_main_section !== false,
+    }
+  })
 })
 
-function openItemMedia(item) {
-  if (!showMedia(item)) return
+const isSideSection = (section) => section?.is_main_section === false
+
+function openItemMedia(item, section) {
+  if (!showMedia(item, section)) return
   selectedMedia.value = {
     image: resolveImageSrc(item),
     video: resolveVideoSrc(item),
@@ -154,7 +184,8 @@ function openItemMedia(item) {
   }
 }
 
-function showMedia(item) {
+function showMedia(item, section) {
+  if (isSideSection(section)) return false
   if (!showImagesEnabled.value) return false
   return !!resolveImageSrc(item)
 }
@@ -292,6 +323,57 @@ function normalizeMediaUrl(raw) {
 
 @media (min-width: 768px) {
   .menu-description { font-size: 1.05rem; }
+}
+
+.menu-section--side {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.menu-section--side .menu-section-title {
+  font-size: clamp(1.35rem, 2.6vw, 1.65rem);
+  margin-bottom: 0.35rem;
+}
+
+.menu-section--side .menu-grid {
+  gap: 0.75rem;
+}
+
+.menu-item-card--side {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 768px) {
+  .menu-item-card--side {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+.menu-item-card--side .menu-item-layout {
+  gap: 0.65rem;
+}
+
+.menu-item-card--side .menu-item-name {
+  font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+}
+
+.menu-item-card--side .menu-price {
+  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+}
+
+.menu-item-card--side .menu-description {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.menu-item-card--side .menu-item-body {
+  margin-bottom: 0.5rem;
+}
+
+.menu-item-card--side .menu-item-media {
+  display: none;
 }
 
 /* Smooth transitions for interactive elements */
