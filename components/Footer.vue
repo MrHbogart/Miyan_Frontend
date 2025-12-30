@@ -11,21 +11,21 @@
             {{ isRTL ? 'میان' : 'Miyan' }}
           </p>
           <p class="text-base leading-relaxed text-white/70 font-normal">
-            {{ isRTL ? footerCopy.about.fa : footerCopy.about.en }}
+            {{ footerAbout }}
           </p>
         </div>
 
         <div v-for="section in footerSections" :key="section.key" class="space-y-2" :class="textClass">
           <p class="footer-heading text-sm uppercase tracking-[0.18em] text-white font-semibold">{{ section.title }}</p>
           <ul class="space-y-1.5 text-white/70 font-normal">
-            <li v-for="link in section.links" :key="link.label.en">
+            <li v-for="link in section.links" :key="link.label">
               <NuxtLink
                 v-if="link.path"
                 :to="buildPath(link.path)"
                 class="hover:text-white transition-colors"
                 :dir="link.dir || (isRTL ? 'rtl' : 'ltr')"
               >
-                {{ isRTL ? link.label.fa : link.label.en }}
+                {{ link.label }}
               </NuxtLink>
               <a
                 v-else
@@ -33,7 +33,7 @@
                 class="hover:text-white transition-colors"
                 :dir="link.dir || (isRTL ? 'rtl' : 'ltr')"
               >
-                {{ isRTL ? link.label.fa : link.label.en }}
+                {{ link.label }}
               </a>
             </li>
           </ul>
@@ -50,7 +50,7 @@
             target="_blank"
             rel="noopener"
           >
-            <span class="footer-heading font-cinzel font-medium text-[0.7rem] uppercase tracking-[0.18em]">Hossein Saeidi</span>
+            <span class="footer-heading font-cinzel font-medium text-[0.7rem] uppercase tracking-[0.18em]">Nous Design</span>
           </a>
         </div>
 
@@ -77,6 +77,7 @@
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useLang, setLang } from '~/composables/useLang'
+import { footerCopy } from '@/state/siteCopy'
 
 const router = useRouter()
 const route = useRoute()
@@ -91,41 +92,18 @@ const footerSafeArea = {
 }
 const textClass = computed(() => (isRTL.value ? 'font-b-titr text-right leading-relaxed' : 'font-sans text-left leading-relaxed'))
 
-const footerCopy = {
-  about: {
-    fa: 'برنامه روزانه قهوه و بیکری در دو شعبه برشت و مادی',
-    en: 'Daily coffee and bakery program across Beresht and Madi',
-  },
-}
+const footerAbout = computed(() => (isRTL.value ? footerCopy.about.fa : footerCopy.about.en))
 
-const footerSections = computed(() => [
-  {
-    key: 'visit',
-    title: isRTL.value ? 'بازدید' : 'Visit',
-    links: [
-      { label: { fa: 'برشت ولنجک', en: 'Beresht' }, path: 'beresht' },
-      { label: { fa: 'مادی کریمخان', en: 'Madi' }, path: 'madi' },
-    ],
-  },
-  {
-    key: 'menus',
-    title: isRTL.value ? 'منوها' : 'Menus',
-    links: [
-      { label: { fa: 'منوی برشت', en: 'Beresht Menu' }, path: 'beresht/menu' },
-      { label: { fa: 'پخت روز برشت', en: "Beresht Today's Special" }, path: 'beresht/daily-menu' },
-      { label: { fa: 'منوی مادی', en: 'Madi Menu' }, path: 'madi/menu' },
-      { label: { fa: 'پخت روز مادی', en: "Madi Today's Special" }, path: 'madi/daily-menu' },
-    ],
-  },
-  {
-    key: 'contact',
-    title: isRTL.value ? 'تماس' : 'Contact',
-    links: [
-      { label: { fa: 'info@miyangroup.com', en: 'info@miyangroup.com' }, href: 'mailto:info@miyangroup.com', dir: 'ltr' },
-      { label: { fa: '+98 21 2244 7700', en: '+98 21 2244 7700' }, href: 'tel:+982122447700', dir: 'ltr' },
-    ],
-  },
-])
+const footerSections = computed(() =>
+  (footerCopy.sections || []).map((section) => ({
+    key: section.key,
+    title: isRTL.value ? section.title.fa : section.title.en,
+    links: (section.links || []).map((link) => ({
+      ...link,
+      label: isRTL.value ? link.label.fa : link.label.en,
+    })),
+  }))
+)
 
 const buildPath = (slug = '') => {
   const normalized = slug.replace(/^\/+|\/+$/g, '')

@@ -2,6 +2,7 @@
   <header
     dir="ltr"
     class="fixed w-full top-0 left-0 z-40"
+    :class="scrolled ? 'header-visible' : 'header-hidden'"
     :style="[headerStyle, headerVisualStyle]"
   >
     <!-- Enhanced status-safe-area overlay for notch / status bar with smooth transitions -->
@@ -9,32 +10,38 @@
       <div :class="['header-grid', scrolled ? 'header-visible' : 'header-hidden']">
         <div class="flex items-center justify-center header-logo">
           <NuxtLink :to="linkTargets.beresht" class="logo-link" :class="{ 'is-active': isActive(linkTargets.beresht) }">
-            <template v-if="lang === 'fa'">
-              <img :src="siteMedia.bereshtLogo" alt="Miyan Beresht" class="logo-img" />
-            </template>
-            <template v-else>
-              <span class="logo-text">Beresht</span>
-            </template>
+            <div class="logo-link-inner">
+              <template v-if="lang === 'fa'">
+                <img :src="siteMedia.bereshtLogo" alt="Miyan Beresht" class="logo-img" />
+              </template>
+              <template v-else>
+                <span class="logo-text">Beresht</span>
+              </template>
+            </div>
           </NuxtLink>
         </div>
         <div class="flex items-center justify-center header-logo">
           <NuxtLink :to="linkTargets.home" class="logo-link" :class="{ 'is-active': isActive(linkTargets.home) }">
-            <template v-if="lang === 'fa'">
-              <img :src="siteMedia.miyanLogo" alt="Miyan" class="logo-img" />
-            </template>
-            <template v-else>
-              <span class="logo-text logo-text--center">Miyan</span>
-            </template>
+            <div class="logo-link-inner">
+              <template v-if="lang === 'fa'">
+                <img :src="siteMedia.miyanLogo" alt="Miyan" class="logo-img" />
+              </template>
+              <template v-else>
+                <span class="logo-text logo-text--center">Miyan</span>
+              </template>
+            </div>
           </NuxtLink>
         </div>
         <div class="flex items-center justify-center header-logo">
           <NuxtLink :to="linkTargets.madi" class="logo-link" :class="{ 'is-active': isActive(linkTargets.madi) }">
-            <template v-if="lang === 'fa'">
-              <img :src="siteMedia.madiLogo" alt="Miyan Madi" class="logo-img" />
-            </template>
-            <template v-else>
-              <span class="logo-text">Madi</span>
-            </template>
+            <div class="logo-link-inner">
+              <template v-if="lang === 'fa'">
+                <img :src="siteMedia.madiLogo" alt="Miyan Madi" class="logo-img" />
+              </template>
+              <template v-else>
+                <span class="logo-text">Madi</span>
+              </template>
+            </div>
           </NuxtLink>
         </div>
       </div>
@@ -239,11 +246,11 @@ header {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  column-gap: 12px;
+  column-gap: 0;
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 0.75rem;
+  padding: 0;
 }
 .header-logo {
   height: 68px;
@@ -256,18 +263,35 @@ header {
 
 .logo-link {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: stretch;
   height: 100%;
   width: 100%;
   cursor: pointer;
   border-radius: 0px;
-  padding: 0.35rem 0.7rem;
+  padding: 0;
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
 }
+
+.logo-link-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--logo-link-pad-y, 0.45rem) var(--logo-link-pad-x, 0.8rem);
+}
 .logo-link.is-active {
-  background: rgba(var(--header-active-rgb, 253, 253, 253), var(--header-active-alpha, 0.2));
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
+  --header-glow-alpha: clamp(0.32, calc(var(--header-active-alpha, 0.22) + 0.18), 0.55);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, var(--header-glow-alpha)) 0%,
+    rgba(245, 245, 245, var(--header-glow-alpha)) 10%,
+    rgba(245, 245, 245, var(--header-glow-alpha)) 20%,
+    rgba(255, 255, 255, var(--header-glow-alpha)) 30%,
+    rgba(255, 255, 255, calc(var(--header-glow-alpha) * 0.7)) 100%
+  );
+  box-shadow: 0 5px 12px -10px rgba(0, 0, 0, 0.2), 0 -3px 7px -10px rgba(0, 0, 0, 0.08);
 }
 .logo-img {
   height: 78%;

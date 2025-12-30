@@ -614,8 +614,8 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: clamp(1.5rem, 3vw, 3rem) 0;
-  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  padding: clamp(1.75rem, 4vw, 3.25rem) 0;
+  margin-bottom: clamp(2.25rem, 5vw, 3.75rem);
   position: relative;
 }
 
@@ -624,21 +624,21 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-2, 1rem);
 }
 
 .hero-intro-single {
-  width: min(72rem, 100%);
-  padding: clamp(1.6rem, 3vw, 3.25rem);
+  width: min(64rem, 100%);
+  padding: 0;
   margin-inline: auto;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 12px 26px rgba(15, 10, 6, 0.06);
+  background: transparent;
+  box-shadow: none;
 }
 
 .hero-intro-headline {
   display: grid;
-  gap: 0.9rem;
-  max-width: 64ch;
+  gap: var(--space-1-5, 0.9rem);
+  max-width: 58ch;
   opacity: 0;
   transform: translateY(1.2rem);
   transition:
@@ -653,15 +653,15 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 }
 
 .hero-intro-text h1 {
-  font-size: clamp(2.4rem, 4.6vw, 4rem);
-  line-height: 1.2;
-  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  line-height: 1.18;
+  margin: 0 0 var(--space-1, 0.5rem);
   font-weight: 400;
 }
 
 .hero-lede {
   color: rgba(38, 28, 18, 0.82);
-  line-height: 1.8;
+  line-height: 1.7;
   margin: 0;
 }
 
@@ -672,8 +672,9 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .hero-intro-divider {
   height: 1px;
   width: 100%;
-  background: linear-gradient(90deg, rgba(26, 18, 12, 0.12), rgba(26, 18, 12, 0));
-  opacity: 0.4;
+  background: linear-gradient(90deg, rgba(26, 18, 12, 0.1), rgba(26, 18, 12, 0));
+  opacity: 0.3;
+  margin: var(--space-2, 1rem) 0;
 }
 
 :deep([dir="rtl"] .hero-intro-divider) {
@@ -683,7 +684,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 .hero-intro-meta {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: 0.75rem 1.25rem;
+  gap: var(--space-1, 0.75rem) var(--space-2, 1.25rem);
   align-items: flex-start;
   opacity: 0;
   transform: translateY(1.3rem);
@@ -699,7 +700,7 @@ useRevealObserver(landingRoot, { threshold: 0.18 })
 }
 
 .meta-card {
-  padding: 0.85rem 0.2rem 0.9rem;
+  padding: var(--space-1-5, 0.85rem) 0 var(--space-1-5, 0.9rem);
   display: flex;
   flex-direction: column;
   gap: 0.15rem;

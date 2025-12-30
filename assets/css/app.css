@@ -10,6 +10,24 @@
   --font-base: var(--font-fa);
   --font-weight-body: 500;
   --font-weight-strong: 700;
+  /* Spacing scale */
+  --space-1: 0.5rem;
+  --space-1-5: 0.75rem;
+  --space-2: 1rem;
+  --space-2-5: 1.25rem;
+  --space-3: 1.5rem;
+  --space-4: 1.75rem;
+  /* Layout gutters */
+  --page-shell-pad: clamp(1.5rem, 8vw, 6rem);
+  --page-shell-pad-compact: clamp(1.5rem, 6vw, 4.5rem);
+  --page-shell-pad-mobile: 1rem;
+  --nav-inner-pad: 0rem;
+  --nav-link-pad-x: 1rem;
+  --nav-link-pad-x-md: 1.5rem;
+  --nav-link-pad-y: 0.9rem;
+  --nav-link-pad-y-md: 1rem;
+  --logo-link-pad-x: 0.8rem;
+  --logo-link-pad-y: 0.45rem;
 }
 
 html, body, #app, #__nuxt {
@@ -163,8 +181,8 @@ header { will-change: transform, background-color }
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding-left: max(env(safe-area-inset-left), clamp(1.5rem, 8vw, 6rem));
-  padding-right: max(env(safe-area-inset-right), clamp(1.5rem, 8vw, 6rem));
+  padding-left: max(env(safe-area-inset-left), var(--page-shell-pad));
+  padding-right: max(env(safe-area-inset-right), var(--page-shell-pad));
 }
 
 .content-shell--flush {
@@ -177,16 +195,16 @@ header { will-change: transform, background-color }
 
 @media (max-width: 640px) {
   .content-shell--flush {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: var(--page-shell-pad-mobile);
+    padding-right: var(--page-shell-pad-mobile);
   }
 }
 
 /* Restore measured horizontal breathing room for menu child views on desktop */
 @media (min-width: 1024px) {
   .content-shell--flush {
-    padding-left: clamp(1.5rem, 6vw, 4.5rem);
-    padding-right: clamp(1.5rem, 6vw, 4.5rem);
+    padding-left: var(--page-shell-pad-compact);
+    padding-right: var(--page-shell-pad-compact);
   }
 }
 
@@ -284,7 +302,7 @@ main,
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 0.75rem;
+  padding: 0 var(--nav-inner-pad);
 }
 
 .brand-surface {

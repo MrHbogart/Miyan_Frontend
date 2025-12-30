@@ -24,7 +24,7 @@
         <div class="nav-inner">
           <div
             :class="[
-              'flex flex-row w-full items-center justify-between gap-1 text-center',
+              'flex flex-row w-full items-stretch justify-between text-center',
               isRTL ? 'flex-row-reverse' : ''
             ]"
           >
@@ -32,14 +32,17 @@
               v-for="item in displayNavItems"
               :key="item.name"
               :to="getLocalizedPath(item.path)"
-              class="flex-1 min-w-0 inline-flex items-center justify-center w-full h-full px-4 md:px-6 py-3.5 md:py-4 transition-transform duration-200 transform-gpu hover:scale-105 uppercase text-base md:text-lg font-semibold nav-link"
+              class="flex-1 min-w-0 inline-flex items-stretch justify-center w-full h-full transition-transform duration-200 transform-gpu uppercase text-base md:text-lg font-semibold nav-link"
               :class="[
                 { 'font-bold nav-link--active': isActive(item.path) },
                 { 'font-cinzel tracking-wide': !isRTL },
-                { 'font-b-titr tracking-normal': isRTL }
+                { 'font-b-titr tracking-normal': isRTL },
+                { 'nav-link--hoverable': !isActive(item.path) }
               ]"
             >
-              {{ isRTL ? item.label.fa : item.label.en }}
+              <span class="nav-link-inner">
+                {{ isRTL ? item.label.fa : item.label.en }}
+              </span>
             </NuxtLink>
           </div>
         </div>
@@ -142,11 +145,47 @@ useSwipeNavigation(childSwipe, {
   color: inherit;
   background: transparent;
   transition: background-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+@media (min-width: 768px) {
+  .nav-link {
+    padding: 0;
+  }
+}
+.nav-link--hoverable {
+  transition: transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
+}
+.nav-link--hoverable:hover {
+  transform: scale(1.05);
+}
+.nav-link-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: var(--nav-link-pad-y) var(--nav-link-pad-x);
+}
+@media (min-width: 768px) {
+  .nav-link-inner {
+    padding: var(--nav-link-pad-y-md) var(--nav-link-pad-x-md);
+  }
 }
 
 .nav-link--active {
-  background: rgba(var(--nav-active-rgb, 251, 251, 251), var(--nav-active-alpha, 0.45)); /* follows navbar opacity */
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
+  --nav-glow-alpha: clamp(0.32, calc(var(--nav-active-alpha, 0.45) + 0.12), 0.55);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, var(--nav-glow-alpha)) 0%,
+    rgba(245, 245, 245, var(--nav-glow-alpha)) 10%,
+    rgba(245, 245, 245, var(--nav-glow-alpha)) 20%,
+    rgba(255, 255, 255, var(--nav-glow-alpha)) 30%,
+    rgba(255, 255, 255, calc(var(--nav-glow-alpha) * 0.7)) 100%
+  ); /* follows navbar opacity */
+  box-shadow: 0 5px 12px -10px rgba(0, 0, 0, 0.2), 0 -3px 7px -10px rgba(0, 0, 0, 0.08);
 }
 
 </style>

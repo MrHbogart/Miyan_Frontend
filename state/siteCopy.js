@@ -283,3 +283,38 @@ export const miyanMadiLandingCopy = {
     cta: { fa: 'نمایش روی نقشه', en: 'Show on map' },
   },
 }
+
+export const footerCopy = {
+  about: {
+    fa: 'برنامه روزانه قهوه و بیکری در دو شعبه برشت و مادی',
+    en: 'Daily coffee and bakery program across Beresht and Madi',
+  },
+  sections: [
+    {
+      key: 'visit',
+      title: { fa: 'بازدید', en: 'Visit' },
+      links: [
+        { label: { fa: 'میان برشت', en: 'Miyan Beresht' }, path: 'beresht' },
+        { label: { fa: 'میان مادی', en: 'Miyan Madi' }, path: 'madi' },
+      ],
+    },
+    {
+      key: 'menus',
+      title: { fa: 'منوها', en: 'Menus' },
+      links: [
+        { label: { fa: 'منوی برشت', en: 'Beresht Menu' }, path: 'beresht/menu' },
+        { label: { fa: 'پخت روز برشت', en: "Beresht Today's Special" }, path: 'beresht/daily-menu' },
+        { label: { fa: 'منوی مادی', en: 'Madi Menu' }, path: 'madi/menu' },
+        { label: { fa: 'پخت روز مادی', en: "Madi Today's Special" }, path: 'madi/daily-menu' },
+      ],
+    },
+    {
+      key: 'contact',
+      title: { fa: 'تماس', en: 'Contact' },
+      links: [
+        { label: { fa: 'info@miyangroup.com', en: 'info@miyangroup.com' }, href: 'mailto:info@miyangroup.com', dir: 'ltr' },
+        { label: { fa: '+98 21 2244 7700', en: '+98 21 2244 7700' }, href: 'tel:+982122447700', dir: 'ltr' },
+      ],
+    },
+  ],
+}
