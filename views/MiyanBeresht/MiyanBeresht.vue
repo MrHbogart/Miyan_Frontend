@@ -144,7 +144,7 @@ useSwipeNavigation(childSwipe, {
 .nav-link {
   color: inherit;
   background: transparent;
-  transition: background-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
+  transition: background-color 200ms ease, box-shadow 200ms ease, color 200ms ease, transform 200ms ease;
   padding: 0;
   display: flex;
   align-items: stretch;
@@ -161,6 +161,9 @@ useSwipeNavigation(childSwipe, {
 .nav-link--hoverable:hover {
   transform: scale(1.05);
 }
+.nav-link--active {
+  transform: none;
+}
 .nav-link-inner {
   display: flex;
   align-items: center;
@@ -176,16 +179,16 @@ useSwipeNavigation(childSwipe, {
 }
 
 .nav-link--active {
-  --nav-glow-alpha: clamp(0.32, calc(var(--nav-active-alpha, 0.45) + 0.12), 0.55);
+  --nav-glow-alpha: clamp(0.12, calc(var(--nav-active-alpha, 0.45) + 0.04), 0.24);
   background: radial-gradient(
     circle at 50% 50%,
     rgba(255, 255, 255, var(--nav-glow-alpha)) 0%,
-    rgba(245, 245, 245, var(--nav-glow-alpha)) 10%,
-    rgba(245, 245, 245, var(--nav-glow-alpha)) 20%,
-    rgba(255, 255, 255, var(--nav-glow-alpha)) 30%,
-    rgba(255, 255, 255, calc(var(--nav-glow-alpha) * 0.7)) 100%
+    rgba(235, 235, 235, calc(var(--nav-glow-alpha) * 0.9)) 20%,
+    rgba(255, 255, 255, calc(var(--nav-glow-alpha) * 0.7)) 70%,
+    rgba(255, 255, 255, calc(var(--nav-glow-alpha) * 0.6)) 100%
   ); /* follows navbar opacity */
-  box-shadow: 0 5px 12px -10px rgba(0, 0, 0, 0.2), 0 -3px 7px -10px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 9px 18px -10px rgba(0, 0, 0, 0.3);
 }
 
 </style>

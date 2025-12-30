@@ -160,7 +160,7 @@ const hasMapLink = computed(() => mapLink.value.length > 0)
 
 const marqueeStyle = computed(() => {
   const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
-  const offsetPx = curve * -80 * speedFactor.value
+  const offsetPx = Math.max(curve * -40 * speedFactor.value, -22)
   return {
     transform: `translateX(${pxToRem(offsetPx)})`
   }
@@ -309,13 +309,24 @@ useMenuPrefetch('beresht')
   display: flex;
   gap: 2rem;
   overflow: hidden;
-  font-size: clamp(1rem, 2vw, 1.3rem);
-  letter-spacing: 0.4em;
+  font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  opacity: 0.55;
-  color: rgba(178, 117, 82, 0.75);
-  margin-bottom: 3rem;
+  opacity: 0.38;
+  color: rgba(32, 22, 15, 0.14);
+  margin-bottom: 2.5rem;
   transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+@media (max-width: 640px) {
+  .beresht-marquee {
+    gap: 1rem;
+    letter-spacing: 0.22em;
+    font-size: 0.9rem;
+    transform: none !important;
+    opacity: 0.32;
+  }
 }
 
 .beresht-atmosphere {

@@ -336,7 +336,7 @@ function normalizeMediaUrl(raw) {
 }
 
 .menu-section--side .menu-grid {
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
 
 .menu-item-card--side {

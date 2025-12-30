@@ -273,6 +273,12 @@ header {
   transition: transform 300ms cubic-bezier(.19,.9,.33,1.19), filter 300ms cubic-bezier(.19,.9,.33,1.19);
 }
 
+.logo-link:not(.is-active):hover,
+.logo-link:not(.is-active):focus,
+.logo-link:not(.is-active):active {
+  transform: scale(1.03);
+}
+
 .logo-link-inner {
   display: flex;
   align-items: center;
@@ -282,16 +288,15 @@ header {
   padding: var(--logo-link-pad-y, 0.45rem) var(--logo-link-pad-x, 0.8rem);
 }
 .logo-link.is-active {
-  --header-glow-alpha: clamp(0.32, calc(var(--header-active-alpha, 0.22) + 0.18), 0.55);
+  --header-glow-alpha: clamp(0.12, calc(var(--header-active-alpha, 0.2) + 0.04), 0.22);
   background: radial-gradient(
     circle at 50% 50%,
     rgba(255, 255, 255, var(--header-glow-alpha)) 0%,
-    rgba(245, 245, 245, var(--header-glow-alpha)) 10%,
-    rgba(245, 245, 245, var(--header-glow-alpha)) 20%,
-    rgba(255, 255, 255, var(--header-glow-alpha)) 30%,
-    rgba(255, 255, 255, calc(var(--header-glow-alpha) * 0.7)) 100%
+    rgba(235, 235, 235, calc(var(--header-glow-alpha) * 0.9)) 20%,
+    rgba(255, 255, 255, calc(var(--header-glow-alpha) * 0.7)) 70%,
+    rgba(255, 255, 255, calc(var(--header-glow-alpha) * 0.6)) 100%
   );
-  box-shadow: 0 5px 12px -10px rgba(0, 0, 0, 0.2), 0 -3px 7px -10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.26);
 }
 .logo-img {
   height: 78%;
