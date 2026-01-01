@@ -115,6 +115,9 @@ useSwipeNavigation(childSwipe, {
 
 .nav-placeholder section {
   width: 100%;
+  overflow: visible;
+  touch-action: pan-y;
+  overscroll-behavior: auto;
 }
 
 .view-shell {
@@ -179,16 +182,14 @@ useSwipeNavigation(childSwipe, {
 }
 
 .nav-link--active {
-  --nav-glow-alpha: clamp(0.12, calc(var(--nav-active-alpha, 0.45) + 0.04), 0.24);
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 255, 255, var(--nav-glow-alpha)) 0%,
-    rgba(235, 235, 235, calc(var(--nav-glow-alpha) * 0.9)) 20%,
-    rgba(255, 255, 255, calc(var(--nav-glow-alpha) * 0.7)) 70%,
-    rgba(255, 255, 255, calc(var(--nav-glow-alpha) * 0.6)) 100%
-  ); /* follows navbar opacity */
-  box-shadow:
-    0 9px 18px -10px rgba(0, 0, 0, 0.3);
+    rgba(255, 255, 255, var(--nav-active-fill-alpha, 1)) 0%,
+    rgba(245, 245, 245, var(--nav-active-fill-alpha, 1)) 5%,
+    rgba(255, 255, 255, var(--nav-active-fill-alpha, 1)) 25%,
+    rgba(255, 255, 255, var(--nav-active-fill-alpha, 1)) 100%
+  );
+  box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.35);
 }
 
 </style>

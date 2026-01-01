@@ -71,6 +71,15 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     checkAttachment()
   }
 
+  function onNavWheel(e) {
+    // Forward wheel scroll to the page so the navbar never traps scroll
+    if (typeof window === 'undefined') return
+    if (Math.abs(e.deltaY) > 0 || Math.abs(e.deltaX) > 0) {
+      e.preventDefault()
+      window.scrollBy({ top: e.deltaY, left: e.deltaX, behavior: 'auto' })
+    }
+  }
+
   function onLoad() {
     updateNavHeight()
     checkAttachment()
@@ -89,20 +98,26 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     navBgOpacity.value = v 
   }, { immediate: true })
 
+  const baseShadow = '0 12px 24px -16px rgba(0, 0, 0, 0.34)'
+  const attachedShadow = '0 12px 24px -14px rgba(0, 0, 0, 0.38)'
+
   /**
    * Navbar inline styles - simple fixed positioning
    * Transparency fades from header to navbar during attachment
    */
   const navInlineStyle = computed(() => {
     const opacity = navBgOpacity.value
-    const activeAlpha = Math.min(1, Math.max(0, opacity * 0.2))
+    const activeFillAlpha = Math.max(0, Math.min(1, opacity))
     const baseStyle = {
       backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-      '--nav-bg-opacity': opacity,
-      '--nav-active-rgb': '251, 251, 251',
-      '--nav-active-alpha': activeAlpha,
+      '--nav-surface-opacity': opacity,
+      '--nav-active-fill-alpha': activeFillAlpha,
       transition: `background ${TRANSITION_DURATION}ms ${EASING}, backdrop-filter ${TRANSITION_DURATION}ms ${EASING}, box-shadow ${TRANSITION_DURATION}ms ${EASING}`,
       boxSizing: 'border-box',
+      position: 'relative',
+      zIndex: '20',
+      boxShadow: baseShadow,
+      overflow: 'visible'
     }
 
     if (isNavFixed.value) {
@@ -122,7 +137,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
         paddingLeft: 'env(safe-area-inset-left, 0px)',
         paddingRight: 'env(safe-area-inset-right, 0px)',
         backdropFilter: 'saturate(120%) blur(6px)',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+        boxShadow: attachedShadow
       }
     }
 
@@ -130,7 +145,7 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     return {
       ...baseStyle,
       backdropFilter: 'none',
-      boxShadow: 'none'
+      boxShadow: baseShadow
     }
   })
 
@@ -159,6 +174,11 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     updateNavHeight()
     checkAttachment()
 
+    const navEl = navbarRef.value
+    if (navEl) {
+      navEl.addEventListener('wheel', onNavWheel, { passive: false })
+    }
+
     window.addEventListener('scroll', onScrollTrack, { passive: true })
     window.addEventListener('resize', onResize)
     window.addEventListener('load', onLoad)
@@ -169,6 +189,10 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     window.removeEventListener('scroll', onScrollTrack)
     window.removeEventListener('resize', onResize)
     window.removeEventListener('load', onLoad)
+    const navEl = navbarRef.value
+    if (navEl) {
+      navEl.removeEventListener('wheel', onNavWheel)
+    }
     if (rafId) window.cancelAnimationFrame(rafId)
     syncAttachment(false)
   })

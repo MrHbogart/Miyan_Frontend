@@ -32,35 +32,19 @@ export const miyanLandingCopy = {
   ],
   heroMeta: [
     {
-      label: { fa: 'حوزه‌ها', en: 'Disciplines' },
-      value: { fa: 'قهوه · رست · سرویس', en: 'Coffee · Roast · Service' },
+      label: { fa: 'تخصص های ما', en: 'Disciplines' },
+      value: { fa: 'رست قهوه · پخت کیک و نان · سرویس و پذیرایی', en: 'Coffee · Roast · Service' },
     },
     {
-      label: { fa: 'آغاز', en: 'Since' },
+      label: { fa: 'شروع داستان ما', en: 'Since' },
       value: { fa: '۱۳۹۳', en: '2014' },
-    },
-  ],
-  heroPillars: [
-    {
-      title: { fa: 'قهوه', en: 'Coffee' },
-      copy: {
-        fa: 'رست روزانه و کوپینگ مشترک، فنجان هر دو کافه را هم‌صدا نگه می‌کند',
-        en: 'Daily roasts and shared cuppings keep every espresso speaking the same language',
-      },
-    },
-    {
-      title: { fa: 'سرویس', en: 'Service' },
-      copy: {
-        fa: 'منوهای کوتاه، سرویس دقیق و یادداشت طعم کنار هر قهوه',
-        en: 'Tight menus, precise service, and tasting notes beside each cup',
-      },
     },
   ],
   branches: {
     overline: { fa: 'کافه‌های میان', en: 'Miyan cafés' },
     title: { fa: 'دو فضا برای دو حال', en: 'Two rooms, two moods' },
     body: {
-      fa: 'هر شعبه شخصیت خودش را دارد؛ برنامه قهوه و شیرینی یکی است، بیان متفاوت',
+      fa: 'هر شعبه شخصیت خودش را دارد، قهوه و خدمات یکسان، بیان متفاوت',
       en: 'Each address keeps its own character; the coffee and daily bake stay aligned',
     },
     cards: [
@@ -68,29 +52,29 @@ export const miyanLandingCopy = {
         name: { fa: 'میان برشت', en: 'Miyan Beresht' },
         area: { fa: 'اصفهان · شیخ صدوق جنوبی', en: 'Isfahan · South Sheikh Sadoogh' },
         copy: {
-          fa: 'سالن رستری با سرویس کامل، شیک و حرفه‌ای',
+          fa: 'فضای مدرن، میز سوشال و بوی روست قهوه',
           en: 'Roastery salon with full service, polished and precise',
         },
-        cta: { fa: 'ورود به برشت', en: 'Visit Beresht' },
+        cta: { fa: 'به برشت', en: 'Visit Beresht' },
         path: 'beresht',
       },
       {
         name: { fa: 'میان مادی', en: 'Miyan Madi' },
-        area: { fa: 'اصفهان · چهارباغ عباسی، نیاسر مادی', en: 'Isfahan · Chahar Bagh Abbasi, Niyasarm Madi' },
+        area: { fa: 'اصفهان · چهارباغ عباسی، مادی نیاصرم', en: 'Isfahan · Chahar Bagh Abbasi, Madi Niyasarm' },
         copy: {
-          fa: 'کافه کوچک و صمیمی برای صبح زود و عصر آرام',
+          fa: 'کافه صمیمی و دوستانه ',
           en: 'A small, warm café for early starts and unhurried evenings',
         },
-        cta: { fa: 'ورود به مادی', en: 'Visit Madi' },
+        cta: { fa: 'به مادی', en: 'Visit Madi' },
         path: 'madi',
       },
     ],
   },
   modal: {
     overline: { fa: 'رستری میان', en: 'Miyan roastery' },
-    title: { fa: 'مسیر حرفه‌ای از دانه تا فنجان', en: 'Professional roast-to-cup workflow' },
+    title: { fa: 'مسیر حرفه‌ای از دانه سبز قهوه تا فنجان', en: 'Professional roast-to-cup workflow' },
     body: {
-      fa: 'رستری ما خرید دانه، توسعه پروفایل و بسته‌بندی را برای هر دو کافه و همکاران انتخابی مدیریت می‌کند تا تازگی قابل‌وعده باشد',
+      fa: 'رستری ما تهیه دانه سبز، طراحی پروفایل روست و نطارت بر کیفیت را با هدف ارائه بهترین تجربه به شما، در هر دو کافه انجام می‌دهد',
       en: 'Our roastery handles sourcing, profile development, and packaging for both cafés and select partners, letting us promise freshness across the group',
     },
     accent: { fa: 'رست روزانه · کنترل پروفایل', en: 'Daily roasts · profile control' },
@@ -99,14 +83,14 @@ export const miyanLandingCopy = {
     {
       title: { fa: 'تأمین', en: 'Sourcing' },
       copy: {
-        fa: 'انتخاب مستقیم لات‌های قابل رهگیری',
+        fa: 'انتخاب مستقیم لات‌های قابل رهگیری برای اطمینان ار کیفیت',
         en: 'Direct picks of traceable lots',
       },
     },
     {
       title: { fa: 'سرویس', en: 'Service' },
       copy: {
-        fa: 'بار و بیکری هر رست را همان روز چک می‌کنند',
+        fa: 'همه اعضای تیم میان، در حوزه خود بهترین هستند',
         en: 'Bar and bakery cup each roast the same day',
       },
     },
@@ -115,18 +99,18 @@ export const miyanLandingCopy = {
     {
       imageKey: 'miyanImg2',
       overline: { fa: 'صبح', en: 'Morning' },
-      title: { fa: 'خمیر زنده', en: 'Living dough' },
+      title: { fa: 'روست تازه', en: 'Living dough' },
       copy: {
-        fa: 'استارتر شب قبل تغذیه می‌شود و صبح آماده است',
+        fa: 'قهوه تازه روست هر لحظه برای عصاره گیری هرچه بهتر تست می‌شود',
         en: 'Levain is fed at night and ready by dawn',
       },
     },
     {
       imageKey: 'miyanImg1',
       overline: { fa: 'سرویس', en: 'Service' },
-      title: { fa: 'ویترین حاضر', en: 'Ready display' },
+      title: { fa: 'کیفیت خدمات مطلوبیت محیط', en: 'Ready display' },
       copy: {
-        fa: 'هر محصول قبل از سالن تست می‌شود',
+        fa: 'خدمات و محیط، مناسب برای مشتری حرفه‌ای',
         en: 'Every item is tasted before the floor',
       },
     },
@@ -136,21 +120,19 @@ export const miyanLandingCopy = {
 export const miyanBereshtLandingCopy = {
   hero: {
     overline: { fa: 'میان برشت', en: 'Miyan Beresht' },
-    title: { fa: 'سالن رستری لوکس اصفهان', en: 'Isfahan luxury roastery salon' },
+    title: { fa: 'مجموعه منظم و هماهنگ', en: 'Isfahan luxury roastery salon' },
     body: {
-      fa: 'برشت قلب رستری میان است؛ سرویس کامل، قهوه‌های تازه و دسرهای ظریف برای مهمان حرفه‌ای',
+      fa: 'میان برشت، قلب رستری میان، سرویس مطلوب، قهوه‌های تازه و دسرهای ظریف برای خلق تجربه حرفه‌ای',
       en: 'Beresht is the heart of our roastery: full service, fresh coffees, and refined desserts for a polished visit',
     },
   },
   marqueeWords: [
-    { fa: 'رستری', en: 'Roastery' },
-    { fa: 'سالن', en: 'Salon' },
-    { fa: 'کیفیت', en: 'Quality' },
-    { fa: 'سرویس', en: 'Service' },
-    { fa: 'لوکس', en: 'Luxury' },
+    { fa: 'خارج', en: 'Out' },
+    { fa: 'از', en: 'of the' },
+    { fa: 'چهارچوب', en: 'Box' },
   ],
   experience: {
-    title: { fa: 'سالن آرام و دقیق', en: 'Composed, detailed room' },
+    title: { fa: 'سالن آرام و مدرن', en: 'Composed, detailed room' },
     paragraphs: [
       {
         fa: 'نور گرم روی بار سنگی می‌نشیند و سرویس دقیق را نرم می‌کند',
@@ -202,7 +184,7 @@ export const miyanBereshtLandingCopy = {
   ],
   location: {
     overline: { fa: 'آدرس و مسیر', en: 'Address & route' },
-    title: { fa: 'برشت، اصفهان', en: 'Beresht, Isfahan' },
+    title: { fa: 'میان برشت، اصفهان', en: 'Miyan Beresht, Isfahan' },
     body: {
       fa: 'روستری و کافه برشت در اصفهان، شیخ صدوق جنوبی؛ دسترسی آسان و فضای حرفه‌ای',
       en: 'Our Beresht roastery café sits on South Sheikh Sadoogh, Isfahan—easy access, professional feel',

@@ -117,14 +117,14 @@ const headerStyle = computed(() => ({
 
 const headerVisualStyle = computed(() => {
   const opacity = headerBgOpacity.value
-  const activeAlpha = Math.min(1, Math.max(0, opacity * 0.2))
+  const activeFillAlpha = Math.max(0, Math.min(1, opacity))
   return {
     backgroundColor: `rgba(255,255,255, ${opacity})`,
     borderBottom: opacity ? '0px solid rgba(255,255,255,0.06)' : 'none',
     transition: 'background 400ms ease, backdrop-filter 400ms ease',
-    '--header-bg-opacity': opacity,
-    '--header-active-rgb': '251, 251, 251',
-    '--header-active-alpha': activeAlpha,
+    boxShadow: '0 8px 18px -16px rgba(0, 0, 0, 0.28)',
+    '--header-surface-opacity': opacity,
+    '--header-active-fill-alpha': activeFillAlpha
   }
 })
 
@@ -146,16 +146,6 @@ function updateHeaderBottom() {
     // no-op
   }
 }
-
-// Status bar styling
-const statusStyle = computed(() => {
-  const opacity = Math.max(0, Math.min(1, Number(headerBgOpacity.value) || 0))
-  return {
-    backgroundColor: `rgba(255,255,255,${opacity})`,
-    backdropFilter: opacity ? 'saturate(120%) blur(6px)' : 'none',
-    transition: 'background 400ms ease, backdrop-filter 400ms ease'
-  }
-})
 
 // Setup theme meta tags
 function ensureThemeMeta() {
@@ -288,15 +278,14 @@ header {
   padding: var(--logo-link-pad-y, 0.45rem) var(--logo-link-pad-x, 0.8rem);
 }
 .logo-link.is-active {
-  --header-glow-alpha: clamp(0.12, calc(var(--header-active-alpha, 0.2) + 0.04), 0.22);
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 255, 255, var(--header-glow-alpha)) 0%,
-    rgba(235, 235, 235, calc(var(--header-glow-alpha) * 0.9)) 20%,
-    rgba(255, 255, 255, calc(var(--header-glow-alpha) * 0.7)) 70%,
-    rgba(255, 255, 255, calc(var(--header-glow-alpha) * 0.6)) 100%
+    rgba(255, 255, 255, var(--header-active-fill-alpha, 1)) 0%,
+    rgba(245, 245, 245, var(--header-active-fill-alpha, 1)) 5%,
+    rgba(255, 255, 255, var(--header-active-fill-alpha, 1)) 25%,
+    rgba(255, 255, 255, var(--header-active-fill-alpha, 1)) 100%
   );
-  box-shadow: 0 8px 18px -10px rgba(0, 0, 0, 0.26);
+  box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.35);
 }
 .logo-img {
   height: 78%;
