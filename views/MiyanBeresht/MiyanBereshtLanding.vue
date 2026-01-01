@@ -15,12 +15,6 @@
       </p>
     </div>
 
-    <div class="beresht-marquee" :style="marqueeStyle">
-      <span v-for="(word, index) in marqueeWords" :key="word.en + index">
-        {{ isRTL ? word.fa : word.en }}
-      </span>
-    </div>
-
     <div class="immersive-stack" v-if="firstStoryGroup.length">
       <article
         v-for="(story, idx) in firstStoryGroup"
@@ -136,8 +130,6 @@ const landingStyle = computed(() => ({
   '--viz-velocity': speedFactor.value.toFixed(3)
 }))
 
-const marqueeWords = miyanBereshtLandingCopy.marqueeWords
-
 const heroCopy = miyanBereshtLandingCopy.hero
 const experienceCopy = miyanBereshtLandingCopy.experience
 
@@ -157,14 +149,6 @@ const mapLink = computed(() => {
   return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
 })
 const hasMapLink = computed(() => mapLink.value.length > 0)
-
-const marqueeStyle = computed(() => {
-  const curve = Math.pow(Math.min(scrollY.value / 400, 1), 0.7)
-  const offsetPx = Math.max(curve * -40 * speedFactor.value, -22)
-  return {
-    transform: `translateX(${pxToRem(offsetPx)})`
-  }
-})
 
 function mistStyle(index) {
   const offset = index * 40
@@ -303,30 +287,6 @@ useMenuPrefetch('beresht')
   text-transform: uppercase;
   font-size: 0.75rem;
   color: rgba(95, 61, 39, 0.6);
-}
-
-.beresht-marquee {
-  display: flex;
-  gap: 2rem;
-  overflow: hidden;
-  font-size: clamp(0.9rem, 1.8vw, 1.15rem);
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  opacity: 0.38;
-  color: rgba(32, 22, 15, 0.14);
-  margin-bottom: 2.5rem;
-  transition: transform calc(1100ms / var(--viz-velocity, 1)) cubic-bezier(.2,.8,.2,1);
-  flex-wrap: wrap;
-  justify-content: center;
-}
-@media (max-width: 640px) {
-  .beresht-marquee {
-    gap: 1rem;
-    letter-spacing: 0.22em;
-    font-size: 0.9rem;
-    transform: none !important;
-    opacity: 0.32;
-  }
 }
 
 .beresht-atmosphere {

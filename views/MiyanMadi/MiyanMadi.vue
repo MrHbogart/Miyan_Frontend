@@ -186,7 +186,7 @@ useSwipeNavigation(childSwipe, {
     circle at 50% 50%,
     rgba(255, 255, 255, 0) 0%,
     rgba(240, 240, 240, 0.8) 5%,
-    rgba(255, 255, 255, 0) 25%,
+    rgba(255, 255, 255, 0) 40%,
     rgba(255, 255, 255, 0) 100%
   );
   box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.35);
