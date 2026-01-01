@@ -184,10 +184,10 @@ useSwipeNavigation(childSwipe, {
 .nav-link--active {
   background: radial-gradient(
     circle at 50% 50%,
-    rgba(255, 255, 255, var(--nav-active-fill-alpha, 1)) 0%,
-    rgba(245, 245, 245, var(--nav-active-fill-alpha, 1)) 5%,
-    rgba(255, 255, 255, var(--nav-active-fill-alpha, 1)) 25%,
-    rgba(255, 255, 255, var(--nav-active-fill-alpha, 1)) 100%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(240, 240, 240, 0.8) 5%,
+    rgba(255, 255, 255, 0) 25%,
+    rgba(255, 255, 255, 0) 100%
   );
   box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.35);
 }

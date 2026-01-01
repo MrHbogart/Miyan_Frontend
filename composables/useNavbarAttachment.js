@@ -98,8 +98,8 @@ export function useNavbarAttachment(navbarRef, navbarSentinel) {
     navBgOpacity.value = v 
   }, { immediate: true })
 
-  const baseShadow = '0 12px 24px -16px rgba(0, 0, 0, 0.34)'
-  const attachedShadow = '0 12px 24px -14px rgba(0, 0, 0, 0.38)'
+  const baseShadow = '0 10px 18px -16px rgba(0, 0, 0, 0.26)'
+  const attachedShadow = '0 10px 20px -14px rgba(0, 0, 0, 0.3)'
 
   /**
    * Navbar inline styles - simple fixed positioning
