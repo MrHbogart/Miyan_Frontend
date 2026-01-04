@@ -7,10 +7,10 @@
   >
     <div class="madi-hero" :style="heroOrbitStyle">
       <p class="overline" :class="textClass">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-      <h1 data-reveal :class="titleClass">
+      <h1 data-reveal :class="titleClass" class="copy-breaks">
         {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
       </h1>
-      <p data-reveal :class="textClass">
+      <p data-reveal :class="textClass" class="copy-breaks">
         {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
       </p>
     </div>
@@ -23,8 +23,8 @@
       >
         <div class="story-copy" :class="textClass">
           <p class="story-overline">{{ isRTL ? primaryStory.overline.fa : primaryStory.overline.en }}</p>
-          <h3 :class="titleClass">{{ isRTL ? primaryStory.title.fa : primaryStory.title.en }}</h3>
-          <p>{{ isRTL ? primaryStory.copy.fa : primaryStory.copy.en }}</p>
+          <h3 :class="titleClass" class="copy-breaks">{{ isRTL ? primaryStory.title.fa : primaryStory.title.en }}</h3>
+          <p class="copy-breaks">{{ isRTL ? primaryStory.copy.fa : primaryStory.copy.en }}</p>
         </div>
       </article>
     </div>
@@ -32,11 +32,12 @@
     <div class="madi-atmosphere">
       <div class="mist-line" v-for="n in 3" :key="`primary-${n}`" :style="mistStyle(n)"></div>
       <div class="atmo-copy" data-reveal>
-        <h2 :class="titleClass">{{ isRTL ? atmosphereCopy.title.fa : atmosphereCopy.title.en }}</h2>
+        <h2 :class="titleClass" class="copy-breaks">{{ isRTL ? atmosphereCopy.title.fa : atmosphereCopy.title.en }}</h2>
         <p
           v-for="(paragraph, idx) in atmosphereCopy.paragraphs"
           :key="`atmo-${idx}`"
           :class="textClass"
+          class="copy-breaks"
         >
           {{ isRTL ? paragraph.fa : paragraph.en }}
         </p>
@@ -53,8 +54,8 @@
       >
         <div class="story-copy" :class="textClass">
           <p class="story-overline">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
-          <h3 :class="titleClass">{{ isRTL ? story.title.fa : story.title.en }}</h3>
-          <p>{{ isRTL ? story.copy.fa : story.copy.en }}</p>
+          <h3 :class="titleClass" class="copy-breaks">{{ isRTL ? story.title.fa : story.title.en }}</h3>
+          <p class="copy-breaks">{{ isRTL ? story.copy.fa : story.copy.en }}</p>
         </div>
       </article>
     </div>
@@ -62,12 +63,11 @@
     <div class="madi-location" data-reveal>
       <div class="location-copy" :class="textClass">
         <p class="overline">{{ isRTL ? locationInfo.overline.fa : locationInfo.overline.en }}</p>
-        <h2 :class="titleClass">{{ isRTL ? locationInfo.title.fa : locationInfo.title.en }}</h2>
-        <p>{{ isRTL ? locationInfo.body.fa : locationInfo.body.en }}</p>
+        <h2 :class="titleClass" class="copy-breaks">{{ isRTL ? locationInfo.title.fa : locationInfo.title.en }}</h2>
         <ul class="location-list">
           <li v-for="(line, idx) in locationLines" :key="`madi-address-${idx}`">{{ line }}</li>
         </ul>
-        <p class="location-hours">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
+        <p class="location-hours copy-breaks">{{ isRTL ? locationInfo.hours.fa : locationInfo.hours.en }}</p>
       </div>
       <div class="location-map" role="region" :aria-label="isRTL ? locationInfo.title.fa : locationInfo.title.en">
         <div class="map-canvas">

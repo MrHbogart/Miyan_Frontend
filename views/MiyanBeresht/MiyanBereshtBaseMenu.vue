@@ -3,7 +3,7 @@
     <div class="content-shell content-shell--flush w-full relative overflow-hidden">
       <StructuredMenu :menu="menu" />
       <div
-        v-if="!stateReady"
+        v-if="!hasSections"
         class="absolute inset-0 flex items-center justify-center px-6 py-10 bg-white/85 backdrop-blur-[2px] text-center"
       >
         <div class="space-y-4">
@@ -39,8 +39,6 @@ const hasSections = computed(() => {
   const sections = menu.value?.sections
   return Array.isArray(sections) && sections.length > 0
 })
-
-const stateReady = computed(() => hasSections.value && !pending.value && !error.value)
 
 const langState = useLang()
 const translateState = (key) => menuStateCopy[key]?.[langState.value] ?? menuStateCopy[key]?.en ?? ''

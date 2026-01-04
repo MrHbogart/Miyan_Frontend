@@ -8,10 +8,10 @@
       <div class="hero-intro-text hero-intro-single" :class="textClass" data-reveal>
         <div class="hero-intro-headline">
           <p class="overline">{{ isRTL ? heroCopy.overline.fa : heroCopy.overline.en }}</p>
-          <h1 :class="titleClass">
+          <h1 :class="titleClass" class="copy-breaks">
             {{ isRTL ? heroCopy.title.fa : heroCopy.title.en }}
           </h1>
-          <p class="hero-lede">
+          <p class="hero-lede copy-breaks">
             {{ isRTL ? heroCopy.body.fa : heroCopy.body.en }}
           </p>
         </div>
@@ -31,8 +31,8 @@
       </div>
       <div class="hero-copy-block" :class="textClass" :style="heroCopyMotion" data-reveal>
         <p class="overline">{{ isRTL ? branchSection.overline.fa : branchSection.overline.en }}</p>
-        <h1 :class="titleClass">{{ isRTL ? branchSection.title.fa : branchSection.title.en }}</h1>
-        <p>{{ isRTL ? branchSection.body.fa : branchSection.body.en }}</p>
+        <h1 :class="titleClass" class="copy-breaks">{{ isRTL ? branchSection.title.fa : branchSection.title.en }}</h1>
+        <p class="copy-breaks">{{ isRTL ? branchSection.body.fa : branchSection.body.en }}</p>
         <div class="branch-grid">
           <NuxtLink
             v-for="branch in branchSection.cards"
@@ -55,8 +55,8 @@
     <div class="miyan-modal-panel">
       <div class="modal-body" data-reveal :class="textClass">
         <p class="modal-overline">{{ isRTL ? modalCopy.overline.fa : modalCopy.overline.en }}</p>
-        <h2 :class="titleClass">{{ isRTL ? modalCopy.title.fa : modalCopy.title.en }}</h2>
-        <p class="modal-intro">{{ isRTL ? modalCopy.body.fa : modalCopy.body.en }}</p>
+        <h2 :class="titleClass" class="copy-breaks">{{ isRTL ? modalCopy.title.fa : modalCopy.title.en }}</h2>
+        <p class="modal-intro copy-breaks">{{ isRTL ? modalCopy.body.fa : modalCopy.body.en }}</p>
         <div class="modal-chip">
           {{ isRTL ? modalCopy.accent.fa : modalCopy.accent.en }}
         </div>
@@ -70,7 +70,7 @@
             :style="{ '--delay': `${idx * 120}ms` }"
           >
             <strong>{{ isRTL ? focus.title.fa : focus.title.en }}</strong>
-            <p>{{ isRTL ? focus.copy.fa : focus.copy.en }}</p>
+            <p class="copy-breaks">{{ isRTL ? focus.copy.fa : focus.copy.en }}</p>
           </article>
         </div>
       </div>
@@ -87,8 +87,8 @@
       >
         <div class="story-copy" :class="textClass">
           <p class="story-overline">{{ isRTL ? story.overline.fa : story.overline.en }}</p>
-          <h3 :class="titleClass">{{ isRTL ? story.title.fa : story.title.en }}</h3>
-          <p>{{ isRTL ? story.copy.fa : story.copy.en }}</p>
+          <h3 :class="titleClass" class="copy-breaks">{{ isRTL ? story.title.fa : story.title.en }}</h3>
+          <p class="copy-breaks">{{ isRTL ? story.copy.fa : story.copy.en }}</p>
         </div>
       </article>
     </div>

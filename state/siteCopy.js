@@ -17,7 +17,7 @@ export const miyanLandingCopy = {
     overline: { fa: 'گروه میان', en: 'Miyan Group' },
     title: { fa: 'میانِ کار و زندگی', en: 'Between Work and Life' },
     body: {
-      fa: 'میان، یک برنامه منسجم را در دو کافه پیش می‌برد؛ قهوه تازه‌رُست، پخت روزانه و ارائه حرفه‌ای',
+      fa: 'میان یک برنامه منسجم را در دو کافه پیش می‌برد\n قهوه تازه‌رُست، پخت روزانه و ارائه حرفه‌ای',
       en: 'At Miyan, a single, focused program runs across two cafés: freshly roasted coffee, daily bakes, and professional service',
     },
   },
@@ -33,7 +33,7 @@ export const miyanLandingCopy = {
   ],
   branches: {
     overline: { fa: 'کافه‌های میان', en: 'Miyan cafés' },
-    title: { fa: 'دو فضا، دو حال‌وهوا', en: 'Two spaces, two moods' },
+    title: { fa: 'دو فضا\n دو حال‌وهوا', en: 'Two spaces\n two moods' },
     body: {
       fa: 'هر شعبه هویت خودش را دارد، کیفیت یکسان است و تجربه متفاوت',
       en: 'Each location has its own identity; quality remains constant while the experience changes',
@@ -51,7 +51,7 @@ export const miyanLandingCopy = {
       },
       {
         name: { fa: 'میان مادی', en: 'Miyan Madi' },
-        area: { fa: 'اصفهان · چهارباغ عباسی، مادی نیاصرم', en: 'Isfahan · Chahar Bagh Abbasi, Madi Niyasarm' },
+        area: { fa: 'اصفهان · چهارباغ عباسی · مادی نیاصرم', en: 'Isfahan · Chahar Bagh Abbasi · Madi Niyasarm' },
         copy: {
           fa: 'کافه‌ای گرم و صمیمی برای لحظه‌های آرام',
           en: 'A small, warm café designed for calm, unhurried moments',
@@ -113,8 +113,8 @@ export const miyanBereshtLandingCopy = {
     overline: { fa: 'میان برشت', en: 'Miyan Beresht' },
     title: { fa: 'مجموعه‌ای منظم و هماهنگ', en: 'A composed and coordinated space' },
     body: {
-      fa: 'میان برشت، قلب رستری میان؛ تمرکز بر قهوه، سرویس و دقت در اجرا',
-      en: 'Miyan Beresht is the heart of our roastery, centered on coffee, service, and precision',
+      fa: 'میان برشت، قلب رستری میان\n تمرکز بر قهوه، سرویس و دقت در اجرا',
+      en: 'Miyan Beresht is the heart of our roastery\n centered on coffee, service, and precision',
     },
   },
   experience: {
@@ -170,11 +170,7 @@ export const miyanBereshtLandingCopy = {
   ],
   location: {
     overline: { fa: 'آدرس و مسیر', en: 'Address & route' },
-    title: { fa: 'میان برشت، اصفهان', en: 'Miyan Beresht, Isfahan' },
-    body: {
-      fa: 'کافه و رستری میان برشت در اصفهان، شیخ صدوق جنوبی',
-      en: 'Miyan Beresht roastery café is located on South Sheikh Sadoogh in Isfahan',
-    },
+    title: { fa: 'میان برشت · اصفهان', en: 'Miyan Beresht · Isfahan' },
     addressLines: {
       fa: ['اصفهان، خیابان شیخ صدوق جنوبی', 'کافه میان برشت'],
       en: ['Isfahan, South Sheikh Sadoogh Avenue', 'Miyan Beresht Café'],
@@ -194,8 +190,8 @@ export const miyanMadiLandingCopy = {
     overline: { fa: 'میان مادی', en: 'Miyan Madi' },
     title: { fa: 'کافه‌ای دنج و آرام', en: 'A cozy café in Isfahan' },
     body: {
-      fa: 'مادی، کافه کوچک و گرم میان است؛ قهوه روزانه و گفت‌وگوهای آرام',
-      en: 'Madi is Miyan’s small, warm café with daily coffee and unhurried conversation',
+      fa: 'مادی، کافه کوچک و گرم میان\n قهوه روزانه و گفت‌وگوهای آرام',
+      en: 'Madi is Miyan’s small, warm café\n with daily coffee and unhurried conversation',
     },
   },
   atmosphere: {
@@ -233,11 +229,7 @@ export const miyanMadiLandingCopy = {
   ],
   location: {
     overline: { fa: 'آدرس و مسیر', en: 'Address & route' },
-    title: { fa: 'مادی نیاصرم، اصفهان', en: 'Niyasarm Madi, Isfahan' },
-    body: {
-      fa: 'کافه میان مادی در اصفهان، چهارباغ عباسی، مادی نیاصرم',
-      en: 'Miyan Madi café is located on Chahar Bagh Abbasi, Niyasarm Madi, Isfahan',
-    },
+    title: { fa: 'مادی نیاصرم · اصفهان', en: 'Niyasarm Madi · Isfahan' },
     addressLines: {
       fa: ['اصفهان، چهارباغ عباسی، مادی نیاصرم', 'کافه میان مادی'],
       en: ['Isfahan, Chahar Bagh Abbasi, Niyasarm Madi', 'Miyan Madi Café'],

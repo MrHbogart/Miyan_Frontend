@@ -367,6 +367,10 @@ main,
   letter-spacing: 0.06em !important;
 }
 
+.copy-breaks {
+  white-space: pre-line;
+}
+
 .h-screen {
   height: 100svh !important;
   height: calc(var(--app-vh-fixed, var(--app-vh, 1vh)) * 100) !important;

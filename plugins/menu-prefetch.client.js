@@ -11,9 +11,5 @@ export default defineNuxtPlugin(() => {
     hasPrefetched.value = true
   }
 
-  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-    window.requestIdleCallback(startPrefetch, { timeout: 2000 })
-  } else {
-    window.setTimeout(startPrefetch, 500)
-  }
+  startPrefetch()
 })
