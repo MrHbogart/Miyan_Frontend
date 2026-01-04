@@ -29,7 +29,7 @@ export const miyanLandingCopy = {
         en: 'Coffee roasting · Baking · Service',
       },
     },
-    { label: { fa: 'شروع داستان ما', en: 'Since' }, value: { fa: '۱۳۹۳', en: '2014' } },
+    { label: { fa: 'شروع داستان ما', en: 'Since' }, value: { fa: '۱۴۰۲', en: '2024' } },
   ],
   branches: {
     overline: { fa: 'کافه‌های میان', en: 'Miyan cafés' },

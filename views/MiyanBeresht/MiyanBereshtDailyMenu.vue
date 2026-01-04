@@ -33,7 +33,7 @@ import { useMenuData } from '~/composables/useMenuData'
 import { useLang } from '~/composables/useLang'
 import { menuStateCopy } from '~/state/menuStateCopy'
 
-const { data: menu, pending, error, refresh } = await useMenuData('beresht-daily-menu')
+const { data: menu, pending, error, refresh } = await useMenuData('beresht-daily-menu', { server: true })
 
 const hasSections = computed(() => {
   const sections = menu.value?.sections
