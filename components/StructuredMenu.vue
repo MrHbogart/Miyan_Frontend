@@ -161,16 +161,20 @@ const menuWidthClass = computed(() => (showImagesEnabled.value ? 'menu-shell--wi
 // Get sections directly from menu.sections
 // The API/mock data structure has sections at the top level
 const sections = computed(() => {
-  if (!props.menu || !props.menu.sections) {
+  if (!props.menu || !Array.isArray(props.menu.sections)) {
     return []
   }
-  return props.menu.sections.map((section) => {
-    if (!section || typeof section !== 'object') return section
-    return {
-      ...section,
-      is_main_section: section?.is_main_section !== false,
-    }
-  })
+  return props.menu.sections
+    .map((section) => {
+      if (!section || typeof section !== 'object') return null
+      const items = Array.isArray(section.items) ? section.items.filter((item) => item && item.name) : []
+      return {
+        ...section,
+        items,
+        is_main_section: section?.is_main_section !== false,
+      }
+    })
+    .filter((section) => section && Array.isArray(section.items) && section.items.length > 0)
 })
 
 const isSideSection = (section) => section?.is_main_section === false

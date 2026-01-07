@@ -37,7 +37,10 @@ const { data: menu, pending, error, refresh } = await useMenuData('madi-base-men
 
 const hasSections = computed(() => {
   const sections = menu.value?.sections
-  return Array.isArray(sections) && sections.length > 0
+  if (!Array.isArray(sections)) return false
+  return sections.some((section) =>
+    Array.isArray(section?.items) && section.items.some((item) => item && item.name),
+  )
 })
 
 const langState = useLang()

@@ -14,7 +14,12 @@ const MENU_HANDLERS = {
 }
 
 const defaultMenuState = () => ({ sections: [] })
-const hasMenuSections = (menu) => Array.isArray(menu?.sections) && menu.sections.length > 0
+const hasMenuSections = (menu) => {
+  if (!Array.isArray(menu?.sections)) return false
+  return menu.sections.some((section) =>
+    Array.isArray(section?.items) && section.items.some((item) => item && item.name),
+  )
+}
 
 async function fetchMenuByKey(key, api) {
   const loader = MENU_HANDLERS[key]
