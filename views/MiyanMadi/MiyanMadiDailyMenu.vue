@@ -33,7 +33,7 @@ import { useMenuData } from '~/composables/useMenuData'
 import { useLang } from '~/composables/useLang'
 import { menuStateCopy } from '~/state/menuStateCopy'
 
-const { data: menu, pending, error, refresh } = await useMenuData('madi-daily-menu', { server: true })
+const { data: menu, pending, error, refresh } = await useMenuData('madi-daily-menu')
 
 const hasSections = computed(() => {
   const sections = menu.value?.sections
